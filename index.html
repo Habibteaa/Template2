@@ -8,7 +8,6 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;0,900;1,500;1,600;1,700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
 <style>
-
   :root{
     --bg:#F4E9D9;
     --bg-deep:#ECDBC0;
@@ -24,29 +23,21 @@
     --error:#BD7C7C;
     --ease:cubic-bezier(.16,1,.3,1);
   }
-
   *{box-sizing:border-box;}
-  html,body{margin:0;padding:0;}
+  html,body{margin:0;padding:0;height:100%;}
   body{
     background:var(--bg);
     color:var(--brown);
-    font-family:'Cormorant Garamond', serif;
-    min-height:100vh;
-    overflow-x:hidden;
+    font-family:'Cormorant Garamond',serif;
+    height:100vh;
+    overflow:hidden;
     position:relative;
   }
-
   button{font-family:inherit;}
 
-  /* ---------- ambient background ---------- */
+  /* ambient */
   .ambient{position:fixed;inset:0;overflow:hidden;z-index:0;pointer-events:none;}
-  .orb{
-    position:absolute;
-    border-radius:50%;
-    filter:blur(2px);
-    opacity:.22;
-    animation:floatY linear infinite alternate;
-  }
+  .orb{position:absolute;border-radius:50%;filter:blur(2px);opacity:.22;animation:floatY linear infinite alternate;}
   .orb.gold{background:radial-gradient(circle, var(--gold-light), transparent 70%);}
   .orb.pink{background:radial-gradient(circle, var(--pink-deep), transparent 70%);}
   .o1{width:220px;height:220px;left:4%;top:8%;animation-duration:26s;}
@@ -54,51 +45,23 @@
   .o3{width:260px;height:260px;left:65%;top:62%;animation-duration:30s;animation-delay:-9s;}
   .o4{width:140px;height:140px;left:10%;top:70%;animation-duration:19s;animation-delay:-6s;}
   .o5{width:180px;height:180px;left:45%;top:-4%;animation-duration:24s;animation-delay:-12s;}
+  @keyframes floatY{0%{transform:translate(0,0);}100%{transform:translate(24px,-28px);}}
 
-  @keyframes floatY{
-    0%{transform:translate(0,0);}
-    100%{transform:translate(24px,-28px);}
-  }
-
-  /* ---------- layout shell ---------- */
+  /* layout */
   .stage{
     position:relative;
     z-index:1;
-    max-width:1280px;
-    margin:0 auto;
-    padding:clamp(28px,5vw,64px) clamp(20px,5vw,56px) clamp(36px,6vw,72px);
-    min-height:100vh;
+    height:100vh;
     display:flex;
     flex-direction:column;
     justify-content:center;
-    gap:clamp(28px,4vw,48px);
-  }
-
-  /* ---------- masthead ---------- */
-  .masthead{text-align:center;}
-
-  .kicker{
-    display:flex;
     align-items:center;
-    justify-content:center;
-    gap:14px;
-    margin:0 0 18px;
-    font-family:'Cormorant Garamond',serif;
-    font-style:italic;
-    font-weight:500;
-    font-size:clamp(12px,1.6vw,15px);
-    letter-spacing:.32em;
-    color:var(--gold-text);
-    opacity:0;
-    animation:fadeRise .9s var(--ease) .1s forwards;
-  }
-  .kicker::before,.kicker::after{
-    content:"";
-    width:clamp(24px,5vw,56px);
-    height:1px;
-    background:var(--gold);
+    padding:clamp(12px,2.5vw,28px) clamp(16px,3vw,40px);
+    gap:clamp(10px,2vh,22px);
   }
 
+  /* masthead */
+  .masthead{text-align:center;}
   .title{
     margin:0;
     font-family:'Playfair Display',serif;
@@ -111,23 +74,22 @@
   }
   .title .line1{
     display:block;
-    font-size:clamp(22px,4.2vw,40px);
+    font-size:clamp(18px,3vw,30px);
     letter-spacing:.14em;
   }
   .title .name{
     display:block;
-    margin-top:.18em;
+    margin-top:.1em;
     font-style:italic;
     font-weight:900;
-    font-size:clamp(40px,8.6vw,84px);
+    font-size:clamp(32px,6.5vw,64px);
     letter-spacing:.05em;
     color:var(--gold-text);
   }
-
   .flourish{
     display:block;
-    margin:14px auto 0;
-    width:clamp(160px,22vw,240px);
+    margin:8px auto 0;
+    width:clamp(120px,16vw,200px);
     height:auto;
     opacity:0;
     animation:fadeIn .6s ease .9s forwards;
@@ -142,122 +104,62 @@
     animation:drawLine 1.3s var(--ease) 1s forwards;
   }
 
-  .subtitle{
-    margin:18px auto 0;
-    max-width:520px;
-    font-style:italic;
-    font-weight:500;
-    font-size:clamp(15px,2vw,19px);
-    color:var(--brown-soft);
-    opacity:0;
-    animation:fadeRise .9s var(--ease) .55s forwards;
-  }
-
-  /* ---------- content row : always side by side ---------- */
+  /* content row */
   .content{
     display:flex;
     flex-direction:row;
-    align-items:stretch;
-    gap:clamp(18px,3.4vw,48px);
+    align-items:center;
+    gap:clamp(20px,3.5vw,52px);
     width:100%;
+    max-width:1100px;
+    justify-content:center;
   }
 
-  .photo-frame{
-    flex:1 1 38%;
-    min-width:0;
-    margin:0;
+  /* teddy bear photo — frameless, floating */
+  .photo-wrap{
+    flex:0 0 auto;
     display:flex;
-    flex-direction:column;
+    align-items:center;
+    justify-content:center;
     opacity:0;
     animation:fadeScaleLeft 1s var(--ease) .7s forwards;
   }
-  .frame-inner{
-    position:relative;
-    flex:1;
-    aspect-ratio:4/5;
-    border:1px solid var(--gold);
-    border-radius:2px;
-    padding:clamp(6px,1vw,10px);
-    background:var(--cream);
-    box-shadow:0 24px 60px -24px rgba(59,42,31,.35);
-  }
-  .frame-inner::before{
-    content:"";
-    position:absolute;
-    inset:clamp(10px,1.6vw,16px);
-    border:1px solid var(--gold);
-    pointer-events:none;
-    opacity:.6;
-    z-index:2;
-  }
-  .frame-inner img{
-    width:100%;
-    height:100%;
-    object-fit:cover;
+  .photo-wrap img{
+    width:clamp(160px,22vw,280px);
+    height:auto;
     display:block;
-    position:relative;
-    z-index:1;
+    transform:rotate(-5deg);
+    filter:drop-shadow(0 18px 32px rgba(59,42,31,.18));
+    transition:transform .4s var(--ease);
   }
-  .img-fallback{
-    display:none;
-    position:absolute;
-    inset:0;
-    align-items:center;
-    justify-content:center;
-    text-align:center;
-    padding:18px;
-    font-style:italic;
-    font-size:clamp(13px,1.6vw,16px);
-    color:var(--brown-soft);
-    background:linear-gradient(160deg,var(--pink-soft),var(--cream));
-  }
-  .photo-frame.img-missing .img-fallback{display:flex;}
-  .photo-frame.img-missing img{visibility:hidden;}
+  .photo-wrap img:hover{transform:rotate(-3deg) scale(1.03);}
 
-  figcaption{
-    margin-top:14px;
-    text-align:center;
-    font-style:italic;
-    font-size:clamp(13px,1.6vw,16px);
-    color:var(--brown-soft);
-  }
-
-  /* ---------- lock card ---------- */
+  /* lock card */
   .lock-card{
-    flex:1 1 52%;
-    min-width:0;
+    flex:0 0 auto;
     background:linear-gradient(160deg,var(--cream),var(--bg-deep));
     border:1px solid var(--gold);
-    border-radius:16px;
-    padding:clamp(20px,3.4vw,40px) clamp(16px,3vw,40px);
-    box-shadow:0 24px 60px -24px rgba(59,42,31,.3);
+    border-radius:20px;
+    padding:clamp(18px,2.8vw,34px) clamp(20px,3vw,38px);
+    box-shadow:0 24px 60px -24px rgba(59,42,31,.28);
     display:flex;
     flex-direction:column;
     align-items:center;
-    gap:clamp(14px,2.4vw,22px);
+    gap:clamp(10px,1.8vh,18px);
+    width:clamp(280px,36vw,400px);
     opacity:0;
     animation:fadeScaleRight 1s var(--ease) .85s forwards;
   }
   .lock-card.shake{animation:shake .5s ease;}
 
-  .lock-label{
-    margin:0;
-    text-transform:uppercase;
-    letter-spacing:.22em;
-    font-family:'Cormorant Garamond',serif;
-    font-weight:600;
-    font-size:clamp(12px,1.5vw,14px);
-    color:var(--gold-text);
-  }
-
-  .pin-row{display:flex;gap:clamp(10px,2vw,18px);}
+  /* pin dots */
+  .pin-row{display:flex;gap:clamp(12px,2.2vw,20px);}
   .pin-box{
-    width:clamp(38px,7vw,56px);
-    height:clamp(38px,7vw,56px);
+    width:clamp(44px,6.5vw,62px);
+    height:clamp(44px,6.5vw,62px);
     border:1.5px solid var(--gold);
-    border-radius:6px;
+    border-radius:10px;
     background:var(--cream);
-    position:relative;
     display:flex;
     align-items:center;
     justify-content:center;
@@ -265,8 +167,8 @@
   }
   .pin-box::after{
     content:"";
-    width:38%;
-    height:38%;
+    width:42%;
+    height:42%;
     border-radius:50%;
     background:var(--gold-text);
     transform:scale(0);
@@ -277,22 +179,22 @@
   .pin-box.success::after{background:var(--brown);}
 
   .pin-feedback{
-    min-height:1.2em;
+    min-height:1em;
     margin:0;
     font-style:italic;
-    font-size:clamp(12px,1.6vw,14px);
+    font-size:clamp(12px,1.5vw,14px);
     color:var(--error);
     opacity:0;
     transition:opacity .25s;
   }
   .pin-feedback.show{opacity:1;}
 
+  /* keypad */
   .keypad{
     width:100%;
-    max-width:320px;
     display:grid;
     grid-template-columns:repeat(3,1fr);
-    gap:clamp(6px,1.6vw,14px);
+    gap:clamp(7px,1.4vw,13px);
   }
   .key{
     position:relative;
@@ -314,7 +216,7 @@
     fill:var(--pink);
     stroke:var(--gold);
     stroke-width:1;
-    filter:drop-shadow(0 6px 10px rgba(59,42,31,.18));
+    filter:drop-shadow(0 5px 8px rgba(59,42,31,.15));
     transition:transform .22s var(--ease), fill .22s;
   }
   .key:hover .heart-svg{transform:scale(1.07);fill:var(--pink-deep);}
@@ -323,21 +225,30 @@
     position:relative;
     z-index:1;
     transform:translateY(-12%);
-    font-weight:600;
+    font-weight:700;
     color:var(--brown);
-    font-size:clamp(16px,2.6vw,22px);
+    font-size:clamp(20px,3.2vw,28px);
+    line-height:1;
   }
-  .key.key-util .key-label{font-size:clamp(15px,2.2vw,19px);font-weight:500;}
-
-  .keypad-hint{
-    margin:2px 0 0;
-    font-style:italic;
-    font-size:clamp(11px,1.4vw,12.5px);
-    color:var(--brown-soft);
-    opacity:.7;
+  .key.key-util .key-label{
+    font-size:clamp(16px,2vw,20px);
+    font-weight:500;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  /* backspace icon */
+  .key.key-util .key-label svg{
+    width:clamp(18px,2.4vw,24px);
+    height:clamp(18px,2.4vw,24px);
+    fill:none;
+    stroke:var(--brown);
+    stroke-width:2;
+    stroke-linecap:round;
+    stroke-linejoin:round;
   }
 
-  /* ---------- transition veil ---------- */
+  /* veil */
   .veil{
     position:fixed;
     inset:0;
@@ -363,7 +274,6 @@
   }
   .veil.show span{opacity:1;transform:translateY(0);}
 
-  /* ---------- keyframes ---------- */
   @keyframes fadeRise{from{opacity:0;transform:translateY(18px);}to{opacity:1;transform:translateY(0);}}
   @keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
   @keyframes fadeScaleLeft{from{opacity:0;transform:translateX(-26px) scale(.96);}to{opacity:1;transform:translateX(0) scale(1);}}
@@ -382,84 +292,86 @@
     .orb{display:none;}
   }
 
-  /* very narrow phones: tighten gap further, never switch to column */
-  @media (max-width:380px){
-    .content{gap:10px;}
-    .lock-card{padding:14px 10px;}
+  @media (max-width:500px){
+    .content{gap:14px;}
+    .photo-wrap img{width:clamp(110px,38vw,160px);}
+    .lock-card{width:clamp(220px,58vw,320px);padding:14px 12px;}
   }
 </style>
 </head>
 <body>
 
-  <div class="ambient" aria-hidden="true">
-    <span class="orb gold o1"></span>
-    <span class="orb pink o2"></span>
-    <span class="orb gold o3"></span>
-    <span class="orb pink o4"></span>
-    <span class="orb gold o5"></span>
-  </div>
+<div class="ambient" aria-hidden="true">
+  <span class="orb gold o1"></span>
+  <span class="orb pink o2"></span>
+  <span class="orb gold o3"></span>
+  <span class="orb pink o4"></span>
+  <span class="orb gold o5"></span>
+</div>
 
-  <main class="stage">
-    <header class="masthead">
-      <p class="kicker">A LETTER FOR</p>
-      <h1 class="title">
-        <span class="line1">HEAR ME ONCE</span>
-        <span class="name">MOMINA</span>
-      </h1>
-      <svg class="flourish" viewBox="0 0 220 30" xmlns="http://www.w3.org/2000/svg">
-        <path d="M5,15 C40,0 60,30 110,15 C160,0 180,30 215,15"/>
-      </svg>
-      <p class="subtitle">Four numbers stand between us. You know them by heart.</p>
-    </header>
+<main class="stage">
+  <header class="masthead">
+    <h1 class="title">
+      <span class="line1">Hear Me Once</span>
+      <span class="name">Momina</span>
+    </h1>
+    <svg class="flourish" viewBox="0 0 220 30" xmlns="http://www.w3.org/2000/svg">
+      <path d="M5,15 C40,0 60,30 110,15 C160,0 180,30 215,15"/>
+    </svg>
+  </header>
 
-    <section class="content">
-      <figure class="photo-frame">
-        <div class="frame-inner">
-          <img src="pic1.jpeg" alt="A photo of us" onerror="this.closest('.photo-frame').classList.add('img-missing')">
-          <div class="img-fallback">Place&nbsp;<strong>pic1.jpeg</strong>&nbsp;in this folder</div>
-        </div>
-        <figcaption>Every page after this one is for you.</figcaption>
-      </figure>
+  <section class="content">
+    <!-- Teddy bear — frameless so bg blends in -->
+    <div class="photo-wrap">
+      <img src="pic1.jpeg" alt="A little teddy bear, just for you">
+    </div>
 
-      <div class="lock-card" id="lockCard">
-        <p class="lock-label">Unlock with your pin</p>
-
-        <div class="pin-row" id="pinRow">
-          <span class="pin-box"></span>
-          <span class="pin-box"></span>
-          <span class="pin-box"></span>
-          <span class="pin-box"></span>
-        </div>
-
-        <p class="pin-feedback" id="pinFeedback" aria-live="polite"></p>
-
-        <div class="keypad" id="keypad">
-          <!-- rows generated by JS -->
-        </div>
-        <p class="keypad-hint">* clears &nbsp;·&nbsp; # deletes</p>
+    <!-- Lock card -->
+    <div class="lock-card" id="lockCard">
+      <div class="pin-row" id="pinRow">
+        <span class="pin-box"></span>
+        <span class="pin-box"></span>
+        <span class="pin-box"></span>
+        <span class="pin-box"></span>
       </div>
-    </section>
-  </main>
 
-  <div class="veil" id="veil"><span id="veilText"></span></div>
+      <p class="pin-feedback" id="pinFeedback" aria-live="polite"></p>
+
+      <div class="keypad" id="keypad"></div>
+    </div>
+  </section>
+</main>
+
+<div class="veil" id="veil"><span id="veilText"></span></div>
 
 <script>
 (function(){
   const HEART_PATH = "M16 28C16 28 1 18.5 1 9.5C1 4.8 4.8 1 9.5 1C12.6 1 15.2 2.7 16 5.4C16.8 2.7 19.4 1 22.5 1C27.2 1 31 4.8 31 9.5C31 18.5 16 28 16 28Z";
-  const KEYS = ['1','2','3','4','5','6','7','8','9','*','0','#'];
+  const BACKSPACE_SVG = `<svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="21 8 21 16"/><path d="M3 12h14l-4-4m0 8l4-4"/></svg>`;
+
+  // Layout: 1 2 3 / 4 5 6 / 7 8 9 / [empty] 0 [backspace]
+  const KEYS = ['1','2','3','4','5','6','7','8','9','','0','#'];
   const keypad = document.getElementById('keypad');
 
-  KEYS.forEach((k, idx)=>{
+  KEYS.forEach((k, idx) => {
+    if(k === ''){
+      // empty spacer
+      const spacer = document.createElement('div');
+      keypad.appendChild(spacer);
+      return;
+    }
     const btn = document.createElement('button');
     btn.type = 'button';
-    btn.className = 'key' + ((k==='*'||k==='#') ? ' key-util' : '');
+    const isBack = k === '#';
+    btn.className = 'key' + (isBack ? ' key-util' : '');
     btn.dataset.key = k;
-    btn.setAttribute('aria-label', k === '*' ? 'Clear' : (k === '#' ? 'Backspace' : k));
-    btn.style.animation = `fadeRise .6s ${'cubic-bezier(.16,1,.3,1)'} ${1 + idx*0.04}s forwards`;
+    btn.setAttribute('aria-label', isBack ? 'Backspace' : k);
+    btn.style.animation = `fadeRise .6s cubic-bezier(.16,1,.3,1) ${1 + idx*0.04}s forwards`;
     btn.style.opacity = '0';
+    const label = isBack ? BACKSPACE_SVG : k;
     btn.innerHTML = `
       <svg class="heart-svg" viewBox="0 0 32 29" aria-hidden="true"><path d="${HEART_PATH}"/></svg>
-      <span class="key-label">${k}</span>
+      <span class="key-label">${label}</span>
     `;
     keypad.appendChild(btn);
   });
@@ -474,41 +386,22 @@
   let locked = false;
 
   function renderBoxes(){
-    boxes.forEach((b,i)=> b.classList.toggle('filled', i < pin.length));
+    boxes.forEach((b,i) => b.classList.toggle('filled', i < pin.length));
   }
-
-  function clearFeedback(){
-    feedback.classList.remove('show');
-  }
+  function clearFeedback(){ feedback.classList.remove('show'); }
 
   function press(k){
     if(locked) return;
-    if(k === '*'){
-      pin = '';
-      renderBoxes();
-      clearFeedback();
-      return;
-    }
-    if(k === '#'){
-      pin = pin.slice(0, -1);
-      renderBoxes();
-      clearFeedback();
-      return;
-    }
+    if(k === '#'){ pin = pin.slice(0,-1); renderBoxes(); clearFeedback(); return; }
     if(pin.length >= 4) return;
     pin += k;
     renderBoxes();
-    if(pin.length === 4){
-      setTimeout(checkPin, 220);
-    }
+    if(pin.length === 4) setTimeout(checkPin, 220);
   }
 
   function checkPin(){
-    if(pin === CORRECT){
-      success();
-    } else {
-      fail();
-    }
+    if(pin === CORRECT) success();
+    else fail();
   }
 
   function fail(){
@@ -528,26 +421,24 @@
   function success(){
     locked = true;
     clearFeedback();
-    boxes.forEach((b,i)=> setTimeout(()=> b.classList.add('success'), i*110));
+    boxes.forEach((b,i) => setTimeout(() => b.classList.add('success'), i*110));
     setTimeout(()=>{
       veilText.textContent = "It's you.";
       veil.classList.add('show');
-      setTimeout(()=>{ window.location.href = 'next.html'; }, 1500);
+      setTimeout(() => { window.location.href = 'next.html'; }, 1500);
     }, 650);
   }
 
-  keypad.addEventListener('click', (e)=>{
+  keypad.addEventListener('click', (e) => {
     const btn = e.target.closest('.key');
     if(btn) press(btn.dataset.key);
   });
 
-  window.addEventListener('keydown', (e)=>{
+  window.addEventListener('keydown', (e) => {
     if(/^[0-9]$/.test(e.key)) press(e.key);
     else if(e.key === 'Backspace') press('#');
-    else if(e.key === 'Escape') press('*');
   });
 })();
 </script>
-
 </body>
 </html>
