@@ -2,451 +2,552 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Don't Judge Me Yet</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Hear Me Once, Momina</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&family=Dancing+Script:wght@600;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;0,900;1,500;1,600;1,700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
 <style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --bg:#FFF8F2;
-  --accent:#F8BBD0;
-  --accent2:#EFA6B8;
-  --heading:#2D2D2D;
-  --body:#6B6B6B;
-}
-html,body{height:100%;width:100%}
-body{
-  font-family:'Inter',sans-serif;
-  background-color:var(--bg);
-  min-height:100vh;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  overflow-x:hidden;
-  overflow-y:auto;
-  position:relative;
-}
-body::before{
-  content:'';
-  position:fixed;
-  inset:0;
-  background:
-    radial-gradient(ellipse 70% 60% at 0% 0%,rgba(248,187,208,0.45) 0%,transparent 70%),
-    radial-gradient(ellipse 60% 55% at 100% 100%,rgba(255,235,210,0.5) 0%,transparent 65%);
-  pointer-events:none;
-  z-index:0;
-  animation:ambientShift 14s ease-in-out infinite alternate;
-}
-body::after{
-  content:'';
-  position:fixed;
-  inset:0;
-  background:radial-gradient(ellipse 100% 100% at 50% 50%,transparent 55%,rgba(45,45,45,0.08) 100%);
-  pointer-events:none;
-  z-index:0;
-}
-.grain{
-  position:fixed;inset:0;z-index:1;opacity:0.032;pointer-events:none;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");
-  background-repeat:repeat;background-size:200px 200px;
-}
-@keyframes ambientShift{
-  0%{transform:scale(1) translate(0,0)}
-  100%{transform:scale(1.06) translate(-1%,1%)}
-}
-.page-wrapper{
-  position:relative;z-index:2;width:100%;
-  display:flex;align-items:center;justify-content:center;
-  min-height:100vh;padding:20px 16px;
-  animation:fadeInPage 1.1s cubic-bezier(.22,1,.36,1) both;
-}
-@keyframes fadeInPage{
-  from{opacity:0;transform:translateY(18px)}
-  to{opacity:1;transform:translateY(0)}
-}
-.card{
-  width:100%;max-width:400px;
-  background:rgba(255,255,255,0.58);
-  border:1px solid rgba(255,255,255,0.78);
-  border-radius:32px;
-  box-shadow:0 8px 40px rgba(239,166,184,0.13),0 2px 8px rgba(239,166,184,0.08),0 0 0 0.5px rgba(248,187,208,0.18) inset;
-  backdrop-filter:blur(28px) saturate(1.4);
-  -webkit-backdrop-filter:blur(28px) saturate(1.4);
-  padding:36px 32px 36px;
-  display:flex;flex-direction:column;align-items:center;
-  transition:transform 0.6s cubic-bezier(.22,1,.36,1),opacity 0.6s ease;
-  position:relative;
-}
-@media(max-width:440px){.card{padding:28px 16px 28px;border-radius:24px}}
-.card.success-shrink{transform:scale(0.94);opacity:0}
 
-.bear-wrap{
-  position:relative;width:80px;height:86px;margin-bottom:16px;
-  animation:bearBreathe 4.2s ease-in-out infinite;
-}
-@keyframes bearBreathe{
-  0%,100%{transform:scaleY(1) translateY(0)}
-  50%{transform:scaleY(1.03) translateY(-2px)}
-}
-.bear-tilt{animation:headTilt 7s ease-in-out infinite;transform-origin:50% 90%}
-@keyframes headTilt{
-  0%,40%,100%{transform:rotate(0deg)}
-  50%,90%{transform:rotate(-4deg)}
-}
-.bear-eyelid-l,.bear-eyelid-r{animation:blink 5.5s ease-in-out infinite;transform-box:fill-box}
-.bear-eyelid-l{transform-origin:50% 0%;transform:scaleY(0)}
-.bear-eyelid-r{transform-origin:50% 0%;transform:scaleY(0)}
-@keyframes blink{
-  0%,88%,100%{transform:scaleY(0)}
-  92%,96%{transform:scaleY(1)}
-}
+  :root{
+    --bg:#F4E9D9;
+    --bg-deep:#ECDBC0;
+    --pink:#F1C2CF;
+    --pink-soft:#F8DEE5;
+    --pink-deep:#E3A2B7;
+    --brown:#3B2A1F;
+    --brown-soft:#6E4F3C;
+    --gold:#C9A063;
+    --gold-text:#8C6A34;
+    --gold-light:#E7CE9A;
+    --cream:#FBF4E8;
+    --error:#BD7C7C;
+    --ease:cubic-bezier(.16,1,.3,1);
+  }
 
-.lock-area{position:relative;display:flex;align-items:center;justify-content:center;margin-bottom:16px}
-.lock-glow{
-  position:absolute;width:60px;height:60px;border-radius:50%;
-  background:radial-gradient(circle,rgba(248,187,208,0.55) 0%,transparent 70%);
-  animation:lockGlowPulse 3.8s ease-in-out infinite;
-  transition:transform 0.6s ease,opacity 0.6s ease;
-}
-@keyframes lockGlowPulse{
-  0%,100%{transform:scale(1);opacity:0.7}
-  50%{transform:scale(1.22);opacity:1}
-}
-.lock-glow.expand{transform:scale(6)!important;opacity:0!important;transition:transform 0.8s cubic-bezier(.22,1,.36,1),opacity 0.8s ease!important}
-.lock-svg{position:relative;z-index:1;animation:lockBreathe 4.2s ease-in-out infinite}
-@keyframes lockBreathe{0%,100%{transform:scale(1)}50%{transform:scale(1.04)}}
-.lock-shackle{transition:transform 0.5s cubic-bezier(.34,1.56,.64,1);transform-origin:50% 100%}
-.lock-svg.unlocked .lock-shackle{transform:translateY(-5px) rotate(-28deg)}
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg);
+    color:var(--brown);
+    font-family:'Cormorant Garamond', serif;
+    min-height:100vh;
+    overflow-x:hidden;
+    position:relative;
+  }
 
-.heading-area{text-align:center;margin-bottom:20px}
-h1{
-  font-family:'Dancing Script',cursive;
-  font-size:clamp(2rem,7vw,2.7rem);
-  font-weight:700;color:#6B4226;
-  letter-spacing:0.01em;line-height:1.15;margin-bottom:2px;
-}
-.subhead{
-  font-family:'Dancing Script',cursive;
-  font-size:clamp(1.05rem,3.4vw,1.25rem);
-  font-weight:600;color:#8A5A3B;letter-spacing:0.01em;
-}
+  button{font-family:inherit;}
 
-.pin-display{display:flex;gap:12px;justify-content:center;margin-bottom:18px}
-.pin-box{
-  width:44px;height:44px;border-radius:12px;
-  border:1.5px solid rgba(239,166,184,0.5);
-  background:rgba(255,255,255,0.5);
-  display:flex;align-items:center;justify-content:center;
-  position:relative;overflow:hidden;
-  transition:border-color 0.25s ease,background 0.2s ease,box-shadow 0.25s ease;
-  box-shadow:0 2px 8px rgba(239,166,184,0.08);
-}
-.pin-box.filled{
-  border-color:var(--accent2);
-  background:rgba(248,187,208,0.12);
-  box-shadow:0 2px 12px rgba(239,166,184,0.22);
-}
-.pin-box.error-state{
-  border-color:rgba(220,80,100,0.5)!important;
-  background:rgba(220,80,100,0.06)!important;
-}
-.pin-box-inner{
-  width:12px;height:12px;border-radius:50%;
-  background:var(--accent2);
-  transform:scale(0);
-  transition:transform 0.2s cubic-bezier(.34,1.56,.64,1);
-}
-.pin-box.filled .pin-box-inner{transform:scale(1)}
-.pin-box .digit-flash{
-  position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
-  font-size:1.1rem;font-weight:500;color:var(--accent2);
-  opacity:0;transition:opacity 0.12s ease;
-}
-.pin-box.show-digit .digit-flash{opacity:1}
-.pin-box.show-digit .pin-box-inner{transform:scale(0)}
+  /* ---------- ambient background ---------- */
+  .ambient{position:fixed;inset:0;overflow:hidden;z-index:0;pointer-events:none;}
+  .orb{
+    position:absolute;
+    border-radius:50%;
+    filter:blur(2px);
+    opacity:.22;
+    animation:floatY linear infinite alternate;
+  }
+  .orb.gold{background:radial-gradient(circle, var(--gold-light), transparent 70%);}
+  .orb.pink{background:radial-gradient(circle, var(--pink-deep), transparent 70%);}
+  .o1{width:220px;height:220px;left:4%;top:8%;animation-duration:26s;}
+  .o2{width:160px;height:160px;left:80%;top:14%;animation-duration:21s;animation-delay:-4s;}
+  .o3{width:260px;height:260px;left:65%;top:62%;animation-duration:30s;animation-delay:-9s;}
+  .o4{width:140px;height:140px;left:10%;top:70%;animation-duration:19s;animation-delay:-6s;}
+  .o5{width:180px;height:180px;left:45%;top:-4%;animation-duration:24s;animation-delay:-12s;}
 
-.pin-display.shake{animation:pinShake 0.42s cubic-bezier(.36,.07,.19,.97) both}
-@keyframes pinShake{
-  10%,90%{transform:translateX(-3px)}
-  20%,80%{transform:translateX(4px)}
-  30%,50%,70%{transform:translateX(-4px)}
-  40%,60%{transform:translateX(4px)}
-}
+  @keyframes floatY{
+    0%{transform:translate(0,0);}
+    100%{transform:translate(24px,-28px);}
+  }
 
-.error-msg{
-  font-size:0.76rem;color:rgba(200,70,90,0.75);font-weight:400;
-  letter-spacing:0.02em;height:16px;margin-bottom:16px;
-  opacity:0;transition:opacity 0.3s ease;text-align:center;
-}
-.error-msg.visible{opacity:1}
+  /* ---------- layout shell ---------- */
+  .stage{
+    position:relative;
+    z-index:1;
+    max-width:1280px;
+    margin:0 auto;
+    padding:clamp(28px,5vw,64px) clamp(20px,5vw,56px) clamp(36px,6vw,72px);
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    gap:clamp(28px,4vw,48px);
+  }
 
-.keypad{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;width:100%;max-width:280px;margin:0 auto 18px}
-.key{
-  position:relative;display:flex;align-items:center;justify-content:center;
-  aspect-ratio:1/1;cursor:pointer;user-select:none;
-  -webkit-tap-highlight-color:transparent;border:none;background:none;padding:0;
-}
-.heart-bg{
-  position:absolute;inset:0;
-  transition:transform 0.15s cubic-bezier(.34,1.56,.64,1),filter 0.15s ease;
-}
-.heart-bg svg{width:100%;height:100%}
-.key:active .heart-bg{transform:scale(0.9)}
-.key.pressed .heart-bg{transform:scale(0.88);filter:brightness(0.93)}
-.key-label{
-  position:relative;z-index:1;
-  font-family:'Inter',sans-serif;font-size:clamp(0.95rem,3vw,1.15rem);
-  font-weight:500;color:#C2607A;
-  pointer-events:none;line-height:1;
-}
-.key.special .key-label{font-size:clamp(0.8rem,2.5vw,0.95rem);color:rgba(194,96,122,0.5)}
+  /* ---------- masthead ---------- */
+  .masthead{text-align:center;}
 
-.unlock-btn{
-  width:100%;max-width:200px;padding:14px 0;border:none;border-radius:100px;
-  background:linear-gradient(135deg,var(--accent) 0%,var(--accent2) 100%);
-  color:#fff;font-family:'Inter',sans-serif;font-size:0.88rem;font-weight:500;
-  letter-spacing:0.07em;cursor:pointer;
-  box-shadow:0 4px 20px rgba(239,166,184,0.38),0 1px 4px rgba(239,166,184,0.2);
-  transition:transform 0.18s cubic-bezier(.34,1.56,.64,1),box-shadow 0.22s ease;
-  outline:none;-webkit-tap-highlight-color:transparent;
-}
-.unlock-btn:hover{
-  box-shadow:0 7px 28px rgba(239,166,184,0.5),0 2px 6px rgba(239,166,184,0.25);
-  transform:translateY(-1px);
-}
-.unlock-btn:active{transform:scale(0.96);box-shadow:0 2px 10px rgba(239,166,184,0.25)}
+  .kicker{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:14px;
+    margin:0 0 18px;
+    font-family:'Cormorant Garamond',serif;
+    font-style:italic;
+    font-weight:500;
+    font-size:clamp(12px,1.6vw,15px);
+    letter-spacing:.32em;
+    color:var(--gold-text);
+    opacity:0;
+    animation:fadeRise .9s var(--ease) .1s forwards;
+  }
+  .kicker::before,.kicker::after{
+    content:"";
+    width:clamp(24px,5vw,56px);
+    height:1px;
+    background:var(--gold);
+  }
 
-.page-fade-out{animation:pageFade 0.55s ease forwards}
-@keyframes pageFade{to{opacity:0}}
+  .title{
+    margin:0;
+    font-family:'Playfair Display',serif;
+    font-weight:700;
+    text-transform:uppercase;
+    line-height:1.05;
+    color:var(--brown);
+    opacity:0;
+    animation:fadeRise 1s var(--ease) .25s forwards;
+  }
+  .title .line1{
+    display:block;
+    font-size:clamp(22px,4.2vw,40px);
+    letter-spacing:.14em;
+  }
+  .title .name{
+    display:block;
+    margin-top:.18em;
+    font-style:italic;
+    font-weight:900;
+    font-size:clamp(40px,8.6vw,84px);
+    letter-spacing:.05em;
+    color:var(--gold-text);
+  }
 
-.corner-bear{
-  position:absolute;
-  top:-22px;left:-18px;
-  width:64px;height:64px;
-  object-fit:contain;
-  transform:rotate(-12deg);
-  filter:drop-shadow(0 6px 14px rgba(239,166,184,0.35));
-  animation:cornerBearSway 5s ease-in-out infinite;
-  pointer-events:none;
-  z-index:3;
-}
-@keyframes cornerBearSway{
-  0%,100%{transform:rotate(-12deg) translateY(0)}
-  50%{transform:rotate(-8deg) translateY(-3px)}
-}
-@media(max-width:440px){.corner-bear{width:52px;height:52px;top:-16px;left:-14px}}
+  .flourish{
+    display:block;
+    margin:14px auto 0;
+    width:clamp(160px,22vw,240px);
+    height:auto;
+    opacity:0;
+    animation:fadeIn .6s ease .9s forwards;
+  }
+  .flourish path{
+    fill:none;
+    stroke:var(--gold);
+    stroke-width:2;
+    stroke-linecap:round;
+    stroke-dasharray:260;
+    stroke-dashoffset:260;
+    animation:drawLine 1.3s var(--ease) 1s forwards;
+  }
+
+  .subtitle{
+    margin:18px auto 0;
+    max-width:520px;
+    font-style:italic;
+    font-weight:500;
+    font-size:clamp(15px,2vw,19px);
+    color:var(--brown-soft);
+    opacity:0;
+    animation:fadeRise .9s var(--ease) .55s forwards;
+  }
+
+  /* ---------- content row : always side by side ---------- */
+  .content{
+    display:flex;
+    flex-direction:row;
+    align-items:stretch;
+    gap:clamp(18px,3.4vw,48px);
+    width:100%;
+  }
+
+  .photo-frame{
+    flex:1 1 38%;
+    min-width:0;
+    margin:0;
+    display:flex;
+    flex-direction:column;
+    opacity:0;
+    animation:fadeScaleLeft 1s var(--ease) .7s forwards;
+  }
+  .frame-inner{
+    position:relative;
+    flex:1;
+    aspect-ratio:4/5;
+    border:1px solid var(--gold);
+    border-radius:2px;
+    padding:clamp(6px,1vw,10px);
+    background:var(--cream);
+    box-shadow:0 24px 60px -24px rgba(59,42,31,.35);
+  }
+  .frame-inner::before{
+    content:"";
+    position:absolute;
+    inset:clamp(10px,1.6vw,16px);
+    border:1px solid var(--gold);
+    pointer-events:none;
+    opacity:.6;
+    z-index:2;
+  }
+  .frame-inner img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    display:block;
+    position:relative;
+    z-index:1;
+  }
+  .img-fallback{
+    display:none;
+    position:absolute;
+    inset:0;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    padding:18px;
+    font-style:italic;
+    font-size:clamp(13px,1.6vw,16px);
+    color:var(--brown-soft);
+    background:linear-gradient(160deg,var(--pink-soft),var(--cream));
+  }
+  .photo-frame.img-missing .img-fallback{display:flex;}
+  .photo-frame.img-missing img{visibility:hidden;}
+
+  figcaption{
+    margin-top:14px;
+    text-align:center;
+    font-style:italic;
+    font-size:clamp(13px,1.6vw,16px);
+    color:var(--brown-soft);
+  }
+
+  /* ---------- lock card ---------- */
+  .lock-card{
+    flex:1 1 52%;
+    min-width:0;
+    background:linear-gradient(160deg,var(--cream),var(--bg-deep));
+    border:1px solid var(--gold);
+    border-radius:16px;
+    padding:clamp(20px,3.4vw,40px) clamp(16px,3vw,40px);
+    box-shadow:0 24px 60px -24px rgba(59,42,31,.3);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:clamp(14px,2.4vw,22px);
+    opacity:0;
+    animation:fadeScaleRight 1s var(--ease) .85s forwards;
+  }
+  .lock-card.shake{animation:shake .5s ease;}
+
+  .lock-label{
+    margin:0;
+    text-transform:uppercase;
+    letter-spacing:.22em;
+    font-family:'Cormorant Garamond',serif;
+    font-weight:600;
+    font-size:clamp(12px,1.5vw,14px);
+    color:var(--gold-text);
+  }
+
+  .pin-row{display:flex;gap:clamp(10px,2vw,18px);}
+  .pin-box{
+    width:clamp(38px,7vw,56px);
+    height:clamp(38px,7vw,56px);
+    border:1.5px solid var(--gold);
+    border-radius:6px;
+    background:var(--cream);
+    position:relative;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    transition:border-color .25s, box-shadow .25s;
+  }
+  .pin-box::after{
+    content:"";
+    width:38%;
+    height:38%;
+    border-radius:50%;
+    background:var(--gold-text);
+    transform:scale(0);
+    transition:transform .25s var(--ease);
+  }
+  .pin-box.filled::after{transform:scale(1);animation:popIn .3s var(--ease);}
+  .pin-box.success{border-color:var(--gold);background:var(--gold-light);box-shadow:0 0 0 4px rgba(201,160,99,.25);}
+  .pin-box.success::after{background:var(--brown);}
+
+  .pin-feedback{
+    min-height:1.2em;
+    margin:0;
+    font-style:italic;
+    font-size:clamp(12px,1.6vw,14px);
+    color:var(--error);
+    opacity:0;
+    transition:opacity .25s;
+  }
+  .pin-feedback.show{opacity:1;}
+
+  .keypad{
+    width:100%;
+    max-width:320px;
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:clamp(6px,1.6vw,14px);
+  }
+  .key{
+    position:relative;
+    aspect-ratio:1;
+    border:none;
+    background:transparent;
+    cursor:pointer;
+    display:grid;
+    place-items:center;
+    padding:0;
+    -webkit-tap-highlight-color:transparent;
+  }
+  .key:focus-visible{outline:2px solid var(--gold-text);outline-offset:4px;border-radius:8px;}
+  .heart-svg{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    fill:var(--pink);
+    stroke:var(--gold);
+    stroke-width:1;
+    filter:drop-shadow(0 6px 10px rgba(59,42,31,.18));
+    transition:transform .22s var(--ease), fill .22s;
+  }
+  .key:hover .heart-svg{transform:scale(1.07);fill:var(--pink-deep);}
+  .key:active .heart-svg{transform:scale(.92);}
+  .key-label{
+    position:relative;
+    z-index:1;
+    transform:translateY(-12%);
+    font-weight:600;
+    color:var(--brown);
+    font-size:clamp(16px,2.6vw,22px);
+  }
+  .key.key-util .key-label{font-size:clamp(15px,2.2vw,19px);font-weight:500;}
+
+  .keypad-hint{
+    margin:2px 0 0;
+    font-style:italic;
+    font-size:clamp(11px,1.4vw,12.5px);
+    color:var(--brown-soft);
+    opacity:.7;
+  }
+
+  /* ---------- transition veil ---------- */
+  .veil{
+    position:fixed;
+    inset:0;
+    background:radial-gradient(circle at 50% 50%, var(--cream), var(--bg-deep));
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .9s ease;
+    z-index:50;
+  }
+  .veil.show{opacity:1;pointer-events:all;}
+  .veil span{
+    font-family:'Playfair Display',serif;
+    font-style:italic;
+    font-weight:600;
+    font-size:clamp(28px,5vw,52px);
+    color:var(--brown);
+    opacity:0;
+    transform:translateY(10px);
+    transition:opacity .8s ease .25s, transform .8s ease .25s;
+  }
+  .veil.show span{opacity:1;transform:translateY(0);}
+
+  /* ---------- keyframes ---------- */
+  @keyframes fadeRise{from{opacity:0;transform:translateY(18px);}to{opacity:1;transform:translateY(0);}}
+  @keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+  @keyframes fadeScaleLeft{from{opacity:0;transform:translateX(-26px) scale(.96);}to{opacity:1;transform:translateX(0) scale(1);}}
+  @keyframes fadeScaleRight{from{opacity:0;transform:translateX(26px) scale(.96);}to{opacity:1;transform:translateX(0) scale(1);}}
+  @keyframes drawLine{to{stroke-dashoffset:0;}}
+  @keyframes popIn{from{transform:scale(0);}to{transform:scale(1);}}
+  @keyframes shake{
+    10%,90%{transform:translateX(-2px);}
+    20%,80%{transform:translateX(4px);}
+    30%,50%,70%{transform:translateX(-7px);}
+    40%,60%{transform:translateX(7px);}
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important;}
+    .orb{display:none;}
+  }
+
+  /* very narrow phones: tighten gap further, never switch to column */
+  @media (max-width:380px){
+    .content{gap:10px;}
+    .lock-card{padding:14px 10px;}
+  }
 </style>
 </head>
 <body>
-<div class="grain"></div>
-<div class="page-wrapper" id="pageWrapper">
-  <div class="card" id="mainCard">
 
-    <img src="pic1.png" alt="cute teddy bear" class="corner-bear">
-
-    <div class="bear-wrap">
-      <svg width="80" height="86" viewBox="0 0 100 108" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <g class="bear-tilt">
-          <ellipse cx="22" cy="26" rx="14" ry="13" fill="#E8C4B0"/>
-          <ellipse cx="78" cy="26" rx="14" ry="13" fill="#E8C4B0"/>
-          <ellipse cx="22" cy="25" rx="10" ry="9" fill="#D4A898"/>
-          <ellipse cx="78" cy="25" rx="10" ry="9" fill="#D4A898"/>
-          <ellipse cx="50" cy="44" rx="36" ry="33" fill="#EDD0BC"/>
-          <ellipse cx="50" cy="44" rx="36" ry="33" fill="url(#bG)"/>
-          <ellipse cx="50" cy="49" rx="19" ry="15" fill="#E8C4B0" opacity="0.6"/>
-          <ellipse cx="38" cy="41" rx="5" ry="5.5" fill="#fff" opacity="0.9"/>
-          <ellipse cx="62" cy="41" rx="5" ry="5.5" fill="#fff" opacity="0.9"/>
-          <ellipse cx="38" cy="42" rx="3" ry="3.2" fill="#5C3D2E"/>
-          <ellipse cx="62" cy="42" rx="3" ry="3.2" fill="#5C3D2E"/>
-          <ellipse cx="37" cy="41" rx="1.1" ry="1.1" fill="#fff"/>
-          <ellipse cx="61" cy="41" rx="1.1" ry="1.1" fill="#fff"/>
-          <rect class="bear-eyelid-l" x="33" y="37" width="10" height="6" rx="3" fill="#EDD0BC"/>
-          <rect class="bear-eyelid-r" x="57" y="37" width="10" height="6" rx="3" fill="#EDD0BC"/>
-          <ellipse cx="50" cy="51" rx="6" ry="4" fill="#D4A898"/>
-          <ellipse cx="50" cy="51" rx="4" ry="2.5" fill="#C2907A"/>
-          <path d="M46 55 Q50 58.5 54 55" stroke="#C2907A" stroke-width="1.2" stroke-linecap="round" fill="none"/>
-          <ellipse cx="50" cy="44" rx="36" ry="33" fill="url(#bS)" opacity="0.18"/>
-        </g>
-        <defs>
-          <radialGradient id="bG" cx="50%" cy="30%" r="60%" gradientUnits="userSpaceOnUse">
-            <stop offset="0%" stop-color="#F5DDD0"/><stop offset="100%" stop-color="#EDD0BC" stop-opacity="0"/>
-          </radialGradient>
-          <radialGradient id="bS" cx="35%" cy="25%" r="50%">
-            <stop offset="0%" stop-color="#fff"/><stop offset="100%" stop-color="#fff" stop-opacity="0"/>
-          </radialGradient>
-        </defs>
-      </svg>
-    </div>
-
-    <div class="lock-area">
-      <div class="lock-glow" id="lockGlow"></div>
-      <svg class="lock-svg" id="lockSvg" width="32" height="38" viewBox="0 0 36 42" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <g class="lock-shackle">
-          <path d="M9 18V13a9 9 0 0 1 18 0v5" stroke="#D4A898" stroke-width="2.5" stroke-linecap="round"/>
-        </g>
-        <rect x="3" y="18" width="30" height="22" rx="7" fill="#EDD0BC"/>
-        <rect x="3" y="18" width="30" height="22" rx="7" fill="url(#lG)"/>
-        <ellipse cx="18" cy="28" rx="4" ry="4" fill="#C2907A" opacity="0.7"/>
-        <rect x="16.5" y="28" width="3" height="5" rx="1.5" fill="#C2907A" opacity="0.7"/>
-        <defs>
-          <linearGradient id="lG" x1="3" y1="18" x2="33" y2="40" gradientUnits="userSpaceOnUse">
-            <stop offset="0%" stop-color="#fff" stop-opacity="0.35"/>
-            <stop offset="100%" stop-color="#fff" stop-opacity="0"/>
-          </linearGradient>
-        </defs>
-      </svg>
-    </div>
-
-    <div class="heading-area">
-      <h1>Don't Judge Me Yet</h1>
-      <p class="subhead">Hear me out 🤍</p>
-    </div>
-
-    <div class="pin-display" id="pinDisplay">
-      <div class="pin-box" id="pb0"><div class="pin-box-inner"></div><span class="digit-flash"></span></div>
-      <div class="pin-box" id="pb1"><div class="pin-box-inner"></div><span class="digit-flash"></span></div>
-      <div class="pin-box" id="pb2"><div class="pin-box-inner"></div><span class="digit-flash"></span></div>
-      <div class="pin-box" id="pb3"><div class="pin-box-inner"></div><span class="digit-flash"></span></div>
-    </div>
-
-    <p class="error-msg" id="errorMsg">That's not our password.</p>
-
-    <div class="keypad" id="keypad">
-      <button class="key" data-val="1"><div class="heart-bg"><svg viewBox="0 0 80 76" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M40 70C40 70 6 50 6 24a18 18 0 0 1 34-8 18 18 0 0 1 34 8c0 26-34 46-34 46Z" fill="url(#hg1)" filter="url(#hs)"/><defs><radialGradient id="hg1" cx="50%" cy="35%" r="60%"><stop offset="0%" stop-color="#FADADD"/><stop offset="100%" stop-color="#F4AABB"/></radialGradient><filter id="hs"><feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="rgba(239,166,184,0.35)"/></filter></defs></svg></div><span class="key-label">1</span></button>
-      <button class="key" data-val="2"><div class="heart-bg"><svg viewBox="0 0 80 76" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M40 70C40 70 6 50 6 24a18 18 0 0 1 34-8 18 18 0 0 1 34 8c0 26-34 46-34 46Z" fill="url(#hg2)" filter="url(#hs2)"/><defs><radialGradient id="hg2" cx="50%" cy="35%" r="60%"><stop offset="0%" stop-color="#FADADD"/><stop offset="100%" stop-color="#F4AABB"/></radialGradient><filter id="hs2"><feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="rgba(239,166,184,0.35)"/></filter></defs></svg></div><span class="key-label">2</span></button>
-      <button class="key" data-val="3"><div class="heart-bg"><svg viewBox="0 0 80 76" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M40 70C40 70 6 50 6 24a18 18 0 0 1 34-8 18 18 0 0 1 34 8c0 26-34 46-34 46Z" fill="url(#hg3)" filter="url(#hs3)"/><defs><radialGradient id="hg3" cx="50%" cy="35%" r="60%"><stop offset="0%" stop-color="#FADADD"/><stop offset="100%" stop-color="#F4AABB"/></radialGradient><filter id="hs3"><feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="rgba(239,166,184,0.35)"/></filter></defs></svg></div><span class="key-label">3</span></button>
-      <button class="key" data-val="4"><div class="heart-bg"><svg viewBox="0 0 80 76" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M40 70C40 70 6 50 6 24a18 18 0 0 1 34-8 18 18 0 0 1 34 8c0 26-34 46-34 46Z" fill="url(#hg4)" filter="url(#hs4)"/><defs><radialGradient id="hg4" cx="50%" cy="35%" r="60%"><stop offset="0%" stop-color="#FADADD"/><stop offset="100%" stop-color="#F4AABB"/></radialGradient><filter id="hs4"><feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="rgba(239,166,184,0.35)"/></filter></defs></svg></div><span class="key-label">4</span></button>
-      <button class="key" data-val="5"><div class="heart-bg"><svg viewBox="0 0 80 76" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M40 70C40 70 6 50 6 24a18 18 0 0 1 34-8 18 18 0 0 1 34 8c0 26-34 46-34 46Z" fill="url(#hg5)" filter="url(#hs5)"/><defs><radialGradient id="hg5" cx="50%" cy="35%" r="60%"><stop offset="0%" stop-color="#FADADD"/><stop offset="100%" stop-color="#F4AABB"/></radialGradient><filter id="hs5"><feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="rgba(239,166,184,0.35)"/></filter></defs></svg></div><span class="key-label">5</span></button>
-      <button class="key" data-val="6"><div class="heart-bg"><svg viewBox="0 0 80 76" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M40 70C40 70 6 50 6 24a18 18 0 0 1 34-8 18 18 0 0 1 34 8c0 26-34 46-34 46Z" fill="url(#hg6)" filter="url(#hs6)"/><defs><radialGradient id="hg6" cx="50%" cy="35%" r="60%"><stop offset="0%" stop-color="#FADADD"/><stop offset="100%" stop-color="#F4AABB"/></radialGradient><filter id="hs6"><feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="rgba(239,166,184,0.35)"/></filter></defs></svg></div><span class="key-label">6</span></button>
-      <button class="key" data-val="7"><div class="heart-bg"><svg viewBox="0 0 80 76" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M40 70C40 70 6 50 6 24a18 18 0 0 1 34-8 18 18 0 0 1 34 8c0 26-34 46-34 46Z" fill="url(#hg7)" filter="url(#hs7)"/><defs><radialGradient id="hg7" cx="50%" cy="35%" r="60%"><stop offset="0%" stop-color="#FADADD"/><stop offset="100%" stop-color="#F4AABB"/></radialGradient><filter id="hs7"><feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="rgba(239,166,184,0.35)"/></filter></defs></svg></div><span class="key-label">7</span></button>
-      <button class="key" data-val="8"><div class="heart-bg"><svg viewBox="0 0 80 76" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M40 70C40 70 6 50 6 24a18 18 0 0 1 34-8 18 18 0 0 1 34 8c0 26-34 46-34 46Z" fill="url(#hg8)" filter="url(#hs8)"/><defs><radialGradient id="hg8" cx="50%" cy="35%" r="60%"><stop offset="0%" stop-color="#FADADD"/><stop offset="100%" stop-color="#F4AABB"/></radialGradient><filter id="hs8"><feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="rgba(239,166,184,0.35)"/></filter></defs></svg></div><span class="key-label">8</span></button>
-      <button class="key" data-val="9"><div class="heart-bg"><svg viewBox="0 0 80 76" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M40 70C40 70 6 50 6 24a18 18 0 0 1 34-8 18 18 0 0 1 34 8c0 26-34 46-34 46Z" fill="url(#hg9)" filter="url(#hs9)"/><defs><radialGradient id="hg9" cx="50%" cy="35%" r="60%"><stop offset="0%" stop-color="#FADADD"/><stop offset="100%" stop-color="#F4AABB"/></radialGradient><filter id="hs9"><feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="rgba(239,166,184,0.35)"/></filter></defs></svg></div><span class="key-label">9</span></button>
-      <button class="key special" data-val="back"><div class="heart-bg"><svg viewBox="0 0 80 76" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M40 70C40 70 6 50 6 24a18 18 0 0 1 34-8 18 18 0 0 1 34 8c0 26-34 46-34 46Z" fill="url(#hgb)" filter="url(#hsb)"/><defs><radialGradient id="hgb" cx="50%" cy="35%" r="60%"><stop offset="0%" stop-color="#FDE8EC"/><stop offset="100%" stop-color="#F8C8D4"/></radialGradient><filter id="hsb"><feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="rgba(239,166,184,0.25)"/></filter></defs></svg></div><span class="key-label">⌫</span></button>
-      <button class="key" data-val="0"><div class="heart-bg"><svg viewBox="0 0 80 76" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M40 70C40 70 6 50 6 24a18 18 0 0 1 34-8 18 18 0 0 1 34 8c0 26-34 46-34 46Z" fill="url(#hg0)" filter="url(#hs0)"/><defs><radialGradient id="hg0" cx="50%" cy="35%" r="60%"><stop offset="0%" stop-color="#FADADD"/><stop offset="100%" stop-color="#F4AABB"/></radialGradient><filter id="hs0"><feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="rgba(239,166,184,0.35)"/></filter></defs></svg></div><span class="key-label">0</span></button>
-      <button class="key special" data-val="ok"><div class="heart-bg"><svg viewBox="0 0 80 76" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M40 70C40 70 6 50 6 24a18 18 0 0 1 34-8 18 18 0 0 1 34 8c0 26-34 46-34 46Z" fill="url(#hgok)" filter="url(#hsok)"/><defs><radialGradient id="hgok" cx="50%" cy="35%" r="60%"><stop offset="0%" stop-color="#FDE8EC"/><stop offset="100%" stop-color="#F8C8D4"/></radialGradient><filter id="hsok"><feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="rgba(239,166,184,0.25)"/></filter></defs></svg></div><span class="key-label">OK</span></button>
-    </div>
-
+  <div class="ambient" aria-hidden="true">
+    <span class="orb gold o1"></span>
+    <span class="orb pink o2"></span>
+    <span class="orb gold o3"></span>
+    <span class="orb pink o4"></span>
+    <span class="orb gold o5"></span>
   </div>
-</div>
+
+  <main class="stage">
+    <header class="masthead">
+      <p class="kicker">A LETTER FOR</p>
+      <h1 class="title">
+        <span class="line1">HEAR ME ONCE</span>
+        <span class="name">MOMINA</span>
+      </h1>
+      <svg class="flourish" viewBox="0 0 220 30" xmlns="http://www.w3.org/2000/svg">
+        <path d="M5,15 C40,0 60,30 110,15 C160,0 180,30 215,15"/>
+      </svg>
+      <p class="subtitle">Four numbers stand between us. You know them by heart.</p>
+    </header>
+
+    <section class="content">
+      <figure class="photo-frame">
+        <div class="frame-inner">
+          <img src="pic1.jpeg" alt="A photo of us" onerror="this.closest('.photo-frame').classList.add('img-missing')">
+          <div class="img-fallback">Place&nbsp;<strong>pic1.jpeg</strong>&nbsp;in this folder</div>
+        </div>
+        <figcaption>Every page after this one is for you.</figcaption>
+      </figure>
+
+      <div class="lock-card" id="lockCard">
+        <p class="lock-label">Unlock with your pin</p>
+
+        <div class="pin-row" id="pinRow">
+          <span class="pin-box"></span>
+          <span class="pin-box"></span>
+          <span class="pin-box"></span>
+          <span class="pin-box"></span>
+        </div>
+
+        <p class="pin-feedback" id="pinFeedback" aria-live="polite"></p>
+
+        <div class="keypad" id="keypad">
+          <!-- rows generated by JS -->
+        </div>
+        <p class="keypad-hint">* clears &nbsp;·&nbsp; # deletes</p>
+      </div>
+    </section>
+  </main>
+
+  <div class="veil" id="veil"><span id="veilText"></span></div>
 
 <script>
 (function(){
-  const CORRECT='1234';
-  const pinDisplay=document.getElementById('pinDisplay');
-  const pbs=[0,1,2,3].map(i=>document.getElementById('pb'+i));
-  const errorMsg=document.getElementById('errorMsg');
-  const lockSvg=document.getElementById('lockSvg');
-  const lockGlow=document.getElementById('lockGlow');
-  const mainCard=document.getElementById('mainCard');
-  const pageWrapper=document.getElementById('pageWrapper');
-  let pin='';
-  let locked=true;
-  let flashTimers=[];
+  const HEART_PATH = "M16 28C16 28 1 18.5 1 9.5C1 4.8 4.8 1 9.5 1C12.6 1 15.2 2.7 16 5.4C16.8 2.7 19.4 1 22.5 1C27.2 1 31 4.8 31 9.5C31 18.5 16 28 16 28Z";
+  const KEYS = ['1','2','3','4','5','6','7','8','9','*','0','#'];
+  const keypad = document.getElementById('keypad');
 
-  document.getElementById('keypad').addEventListener('click',function(e){
-    const key=e.target.closest('.key');
-    if(!key||!locked)return;
-    const val=key.dataset.val;
-    key.classList.add('pressed');
-    setTimeout(function(){key.classList.remove('pressed')},180);
-    if(val==='back'){
-      if(pin.length>0){
-        pin=pin.slice(0,-1);
-        renderBoxes();
-        clearError();
-      }
-    } else if(val==='ok'){
-      attempt();
-    } else if(/^\d$/.test(val)){
-      if(pin.length<4){
-        pin+=val;
-        renderBoxes(true);
-        clearError();
-        if(pin.length===4)setTimeout(attempt,300);
-      }
-    }
+  KEYS.forEach((k, idx)=>{
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'key' + ((k==='*'||k==='#') ? ' key-util' : '');
+    btn.dataset.key = k;
+    btn.setAttribute('aria-label', k === '*' ? 'Clear' : (k === '#' ? 'Backspace' : k));
+    btn.style.animation = `fadeRise .6s ${'cubic-bezier(.16,1,.3,1)'} ${1 + idx*0.04}s forwards`;
+    btn.style.opacity = '0';
+    btn.innerHTML = `
+      <svg class="heart-svg" viewBox="0 0 32 29" aria-hidden="true"><path d="${HEART_PATH}"/></svg>
+      <span class="key-label">${k}</span>
+    `;
+    keypad.appendChild(btn);
   });
 
-  document.addEventListener('keydown',function(e){
-    if(!locked)return;
-    if(e.key>='0'&&e.key<='9'){
-      if(pin.length<4){
-        pin+=e.key;renderBoxes(true);clearError();
-        if(pin.length===4)setTimeout(attempt,300);
-      }
-    } else if(e.key==='Backspace'){
-      if(pin.length>0){pin=pin.slice(0,-1);renderBoxes();clearError();}
-    } else if(e.key==='Enter'){attempt();}
-  });
+  const CORRECT = '1234';
+  let pin = '';
+  const boxes = Array.from(document.querySelectorAll('.pin-box'));
+  const feedback = document.getElementById('pinFeedback');
+  const lockCard = document.getElementById('lockCard');
+  const veil = document.getElementById('veil');
+  const veilText = document.getElementById('veilText');
+  let locked = false;
 
-  document.addEventListener('paste',function(e){
-    if(!locked)return;
-    e.preventDefault();
-    const text=(e.clipboardData||window.clipboardData).getData('text');
-    const digits=text.replace(/\D/g,'').slice(0,4);
-    if(digits.length>0){
-      pin=digits;renderBoxes(false);clearError();
-      if(pin.length===4)setTimeout(attempt,200);
-    }
-  });
-
-  function renderBoxes(flash){
-    flashTimers.forEach(clearTimeout);flashTimers=[];
-    pbs.forEach(function(box,i){
-      box.classList.remove('filled','show-digit','error-state');
-      box.querySelector('.digit-flash').textContent='';
-      if(i<pin.length){
-        box.classList.add('filled');
-        if(flash&&i===pin.length-1){
-          box.querySelector('.digit-flash').textContent=pin[i];
-          box.classList.add('show-digit');
-          var t=setTimeout(function(){
-            box.classList.remove('show-digit');
-          },420);
-          flashTimers.push(t);
-        }
-      }
-    });
+  function renderBoxes(){
+    boxes.forEach((b,i)=> b.classList.toggle('filled', i < pin.length));
   }
 
-  function clearError(){
-    errorMsg.classList.remove('visible');
-    pbs.forEach(function(b){b.classList.remove('error-state')});
-    pinDisplay.classList.remove('shake');
+  function clearFeedback(){
+    feedback.classList.remove('show');
   }
 
-  function attempt(){
-    if(!locked)return;
-    if(pin.length<4)return;
-    if(pin===CORRECT){success();}
-    else{fail();}
+  function press(k){
+    if(locked) return;
+    if(k === '*'){
+      pin = '';
+      renderBoxes();
+      clearFeedback();
+      return;
+    }
+    if(k === '#'){
+      pin = pin.slice(0, -1);
+      renderBoxes();
+      clearFeedback();
+      return;
+    }
+    if(pin.length >= 4) return;
+    pin += k;
+    renderBoxes();
+    if(pin.length === 4){
+      setTimeout(checkPin, 220);
+    }
+  }
+
+  function checkPin(){
+    if(pin === CORRECT){
+      success();
+    } else {
+      fail();
+    }
   }
 
   function fail(){
-    pbs.forEach(function(b){b.classList.add('error-state')});
-    pinDisplay.classList.remove('shake');
-    void pinDisplay.offsetWidth;
-    pinDisplay.classList.add('shake');
-    errorMsg.classList.add('visible');
-    pin='';
-    setTimeout(function(){
-      renderBoxes(false);
-      pbs.forEach(function(b){b.classList.remove('error-state')});
-      pinDisplay.classList.remove('shake');
-    },900);
+    locked = true;
+    lockCard.classList.add('shake');
+    feedback.textContent = 'Not quite — try again.';
+    feedback.classList.add('show');
+    setTimeout(()=>{
+      pin = '';
+      renderBoxes();
+      lockCard.classList.remove('shake');
+      clearFeedback();
+      locked = false;
+    }, 850);
   }
 
   function success(){
-    locked=false;
-    lockSvg.classList.add('unlocked');
-    lockGlow.classList.add('expand');
-    setTimeout(function(){mainCard.classList.add('success-shrink')},320);
-    setTimeout(function(){pageWrapper.classList.add('page-fade-out')},480);
-    setTimeout(function(){window.location.href='next.html'},900);
+    locked = true;
+    clearFeedback();
+    boxes.forEach((b,i)=> setTimeout(()=> b.classList.add('success'), i*110));
+    setTimeout(()=>{
+      veilText.textContent = "It's you.";
+      veil.classList.add('show');
+      setTimeout(()=>{ window.location.href = 'next.html'; }, 1500);
+    }, 650);
   }
+
+  keypad.addEventListener('click', (e)=>{
+    const btn = e.target.closest('.key');
+    if(btn) press(btn.dataset.key);
+  });
+
+  window.addEventListener('keydown', (e)=>{
+    if(/^[0-9]$/.test(e.key)) press(e.key);
+    else if(e.key === 'Backspace') press('#');
+    else if(e.key === 'Escape') press('*');
+  });
 })();
 </script>
+
 </body>
 </html>
