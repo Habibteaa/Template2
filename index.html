@@ -1,444 +1,498 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Hear Me Once, Momina</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;0,900;1,500;1,600;1,700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
-<style>
-  :root{
-    --bg:#F4E9D9;
-    --bg-deep:#ECDBC0;
-    --pink:#F1C2CF;
-    --pink-soft:#F8DEE5;
-    --pink-deep:#E3A2B7;
-    --brown:#3B2A1F;
-    --brown-soft:#6E4F3C;
-    --gold:#C9A063;
-    --gold-text:#8C6A34;
-    --gold-light:#E7CE9A;
-    --cream:#FBF4E8;
-    --error:#BD7C7C;
-    --ease:cubic-bezier(.16,1,.3,1);
-  }
-  *{box-sizing:border-box;}
-  html,body{margin:0;padding:0;height:100%;}
-  body{
-    background:var(--bg);
-    color:var(--brown);
-    font-family:'Cormorant Garamond',serif;
-    height:100vh;
-    overflow:hidden;
-    position:relative;
-  }
-  button{font-family:inherit;}
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hear Me Once — Momina</title>
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Cormorant+Garant:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Montserrat:wght@300;400&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-  /* ambient */
-  .ambient{position:fixed;inset:0;overflow:hidden;z-index:0;pointer-events:none;}
-  .orb{position:absolute;border-radius:50%;filter:blur(2px);opacity:.22;animation:floatY linear infinite alternate;}
-  .orb.gold{background:radial-gradient(circle, var(--gold-light), transparent 70%);}
-  .orb.pink{background:radial-gradient(circle, var(--pink-deep), transparent 70%);}
-  .o1{width:220px;height:220px;left:4%;top:8%;animation-duration:26s;}
-  .o2{width:160px;height:160px;left:80%;top:14%;animation-duration:21s;animation-delay:-4s;}
-  .o3{width:260px;height:260px;left:65%;top:62%;animation-duration:30s;animation-delay:-9s;}
-  .o4{width:140px;height:140px;left:10%;top:70%;animation-duration:19s;animation-delay:-6s;}
-  .o5{width:180px;height:180px;left:45%;top:-4%;animation-duration:24s;animation-delay:-12s;}
-  @keyframes floatY{0%{transform:translate(0,0);}100%{transform:translate(24px,-28px);}}
+    :root {
+      --beige:      #F5EFE6;
+      --beige-deep: #EDE4D8;
+      --pink:       #F4B8C8;
+      --pink-light: #FAD9E3;
+      --pink-deep:  #E89AAF;
+      --brown:      #3B1F14;
+      --brown-mid:  #6B3A28;
+      --brown-light:#9E6B56;
+      --cream:      #FDF8F3;
+    }
 
-  /* layout */
-  .stage{
-    position:relative;
-    z-index:1;
-    height:100vh;
-    display:flex;
-    flex-direction:column;
-    justify-content:center;
-    align-items:center;
-    padding:clamp(12px,2.5vw,28px) clamp(16px,3vw,40px);
-    gap:clamp(10px,2vh,22px);
-  }
+    html, body {
+      width: 100%; height: 100%;
+      background: var(--beige);
+      color: var(--brown);
+      font-family: 'Cormorant Garant', serif;
+      overflow: hidden;
+    }
 
-  /* masthead */
-  .masthead{text-align:center;}
-  .title{
-    margin:0;
-    font-family:'Playfair Display',serif;
-    font-weight:700;
-    text-transform:uppercase;
-    line-height:1.05;
-    color:var(--brown);
-    opacity:0;
-    animation:fadeRise 1s var(--ease) .25s forwards;
-  }
-  .title .line1{
-    display:block;
-    font-size:clamp(18px,3vw,30px);
-    letter-spacing:.14em;
-  }
-  .title .name{
-    display:block;
-    margin-top:.1em;
-    font-style:italic;
-    font-weight:900;
-    font-size:clamp(32px,6.5vw,64px);
-    letter-spacing:.05em;
-    color:var(--gold-text);
-  }
-  .flourish{
-    display:block;
-    margin:8px auto 0;
-    width:clamp(120px,16vw,200px);
-    height:auto;
-    opacity:0;
-    animation:fadeIn .6s ease .9s forwards;
-  }
-  .flourish path{
-    fill:none;
-    stroke:var(--gold);
-    stroke-width:2;
-    stroke-linecap:round;
-    stroke-dasharray:260;
-    stroke-dashoffset:260;
-    animation:drawLine 1.3s var(--ease) 1s forwards;
-  }
+    /* Floating petals */
+    .petal-layer {
+      position: fixed; inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+    .petal {
+      position: absolute;
+      width: 10px; height: 14px;
+      background: var(--pink);
+      border-radius: 50% 50% 50% 0 / 60% 60% 40% 0;
+      opacity: 0;
+      animation: petalFall linear infinite;
+    }
+    @keyframes petalFall {
+      0%   { transform: translateY(-40px) rotate(0deg); opacity: 0; }
+      10%  { opacity: 0.45; }
+      90%  { opacity: 0.3; }
+      100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
+    }
 
-  /* content row */
-  .content{
-    display:flex;
-    flex-direction:row;
-    align-items:center;
-    gap:clamp(20px,3.5vw,52px);
-    width:100%;
-    max-width:1100px;
-    justify-content:center;
-  }
+    /* Main wrapper */
+    .stage {
+      position: relative; z-index: 1;
+      width: 100vw; height: 100vh;
+      display: grid;
+      grid-template-rows: auto 1fr;
+      grid-template-columns: 1fr 1fr;
+      grid-template-areas:
+        "header header"
+        "left   right";
+    }
 
-  /* teddy bear photo — frameless, floating */
-  .photo-wrap{
-    flex:0 0 auto;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    opacity:0;
-    animation:fadeScaleLeft 1s var(--ease) .7s forwards;
-  }
-  .photo-wrap img{
-    width:clamp(160px,22vw,280px);
-    height:auto;
-    display:block;
-    transform:rotate(-5deg);
-    filter:drop-shadow(0 18px 32px rgba(59,42,31,.18));
-    transition:transform .4s var(--ease);
-  }
-  .photo-wrap img:hover{transform:rotate(-3deg) scale(1.03);}
+    /* ── Header ── */
+    header {
+      grid-area: header;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: clamp(14px, 2.5vh, 28px) 0 clamp(8px, 1.5vh, 18px);
+      position: relative;
+    }
+    .eyebrow {
+      font-family: 'Montserrat', sans-serif;
+      font-size: clamp(9px, 1vw, 13px);
+      font-weight: 300;
+      letter-spacing: 0.32em;
+      text-transform: uppercase;
+      color: var(--brown-light);
+    }
+    .brand {
+      font-family: 'Great Vibes', cursive;
+      font-size: clamp(42px, 6vw, 88px);
+      color: var(--brown);
+      line-height: 1;
+      margin-top: -4px;
+    }
+    .divider-line {
+      width: clamp(60px, 8vw, 120px);
+      height: 1px;
+      background: linear-gradient(to right, transparent, var(--pink-deep), transparent);
+      margin-top: clamp(6px, 1vh, 12px);
+    }
 
-  /* lock card */
-  .lock-card{
-    flex:0 0 auto;
-    background:linear-gradient(160deg,var(--cream),var(--bg-deep));
-    border:1px solid var(--gold);
-    border-radius:20px;
-    padding:clamp(18px,2.8vw,34px) clamp(20px,3vw,38px);
-    box-shadow:0 24px 60px -24px rgba(59,42,31,.28);
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    gap:clamp(10px,1.8vh,18px);
-    width:clamp(280px,36vw,400px);
-    opacity:0;
-    animation:fadeScaleRight 1s var(--ease) .85s forwards;
-  }
-  .lock-card.shake{animation:shake .5s ease;}
+    /* ── Left panel — Teddy ── */
+    .panel-left {
+      grid-area: left;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: clamp(10px, 2vw, 40px) clamp(20px, 4vw, 80px);
+      position: relative;
+    }
+    .teddy-aura {
+      position: absolute;
+      width: clamp(200px, 30vw, 440px);
+      height: clamp(200px, 30vw, 440px);
+      border-radius: 50%;
+      background: radial-gradient(circle, var(--pink-light) 0%, transparent 70%);
+      animation: pulse 3.5s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 0.55; }
+      50%       { transform: scale(1.08); opacity: 0.85; }
+    }
+    .teddy-wrap {
+      position: relative;
+      width: clamp(180px, 26vw, 400px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: clamp(12px, 2vh, 24px);
+    }
+    .teddy-img {
+      width: 100%;
+      filter: drop-shadow(0 16px 40px rgba(59,31,20,0.18));
+      animation: teddyFloat 4s ease-in-out infinite;
+      transform-origin: center bottom;
+    }
+    @keyframes teddyFloat {
+      0%, 100% { transform: translateY(0) rotate(-1deg); }
+      50%       { transform: translateY(-12px) rotate(1deg); }
+    }
+    .teddy-caption {
+      font-family: 'Great Vibes', cursive;
+      font-size: clamp(22px, 2.8vw, 42px);
+      color: var(--brown-mid);
+      text-align: center;
+      line-height: 1.2;
+      animation: fadeSlideUp 1.4s ease both;
+    }
+    @keyframes fadeSlideUp {
+      from { opacity: 0; transform: translateY(18px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
 
-  /* pin dots */
-  .pin-row{display:flex;gap:clamp(12px,2.2vw,20px);}
-  .pin-box{
-    width:clamp(44px,6.5vw,62px);
-    height:clamp(44px,6.5vw,62px);
-    border:1.5px solid var(--gold);
-    border-radius:10px;
-    background:var(--cream);
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    transition:border-color .25s, box-shadow .25s;
-  }
-  .pin-box::after{
-    content:"";
-    width:42%;
-    height:42%;
-    border-radius:50%;
-    background:var(--gold-text);
-    transform:scale(0);
-    transition:transform .25s var(--ease);
-  }
-  .pin-box.filled::after{transform:scale(1);animation:popIn .3s var(--ease);}
-  .pin-box.success{border-color:var(--gold);background:var(--gold-light);box-shadow:0 0 0 4px rgba(201,160,99,.25);}
-  .pin-box.success::after{background:var(--brown);}
+    /* ── Right panel — PIN ── */
+    .panel-right {
+      grid-area: right;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: clamp(10px, 2vw, 40px) clamp(20px, 4vw, 80px);
+    }
+    .lock-card {
+      background: var(--cream);
+      border-radius: clamp(16px, 2vw, 28px);
+      padding: clamp(24px, 3.5vh, 48px) clamp(28px, 3.5vw, 52px);
+      box-shadow:
+        0 4px 24px rgba(59,31,20,0.07),
+        0 1px 0 rgba(255,255,255,0.8) inset;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: clamp(14px, 2.2vh, 28px);
+      animation: cardRise 1s ease both 0.3s;
+    }
+    @keyframes cardRise {
+      from { opacity: 0; transform: translateY(30px) scale(0.97); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
 
-  .pin-feedback{
-    min-height:1em;
-    margin:0;
-    font-style:italic;
-    font-size:clamp(12px,1.5vw,14px);
-    color:var(--error);
-    opacity:0;
-    transition:opacity .25s;
-  }
-  .pin-feedback.show{opacity:1;}
+    .lock-label {
+      font-family: 'Montserrat', sans-serif;
+      font-size: clamp(9px, 0.9vw, 12px);
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--brown-light);
+    }
+    .lock-title {
+      font-family: 'Great Vibes', cursive;
+      font-size: clamp(28px, 3.5vw, 52px);
+      color: var(--brown);
+      line-height: 1;
+      margin-top: -8px;
+    }
 
-  /* keypad */
-  .keypad{
-    width:100%;
-    display:grid;
-    grid-template-columns:repeat(3,1fr);
-    gap:clamp(7px,1.4vw,13px);
-  }
-  .key{
-    position:relative;
-    aspect-ratio:1;
-    border:none;
-    background:transparent;
-    cursor:pointer;
-    display:grid;
-    place-items:center;
-    padding:0;
-    -webkit-tap-highlight-color:transparent;
-  }
-  .key:focus-visible{outline:2px solid var(--gold-text);outline-offset:4px;border-radius:8px;}
-  .heart-svg{
-    position:absolute;
-    inset:0;
-    width:100%;
-    height:100%;
-    fill:var(--pink);
-    stroke:var(--gold);
-    stroke-width:1;
-    filter:drop-shadow(0 5px 8px rgba(59,42,31,.15));
-    transition:transform .22s var(--ease), fill .22s;
-  }
-  .key:hover .heart-svg{transform:scale(1.07);fill:var(--pink-deep);}
-  .key:active .heart-svg{transform:scale(.92);}
-  .key-label{
-    position:relative;
-    z-index:1;
-    transform:translateY(-12%);
-    font-weight:700;
-    color:var(--brown);
-    font-size:clamp(20px,3.2vw,28px);
-    line-height:1;
-  }
-  .key.key-util .key-label{
-    font-size:clamp(16px,2vw,20px);
-    font-weight:500;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-  }
-  /* backspace icon */
-  .key.key-util .key-label svg{
-    width:clamp(18px,2.4vw,24px);
-    height:clamp(18px,2.4vw,24px);
-    fill:none;
-    stroke:var(--brown);
-    stroke-width:2;
-    stroke-linecap:round;
-    stroke-linejoin:round;
-  }
+    /* PIN dots */
+    .pin-dots {
+      display: flex;
+      gap: clamp(10px, 1.4vw, 20px);
+    }
+    .dot {
+      width:  clamp(12px, 1.6vw, 22px);
+      height: clamp(12px, 1.6vw, 22px);
+      border-radius: 50%;
+      border: 2px solid var(--pink-deep);
+      background: transparent;
+      transition: background 0.25s, border-color 0.25s, transform 0.18s;
+    }
+    .dot.filled {
+      background: var(--pink-deep);
+      border-color: var(--pink-deep);
+      transform: scale(1.18);
+    }
 
-  /* veil */
-  .veil{
-    position:fixed;
-    inset:0;
-    background:radial-gradient(circle at 50% 50%, var(--cream), var(--bg-deep));
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    opacity:0;
-    pointer-events:none;
-    transition:opacity .9s ease;
-    z-index:50;
-  }
-  .veil.show{opacity:1;pointer-events:all;}
-  .veil span{
-    font-family:'Playfair Display',serif;
-    font-style:italic;
-    font-weight:600;
-    font-size:clamp(28px,5vw,52px);
-    color:var(--brown);
-    opacity:0;
-    transform:translateY(10px);
-    transition:opacity .8s ease .25s, transform .8s ease .25s;
-  }
-  .veil.show span{opacity:1;transform:translateY(0);}
+    /* Keypad */
+    .keypad {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: clamp(8px, 1.2vw, 16px);
+    }
+    .key {
+      width:  clamp(48px, 6vw, 82px);
+      height: clamp(48px, 6vw, 82px);
+      border-radius: clamp(10px, 1.2vw, 16px);
+      border: 1.5px solid var(--pink);
+      background: var(--beige);
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.18s, transform 0.13s, box-shadow 0.18s;
+      position: relative;
+      overflow: hidden;
+    }
+    .key:hover {
+      background: var(--pink-light);
+      box-shadow: 0 4px 16px rgba(244,184,200,0.45);
+      transform: translateY(-2px);
+    }
+    .key:active { transform: scale(0.93); }
+    .key-num {
+      font-family: 'Cormorant Garant', serif;
+      font-size: clamp(18px, 2.2vw, 30px);
+      font-weight: 500;
+      color: var(--brown);
+      line-height: 1;
+    }
+    .key-letter {
+      font-family: 'Montserrat', sans-serif;
+      font-size: clamp(6px, 0.6vw, 9px);
+      letter-spacing: 0.18em;
+      color: var(--brown-light);
+      margin-top: 2px;
+    }
+    /* Heart ripple on key press */
+    .key::after {
+      content: '';
+      position: absolute;
+      inset: 50%;
+      background: var(--pink);
+      border-radius: 50%;
+      opacity: 0;
+      transition: none;
+    }
+    .key.ripple::after {
+      animation: ripple 0.45s ease-out forwards;
+    }
+    @keyframes ripple {
+      0%   { inset: 50%; opacity: 0.5; }
+      100% { inset: -20%; opacity: 0; }
+    }
 
-  @keyframes fadeRise{from{opacity:0;transform:translateY(18px);}to{opacity:1;transform:translateY(0);}}
-  @keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
-  @keyframes fadeScaleLeft{from{opacity:0;transform:translateX(-26px) scale(.96);}to{opacity:1;transform:translateX(0) scale(1);}}
-  @keyframes fadeScaleRight{from{opacity:0;transform:translateX(26px) scale(.96);}to{opacity:1;transform:translateX(0) scale(1);}}
-  @keyframes drawLine{to{stroke-dashoffset:0;}}
-  @keyframes popIn{from{transform:scale(0);}to{transform:scale(1);}}
-  @keyframes shake{
-    10%,90%{transform:translateX(-2px);}
-    20%,80%{transform:translateX(4px);}
-    30%,50%,70%{transform:translateX(-7px);}
-    40%,60%{transform:translateX(7px);}
-  }
+    /* Delete key */
+    .key-del .key-num {
+      font-size: clamp(14px, 1.6vw, 22px);
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 300;
+    }
 
-  @media (prefers-reduced-motion: reduce){
-    *{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important;}
-    .orb{display:none;}
-  }
+    /* Error message */
+    .error-msg {
+      font-family: 'Cormorant Garant', serif;
+      font-style: italic;
+      font-size: clamp(12px, 1.2vw, 16px);
+      color: var(--brown-mid);
+      min-height: 1.4em;
+      text-align: center;
+      animation: shake 0.4s ease both;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    .error-msg.visible { opacity: 1; }
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20%       { transform: translateX(-6px); }
+      40%       { transform: translateX(6px); }
+      60%       { transform: translateX(-4px); }
+      80%       { transform: translateX(4px); }
+    }
 
-  @media (max-width:500px){
-    .content{gap:14px;}
-    .photo-wrap img{width:clamp(110px,38vw,160px);}
-    .lock-card{width:clamp(220px,58vw,320px);padding:14px 12px;}
-  }
-</style>
+    /* Unlock overlay */
+    .unlock-overlay {
+      position: fixed; inset: 0;
+      background: var(--pink-light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.8s ease;
+    }
+    .unlock-overlay.active {
+      opacity: 1;
+      pointer-events: all;
+    }
+    .unlock-text {
+      font-family: 'Great Vibes', cursive;
+      font-size: clamp(40px, 7vw, 100px);
+      color: var(--brown);
+      text-align: center;
+      opacity: 0;
+      transform: scale(0.7);
+      transition: opacity 0.7s ease 0.4s, transform 0.7s ease 0.4s;
+    }
+    .unlock-overlay.active .unlock-text {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    /* ── Responsive: portrait/mobile ── */
+    @media (max-width: 700px) or (orientation: portrait) {
+      html, body { overflow: auto; }
+      .stage {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto auto auto;
+        grid-template-areas:
+          "header"
+          "left"
+          "right";
+        height: auto;
+        min-height: 100vh;
+      }
+      .panel-left  { padding: 20px 16px 8px; }
+      .panel-right { padding: 8px 16px 32px; }
+    }
+    @media (max-height: 600px) and (orientation: landscape) {
+      .teddy-caption { display: none; }
+    }
+  </style>
 </head>
 <body>
 
-<div class="ambient" aria-hidden="true">
-  <span class="orb gold o1"></span>
-  <span class="orb pink o2"></span>
-  <span class="orb gold o3"></span>
-  <span class="orb pink o4"></span>
-  <span class="orb gold o5"></span>
+<!-- Floating petals -->
+<div class="petal-layer" id="petalLayer"></div>
+
+<!-- Unlock transition overlay -->
+<div class="unlock-overlay" id="unlockOverlay">
+  <div class="unlock-text">Opening something beautiful…</div>
 </div>
 
-<main class="stage">
-  <header class="masthead">
-    <h1 class="title">
-      <span class="line1">Hear Me Once</span>
-      <span class="name">Momina</span>
-    </h1>
-    <svg class="flourish" viewBox="0 0 220 30" xmlns="http://www.w3.org/2000/svg">
-      <path d="M5,15 C40,0 60,30 110,15 C160,0 180,30 215,15"/>
-    </svg>
+<div class="stage">
+
+  <!-- Header -->
+  <header>
+    <span class="eyebrow">Hear Me Once</span>
+    <h1 class="brand">Momina</h1>
+    <div class="divider-line"></div>
   </header>
 
-  <section class="content">
-    <!-- Teddy bear — frameless so bg blends in -->
-    <div class="photo-wrap">
-      <img src="pic1.jpg" alt="">
+  <!-- Left: Teddy -->
+  <div class="panel-left">
+    <div class="teddy-aura"></div>
+    <div class="teddy-wrap">
+      <img src="pic1.jpg" alt="A gift for you" class="teddy-img" />
+      <p class="teddy-caption">I am sorry, Momina</p>
     </div>
+  </div>
 
-    <!-- Lock card -->
-    <div class="lock-card" id="lockCard">
-      <div class="pin-row" id="pinRow">
-        <span class="pin-box"></span>
-        <span class="pin-box"></span>
-        <span class="pin-box"></span>
-        <span class="pin-box"></span>
+  <!-- Right: PIN Lock -->
+  <div class="panel-right">
+    <div class="lock-card">
+      <span class="lock-label">Private Access</span>
+      <h2 class="lock-title">Enter the code</h2>
+
+      <div class="pin-dots" id="pinDots">
+        <div class="dot" id="d0"></div>
+        <div class="dot" id="d1"></div>
+        <div class="dot" id="d2"></div>
+        <div class="dot" id="d3"></div>
       </div>
 
-      <p class="pin-feedback" id="pinFeedback" aria-live="polite"></p>
+      <div class="keypad" id="keypad">
+        <!-- Row 1 -->
+        <button class="key" data-n="1"><span class="key-num">1</span></button>
+        <button class="key" data-n="2"><span class="key-num">2</span><span class="key-letter">ABC</span></button>
+        <button class="key" data-n="3"><span class="key-num">3</span><span class="key-letter">DEF</span></button>
+        <!-- Row 2 -->
+        <button class="key" data-n="4"><span class="key-num">4</span><span class="key-letter">GHI</span></button>
+        <button class="key" data-n="5"><span class="key-num">5</span><span class="key-letter">JKL</span></button>
+        <button class="key" data-n="6"><span class="key-num">6</span><span class="key-letter">MNO</span></button>
+        <!-- Row 3 -->
+        <button class="key" data-n="7"><span class="key-num">7</span><span class="key-letter">PQRS</span></button>
+        <button class="key" data-n="8"><span class="key-num">8</span><span class="key-letter">TUV</span></button>
+        <button class="key" data-n="9"><span class="key-num">9</span><span class="key-letter">WXYZ</span></button>
+        <!-- Row 4 -->
+        <button class="key key-del" data-n="del"><span class="key-num">&#8592;</span></button>
+        <button class="key" data-n="0"><span class="key-num">0</span></button>
+        <button class="key" data-n="del" style="visibility:hidden"></button>
+      </div>
 
-      <div class="keypad" id="keypad"></div>
+      <div class="error-msg" id="errorMsg">That is not our number, love.</div>
     </div>
-  </section>
-</main>
+  </div>
 
-<div class="veil" id="veil"><span id="veilText"></span></div>
+</div>
 
 <script>
-(function(){
-  const HEART_PATH = "M16 28C16 28 1 18.5 1 9.5C1 4.8 4.8 1 9.5 1C12.6 1 15.2 2.7 16 5.4C16.8 2.7 19.4 1 22.5 1C27.2 1 31 4.8 31 9.5C31 18.5 16 28 16 28Z";
-  const BACKSPACE_SVG = `<svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="21 8 21 16"/><path d="M3 12h14l-4-4m0 8l4-4"/></svg>`;
-
-  // Layout: 1 2 3 / 4 5 6 / 7 8 9 / [empty] 0 [backspace]
-  const KEYS = ['1','2','3','4','5','6','7','8','9','','0','#'];
-  const keypad = document.getElementById('keypad');
-
-  KEYS.forEach((k, idx) => {
-    if(k === ''){
-      // empty spacer
-      const spacer = document.createElement('div');
-      keypad.appendChild(spacer);
-      return;
-    }
-    const btn = document.createElement('button');
-    btn.type = 'button';
-    const isBack = k === '#';
-    btn.className = 'key' + (isBack ? ' key-util' : '');
-    btn.dataset.key = k;
-    btn.setAttribute('aria-label', isBack ? 'Backspace' : k);
-    btn.style.animation = `fadeRise .6s cubic-bezier(.16,1,.3,1) ${1 + idx*0.04}s forwards`;
-    btn.style.opacity = '0';
-    const label = isBack ? BACKSPACE_SVG : k;
-    btn.innerHTML = `
-      <svg class="heart-svg" viewBox="0 0 32 29" aria-hidden="true"><path d="${HEART_PATH}"/></svg>
-      <span class="key-label">${label}</span>
+  /* ── Petals ── */
+  const layer = document.getElementById('petalLayer');
+  const PETAL_COUNT = 18;
+  for (let i = 0; i < PETAL_COUNT; i++) {
+    const p = document.createElement('div');
+    p.className = 'petal';
+    const size = 8 + Math.random() * 10;
+    p.style.cssText = `
+      width:${size}px; height:${size*1.4}px;
+      left:${Math.random()*100}%;
+      animation-duration:${7 + Math.random()*8}s;
+      animation-delay:${Math.random()*10}s;
+      opacity:0;
+      transform:rotate(${Math.random()*360}deg);
     `;
-    keypad.appendChild(btn);
-  });
+    layer.appendChild(p);
+  }
 
+  /* ── PIN Logic ── */
   const CORRECT = '1234';
-  let pin = '';
-  const boxes = Array.from(document.querySelectorAll('.pin-box'));
-  const feedback = document.getElementById('pinFeedback');
-  const lockCard = document.getElementById('lockCard');
-  const veil = document.getElementById('veil');
-  const veilText = document.getElementById('veilText');
-  let locked = false;
+  let entered = '';
+  const dots   = [0,1,2,3].map(i => document.getElementById('d'+i));
+  const errMsg = document.getElementById('errorMsg');
+  const overlay = document.getElementById('unlockOverlay');
 
-  function renderBoxes(){
-    boxes.forEach((b,i) => b.classList.toggle('filled', i < pin.length));
-  }
-  function clearFeedback(){ feedback.classList.remove('show'); }
-
-  function press(k){
-    if(locked) return;
-    if(k === '#'){ pin = pin.slice(0,-1); renderBoxes(); clearFeedback(); return; }
-    if(pin.length >= 4) return;
-    pin += k;
-    renderBoxes();
-    if(pin.length === 4) setTimeout(checkPin, 220);
+  function updateDots() {
+    dots.forEach((d, i) => d.classList.toggle('filled', i < entered.length));
   }
 
-  function checkPin(){
-    if(pin === CORRECT) success();
-    else fail();
+  function showError() {
+    errMsg.classList.remove('visible');
+    void errMsg.offsetWidth; // reflow to re-trigger animation
+    errMsg.classList.add('visible');
   }
 
-  function fail(){
-    locked = true;
-    lockCard.classList.add('shake');
-    feedback.textContent = 'Not quite — try again.';
-    feedback.classList.add('show');
-    setTimeout(()=>{
-      pin = '';
-      renderBoxes();
-      lockCard.classList.remove('shake');
-      clearFeedback();
-      locked = false;
-    }, 850);
+  function triggerUnlock() {
+    overlay.classList.add('active');
+    setTimeout(() => {
+      window.location.href = 'next.html';
+    }, 1800);
   }
 
-  function success(){
-    locked = true;
-    clearFeedback();
-    boxes.forEach((b,i) => setTimeout(() => b.classList.add('success'), i*110));
-    setTimeout(()=>{
-      veilText.textContent = "It's you.";
-      veil.classList.add('show');
-      setTimeout(() => { window.location.href = 'next.html'; }, 1500);
-    }, 650);
-  }
+  document.getElementById('keypad').addEventListener('click', e => {
+    const btn = e.target.closest('[data-n]');
+    if (!btn) return;
+    const n = btn.dataset.n;
 
-  keypad.addEventListener('click', (e) => {
-    const btn = e.target.closest('.key');
-    if(btn) press(btn.dataset.key);
+    // ripple
+    btn.classList.remove('ripple');
+    void btn.offsetWidth;
+    btn.classList.add('ripple');
+    btn.addEventListener('animationend', () => btn.classList.remove('ripple'), { once: true });
+
+    if (n === 'del') {
+      entered = entered.slice(0, -1);
+      errMsg.classList.remove('visible');
+    } else if (entered.length < 4) {
+      entered += n;
+    }
+
+    updateDots();
+
+    if (entered.length === 4) {
+      if (entered === CORRECT) {
+        triggerUnlock();
+      } else {
+        showError();
+        setTimeout(() => {
+          entered = '';
+          updateDots();
+        }, 900);
+      }
+    }
   });
 
-  window.addEventListener('keydown', (e) => {
-    if(/^[0-9]$/.test(e.key)) press(e.key);
-    else if(e.key === 'Backspace') press('#');
+  /* Keyboard support */
+  document.addEventListener('keydown', e => {
+    if (e.key >= '0' && e.key <= '9') {
+      document.querySelector(`[data-n="${e.key}"]`)?.click();
+    } else if (e.key === 'Backspace') {
+      document.querySelector('.key-del')?.click();
+    }
   });
-})();
 </script>
 </body>
 </html>
