@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Our Memory Wall</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;700&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --cream: #FDFBF7;
+      --cream-deep: #F5EFEB;
+      --pink: #FFD1DC;
+      --pink-deep: #F4A7B9;
+      --brown: #362214;
+      --brown-muted: #9C7B67;
+      --rope-1: #a06a38;
+      --rope-2: #b8864b;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      width: 100%; min-height: 100%;
+      background: radial-gradient(circle at center, var(--cream) 30%, var(--cream-deep) 100%);
+      font-family: 'DM Sans', sans-serif;
+      color: var(--brown);
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* â”€â”€ LAYER 0: WARM STUDIO WINDOW GLOW â”€â”€ */
+    .studio-glow {
+      position: fixed; top: -20%; left: 50%; transform: translateX(-50%);
+      width: 90vw; height: 70vh;
+      background: radial-gradient(ellipse at center, rgba(255,225,200,0.55) 0%, rgba(255,209,220,0.18) 45%, rgba(255,253,247,0) 75%);
+      filter: blur(40px); pointer-events: none; z-index: 0;
+      animation: glowBreath 16s ease-in-out infinite alternate;
+    }
+    @keyframes glowBreath {
+      0% { opacity: 0.75; transform: translateX(-50%) scale(1); }
+      100% { opacity: 1; transform: translateX(-50%) scale(1.08); }
+    }
+
+    /* â”€â”€ CHIFFON CURTAIN OVERLAY â”€â”€ */
+    #chiffon-canvas {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      pointer-events: none; z-index: 1; opacity: 0.5;
+      mix-blend-mode: soft-light;
+    }
+
+    /* â”€â”€ PAGE HEADER â”€â”€ */
+    .page-header {
+      position: relative; z-index: 10;
+      text-align: center;
+      padding: 2.2rem 1rem 0.6rem;
+    }
+    .page-title {
+      font-family: 'Playfair Display', serif;
+      font-weight: 900;
+      font-size: clamp(1.9rem, 4.5vw, 3rem);
+      letter-spacing: -0.02em;
+      color: var(--brown);
+    }
+    .page-sub {
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 400;
+      letter-spacing: 0.45em;
+      font-size: clamp(0.6rem, 1.5vw, 0.78rem);
+      color: var(--brown-muted);
+      margin-top: 0.5rem;
+      padding-left: 0.45em;
+    }
+
+    /* â”€â”€ MEMORY WALL CONTAINER â”€â”€ */
+    .wall {
+      position: relative; z-index: 10;
+      width: 100%;
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 1.5rem clamp(0.6rem, 3vw, 3rem) 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: clamp(2.2rem, 5vw, 4.2rem);
+    }
+
+    /* â”€â”€ ROPE LINE ROW â”€â”€ */
+    .rope-row {
+      position: relative;
+      width: 100%;
+      padding-top: clamp(1.4rem, 3vw, 2.2rem);
+    }
+
+    /* The twisted twine rope */
+    .rope {
+      position: absolute;
+      top: clamp(1.4rem, 3vw, 2.2rem);
+      left: 0; right: 0;
+      height: 6px;
+      border-radius: 3px;
+      background:
+        repeating-linear-gradient(
+          60deg,
+          var(--rope-1) 0px,
+          var(--rope-2) 3px,
+          #c99a5e 6px,
+          var(--rope-1) 9px
+        );
+      box-shadow: 0 4px 6px rgba(54,34,20,0.22), inset 0 -1px 1px rgba(54,34,20,0.3), inset 0 1px 1px rgba(255,240,210,0.4);
+      z-index: 11;
+    }
+    /* gentle rope sag illusion via slight curve */
+    .rope::after {
+      content: '';
+      position: absolute;
+      top: 0; left: -2%; width: 104%; height: 100%;
+      background: inherit;
+      border-radius: inherit;
+      transform: scaleY(1);
+      opacity: 0;
+    }
+
+    /* The photos sit on the rope */
+    .photo-line {
+      position: relative;
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: clamp(0.4rem, 1.8vw, 1.6rem);
+      align-items: start;
+      z-index: 12;
+    }
+
+    /* â”€â”€ POLAROID â”€â”€ */
+    .polaroid-wrap {
+      position: relative;
+      padding-top: clamp(0.9rem, 2vw, 1.4rem); /* room for the peg */
+      display: flex;
+      justify-content: center;
+      transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1);
+      transform-origin: top center;
+      cursor: pointer;
+    }
+    .polaroid-wrap:hover {
+      transform: translateY(6px) rotate(0deg) scale(1.04) !important;
+      z-index: 30;
+    }
+
+    .polaroid {
+      background: #FFFDFA;
+      padding: clamp(4px, 1vw, 9px) clamp(4px, 1vw, 9px) clamp(12px, 2.5vw, 26px);
+      border-radius: 3px;
+      box-shadow: 0 6px 14px rgba(54,34,20,0.25), 0 2px 4px rgba(54,34,20,0.18);
+      width: 100%;
+      position: relative;
+    }
+    .polaroid-photo {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      object-fit: cover;
+      display: block;
+      background: linear-gradient(135deg, #F5EFEB, #E8DDD2);
+      border: 1px solid rgba(54,34,20,0.06);
+    }
+    .polaroid-cap {
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      text-align: center;
+      font-size: clamp(0.42rem, 1.1vw, 0.72rem);
+      color: var(--brown-muted);
+      margin-top: clamp(3px, 0.8vw, 7px);
+      line-height: 1.2;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* â”€â”€ WOODEN CLOTHESPIN (PEG) â”€â”€ */
+    .peg {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: clamp(14px, 3vw, 22px);
+      height: clamp(26px, 5.5vw, 42px);
+      z-index: 20;
+      filter: drop-shadow(0 2px 2px rgba(54,34,20,0.35));
+    }
+
+    /* â”€â”€ MODAL OVERLAY â”€â”€ */
+    #modal {
+      position: fixed; inset: 0;
+      z-index: 100;
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(40,25,15,0.72);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.4s ease;
+      padding: 1.5rem;
+    }
+    #modal.open { opacity: 1; pointer-events: auto; }
+
+    .modal-inner {
+      position: relative;
+      display: flex; flex-direction: column; align-items: center;
+      gap: 1.2rem;
+      max-width: 92vw;
+      transform: scale(0.85);
+      transition: transform 0.45s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    #modal.open .modal-inner { transform: scale(1); }
+
+    .modal-cap {
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-weight: 400;
+      color: var(--cream);
+      text-align: center;
+      font-size: clamp(0.95rem, 2.6vw, 1.5rem);
+      line-height: 1.4;
+      max-width: 580px;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.4);
+    }
+    .modal-frame {
+      background: #FFFDFA;
+      padding: clamp(10px, 2vw, 18px) clamp(10px, 2vw, 18px) clamp(28px, 4vw, 46px);
+      border-radius: 5px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+      transform: rotate(-1.2deg);
+    }
+    .modal-img {
+      display: block;
+      max-width: min(72vw, 460px);
+      max-height: 58vh;
+      width: auto; height: auto;
+      object-fit: contain;
+      background: #F5EFEB;
+    }
+    .modal-close {
+      position: absolute;
+      top: -14px; right: -14px;
+      width: 44px; height: 44px;
+      border-radius: 50%;
+      border: 2px solid var(--cream);
+      background: var(--pink-deep);
+      color: var(--cream);
+      font-size: 1.3rem;
+      font-family: 'DM Sans', sans-serif;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+      transition: transform 0.2s ease, background 0.2s ease;
+      z-index: 5;
+    }
+    .modal-close:hover { transform: scale(1.12) rotate(90deg); background: var(--brown); }
+
+    /* â”€â”€ NAVIGATION TERMINAL â”€â”€ */
+    .nav-terminal {
+      position: relative; z-index: 10;
+      display: flex; justify-content: center;
+      padding: 2rem 1rem 3.5rem;
+    }
+    .continue-btn {
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 700;
+      letter-spacing: 0.22em;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      color: var(--brown);
+      background: linear-gradient(180deg, var(--pink) 0%, var(--pink-deep) 100%);
+      border: 2.5px solid var(--brown);
+      border-radius: 40px;
+      padding: 0.9rem 2.8rem;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex; align-items: center; gap: 0.6rem;
+      box-shadow: 0 6px 0 rgba(54,34,20,0.3), 0 10px 20px rgba(54,34,20,0.18);
+      transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.3s ease;
+    }
+    .continue-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 9px 0 rgba(54,34,20,0.3), 0 16px 28px rgba(54,34,20,0.22);
+      background: linear-gradient(180deg, #FFDDE5 0%, var(--pink) 100%);
+    }
+    .continue-btn:active {
+      transform: translateY(3px);
+      box-shadow: 0 2px 0 rgba(54,34,20,0.3), 0 4px 10px rgba(54,34,20,0.18);
+    }
+    .continue-btn .arrow { font-size: 1.1rem; line-height: 1; transition: transform 0.2s ease; }
+    .continue-btn:hover .arrow { transform: translateX(4px); }
+
+    /* â”€â”€ MOBILE FINE-TUNING (keep 5 per row, never wrap) â”€â”€ */
+    @media (max-width: 600px) {
+      .wall { padding: 1rem 0.5rem; gap: 2rem; }
+      .photo-line { gap: 0.35rem; }
+      .polaroid { padding: 3px 3px 9px; }
+      .polaroid-cap { display: none; } /* keep small frames clean on tiny screens */
+      .rope { height: 4px; }
+    }
+    @media (max-width: 380px) {
+      .photo-line { gap: 0.25rem; }
+      .peg { width: 12px; height: 22px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- LAYER 0: STUDIO WINDOW GLOW -->
+  <div class="studio-glow"></div>
+
+  <!-- CHIFFON CURTAIN -->
+  <canvas id="chiffon-canvas"></canvas>
+
+  <!-- HEADER -->
+  <header class="page-header">
+    <div class="page-title">Our Memory Wall</div>
+    <div class="page-sub">EVERY MOMENT WITH YOU</div>
+  </header>
+
+  <!-- MEMORY WALL -->
+  <main class="wall" id="wall">
+    <!-- Rows injected by JS -->
+  </main>
+
+  <!-- NAVIGATION TERMINAL -->
+  <div class="nav-terminal">
+    <a href="next1.html" class="continue-btn">Continue <span class="arrow">→</span></a>
+  </div>
+
+  <!-- MODAL -->
+  <div id="modal">
+    <div class="modal-inner">
+      <button class="modal-close" id="modal-close" aria-label="Close">✕</button>
+      <div class="modal-cap" id="modal-cap"></div>
+      <div class="modal-frame">
+        <img class="modal-img" id="modal-img" src="" alt="Memory" />
+      </div>
+    </div>
+  </div>
+
+<script>
+(function () {
+  'use strict';
+
+  /* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+     PHOTO DATA + CAPTIONS (exact story order)
+     â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+  const PHOTOS = [
+    { src: 'images/pic1.jpg',  cap: 'Holding on tight, chasing the night breeze, and laughing through every turn.' },
+    { src: 'images/pic2.jpg',  cap: 'Warm mugs, shared smiles, and conversations that made time completely stand still.' },
+    { src: 'images/pic3.jpg',  cap: 'A gentle reminder that the most beautiful things in life bloom quietly by your side.' },
+    { src: 'images/pic4.jpg',  cap: 'Playful rivalries, competitive streaks, and the absolute best teammate I could ever ask for.' },
+    { src: 'images/pic5.jpg',  cap: 'Flickering screens, shared popcorn, and a shoulder that always feels just like home.' },
+    { src: 'images/pic6.jpg',  cap: 'Sweet mornings, messy kitchens, and the perfect recipe for a happy heart.' },
+    { src: 'images/pic7.jpg',  cap: 'Losing the game but winning the absolute jackpot of a lifetime.' },
+    { src: 'images/pic8.jpg',  cap: 'The true ruler of our little world, bringing endless warmth and fuzzy cuddles.' },
+    { src: 'images/pic9.jpg',  cap: 'Soft acoustic chords strumming to the rhythm of our favorite unwritten love song.' },
+    { src: 'images/pic10.jpg', cap: 'Chilly nights made incredibly warm by golden embers and your hand slipped into mine.' },
+    { src: 'images/pic11.jpg', cap: 'Conquering new heights together and realizing the best view is always just looking at you.' },
+    { src: 'images/pic12.jpg', cap: 'Woven with patience, wrapped in comfort, and carrying the cozy scent of your embrace.' },
+    { src: 'images/pic13.jpg', cap: 'Ink on paper, pouring out a love that words can barely begin to contain.' },
+    { src: 'images/pic14.jpg', cap: 'A quiet, cinematic pause in the rush of life, sharing a single heartbeat in the dark.' },
+    { src: 'images/pic15.jpg', cap: 'Sweet milestones, bright candles, and celebrating another beautiful chapter of us.' }
+  ];
+
+  /* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+     WOODEN CLOTHESPIN SVG (realistic, split-body)
+     â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+  const PEG_SVG = `
+    <svg class="peg" viewBox="0 0 24 46" xmlns="http://www.w3.org/2000/svg">
+      <!-- left wood half (light tan) -->
+      <path d="M4 2 Q4 1 6 1 L11.5 1 L11.5 45 L6 45 Q4 45 4 44 Z" fill="#e2a76f"/>
+      <!-- right wood half (shaded warm brown) -->
+      <path d="M20 2 Q20 1 18 1 L12.5 1 L12.5 45 L18 45 Q20 45 20 44 Z" fill="#c68a4c"/>
+      <!-- wood grain subtle lines -->
+      <path d="M7 6 L7 40" stroke="#c68a4c" stroke-width="0.5" opacity="0.4"/>
+      <path d="M9 5 L9 41" stroke="#c68a4c" stroke-width="0.4" opacity="0.3"/>
+      <path d="M16 6 L16 40" stroke="#a06a38" stroke-width="0.5" opacity="0.45"/>
+      <path d="M17.5 5 L17.5 41" stroke="#a06a38" stroke-width="0.4" opacity="0.35"/>
+      <!-- sharp vertical seam -->
+      <line x1="12" y1="1" x2="12" y2="45" stroke="#7a4a22" stroke-width="0.9"/>
+      <!-- outer edge shading -->
+      <path d="M4 2 Q4 1 6 1 L11.5 1 L11.5 45 L6 45 Q4 45 4 44 Z" fill="none" stroke="#a06a38" stroke-width="0.6" opacity="0.5"/>
+      <path d="M20 2 Q20 1 18 1 L12.5 1 L12.5 45 L18 45 Q20 45 20 44 Z" fill="none" stroke="#7a4a22" stroke-width="0.6" opacity="0.5"/>
+      <!-- metallic silver spring coil across the middle -->
+      <rect x="2.5" y="20" width="19" height="6.5" rx="1.5" fill="none" stroke="#9aa0a6" stroke-width="1.6"/>
+      <rect x="2.5" y="20" width="19" height="6.5" rx="1.5" fill="none" stroke="#d8dde2" stroke-width="0.6"/>
+      <line x1="5" y1="20.5" x2="5" y2="26" stroke="#c2c7cc" stroke-width="0.9"/>
+      <line x1="19" y1="20.5" x2="19" y2="26" stroke="#c2c7cc" stroke-width="0.9"/>
+      <circle cx="12" cy="23.2" r="1.4" fill="#bfc4c9" stroke="#8c9197" stroke-width="0.5"/>
+    </svg>
+  `;
+
+  /* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+     BUILD THE 3 ROWS x 5 PHOTOS
+     â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+  const wall = document.getElementById('wall');
+  // alternating organic tilt pattern (between -2.5 and +2.5 deg)
+  const TILTS = [-2.3, 1.8, -1.2, 2.5, -2.0,
+                  2.1, -1.6, 0.0, 1.4, -2.5,
+                 -1.9, 2.3, -1.1, 1.7, -2.2];
+
+  for (let row = 0; row < 3; row++) {
+    const ropeRow = document.createElement('div');
+    ropeRow.className = 'rope-row';
+
+    const rope = document.createElement('div');
+    rope.className = 'rope';
+    ropeRow.appendChild(rope);
+
+    const line = document.createElement('div');
+    line.className = 'photo-line';
+
+    for (let col = 0; col < 5; col++) {
+      const idx = row * 5 + col;
+      const data = PHOTOS[idx];
+
+      const wrap = document.createElement('div');
+      wrap.className = 'polaroid-wrap';
+      wrap.style.transform = 'rotate(' + TILTS[idx] + 'deg)';
+      wrap.dataset.index = idx;
+
+      wrap.innerHTML =
+        PEG_SVG +
+        '<div class="polaroid">' +
+          '<img class="polaroid-photo" src="' + data.src + '" alt="Memory ' + (idx + 1) + '" ' +
+            'onerror="this.style.background=\'linear-gradient(135deg,#F5EFEB,#E8DDD2)\';this.removeAttribute(\'src\');" />' +
+          '<div class="polaroid-cap">' + data.cap + '</div>' +
+        '</div>';
+
+      wrap.addEventListener('click', function () {
+        openModal(parseInt(this.dataset.index, 10));
+      });
+
+      line.appendChild(wrap);
+    }
+
+    ropeRow.appendChild(line);
+    wall.appendChild(ropeRow);
+  }
+
+  /* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+     MODAL ZOOM + CAPTION
+     â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+  const modal     = document.getElementById('modal');
+  const modalImg  = document.getElementById('modal-img');
+  const modalCap  = document.getElementById('modal-cap');
+  const modalClose= document.getElementById('modal-close');
+
+  function openModal(index) {
+    const data = PHOTOS[index];
+    modalImg.src = data.src;
+    modalCap.textContent = data.cap;
+    modal.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeModal() {
+    modal.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  modalClose.addEventListener('click', closeModal);
+  modal.addEventListener('click', function (e) {
+    if (e.target === modal) closeModal();
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') closeModal();
+  });
+
+  /* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+     CHIFFON CURTAIN AMBIENT SWAY
+     â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+  const chiffon = document.getElementById('chiffon-canvas');
+  const cctx = chiffon.getContext('2d');
+  let chiffonT = 0;
+
+  function sizeChiffon() {
+    chiffon.width = window.innerWidth;
+    chiffon.height = window.innerHeight;
+  }
+  sizeChiffon();
+  window.addEventListener('resize', sizeChiffon);
+
+  function drawChiffon() {
+    cctx.clearRect(0, 0, chiffon.width, chiffon.height);
+    const W = chiffon.width, H = chiffon.height;
+    const folds = 14;
+    const foldW = W / folds;
+
+    for (let i = 0; i <= folds; i++) {
+      const baseX = i * foldW;
+      const sway  = Math.sin(chiffonT * 0.6 + i * 0.55) * (foldW * 0.32);
+      const sway2 = Math.cos(chiffonT * 0.4 + i * 0.4) * (foldW * 0.15);
+
+      const grad = cctx.createLinearGradient(baseX - foldW/2, 0, baseX + foldW/2, 0);
+      grad.addColorStop(0, 'rgba(255,253,247,0.0)');
+      grad.addColorStop(0.5, 'rgba(255,225,232,0.16)');
+      grad.addColorStop(1, 'rgba(255,253,247,0.0)');
+
+      cctx.beginPath();
+      cctx.moveTo(baseX + sway, 0);
+      cctx.bezierCurveTo(
+        baseX + sway + sway2, H * 0.35,
+        baseX + sway - sway2, H * 0.65,
+        baseX + sway, H
+      );
+      cctx.lineTo(baseX + foldW + sway, H);
+      cctx.bezierCurveTo(
+        baseX + foldW + sway - sway2, H * 0.65,
+        baseX + foldW + sway + sway2, H * 0.35,
+        baseX + foldW + sway, 0
+      );
+      cctx.closePath();
+      cctx.fillStyle = grad;
+      cctx.fill();
+
+      cctx.beginPath();
+      cctx.moveTo(baseX + sway, 0);
+      cctx.bezierCurveTo(
+        baseX + sway + sway2, H * 0.35,
+        baseX + sway - sway2, H * 0.65,
+        baseX + sway, H
+      );
+      cctx.strokeStyle = 'rgba(156,123,103,0.06)';
+      cctx.lineWidth = 1.5;
+      cctx.stroke();
+    }
+
+    chiffonT += 0.012;
+    requestAnimationFrame(drawChiffon);
+  }
+  drawChiffon();
+
+})();
+</script>
+</body>
+</html>
