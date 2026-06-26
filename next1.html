@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Memory Journey — The Strings</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #FDFBF7;
+    --pastel-pink: #F6D6DC;
+    --bright-pink: #E8869B;
+    --mahogany: #6B3B2E;
+    --earthy: #9A7B6A;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    font-family: 'DM Sans', sans-serif;
+    background: radial-gradient(circle at 50% 40%, #FDFBF7 0%, #F5EFEB 100%);
+    color: var(--mahogany);
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: none;
+  }
+
+  /* Studio glow breathing overlay */
+  .studio-glow {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 5;
+    background: radial-gradient(ellipse at 50% 35%, rgba(255, 240, 230, 0.35) 0%, rgba(255, 220, 210, 0.08) 40%, transparent 70%);
+    mix-blend-mode: screen;
+    animation: breathe 16s ease-in-out infinite;
+  }
+  @keyframes breathe {
+    0%, 100% { opacity: 0.55; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.08); }
+  }
+
+  /* Chiffon curtain canvas */
+  #curtainCanvas {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    opacity: 0.5;
+  }
+
+  #sparkCanvas {
+    position: fixed;
+    inset: 0;
+    z-index: 8;
+    pointer-events: none;
+  }
+
+  .stage {
+    position: relative;
+    z-index: 4;
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    padding: 2.2vh 4vw 2.4vh;
+  }
+
+  /* ---- TOP ---- */
+  .top {
+    width: 100%;
+    max-width: 720px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.6vh;
+  }
+  .guide {
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 500;
+    font-size: clamp(13px, 1.7vw, 17px);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--earthy);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .guide .dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--bright-pink);
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse { 0%,100%{opacity:.3;} 50%{opacity:1;} }
+
+  .poetry {
+    margin-top: 0.8vh;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4vh;
+  }
+  .line {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: clamp(15px, 2.4vw, 22px);
+    color: var(--mahogany);
+    filter: blur(7px);
+    opacity: 0.25;
+    transform: translateY(8px);
+    transition: filter 1.4s ease, opacity 1.4s ease, transform 1.4s ease;
+  }
+  .line.unlocked {
+    filter: blur(0);
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ---- CENTER: GUITAR ---- */
+  .guitar-wrap {
+    flex: 1;
+    width: 100%;
+    max-width: 880px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5vh 0;
+  }
+  .fretboard {
+    position: relative;
+    width: 100%;
+    height: clamp(180px, 32vh, 300px);
+    border-radius: 14px;
+    background:
+      linear-gradient(180deg, rgba(0,0,0,0.18), transparent 12%, transparent 88%, rgba(0,0,0,0.25)),
+      linear-gradient(90deg, #3a2218 0%, #5a3221 18%, #6e3f29 40%, #5a3221 62%, #44281c 85%, #2e1a12 100%);
+    box-shadow:
+      0 18px 40px rgba(60,30,20,0.35),
+      inset 0 2px 6px rgba(255,220,190,0.18),
+      inset 0 -8px 18px rgba(0,0,0,0.4);
+    overflow: hidden;
+    cursor: crosshair;
+  }
+  /* wood grain */
+  .fretboard::before {
+    content:'';
+    position:absolute; inset:0;
+    background-image:
+      repeating-linear-gradient(88deg, rgba(0,0,0,0.05) 0px, rgba(0,0,0,0.05) 1px, transparent 2px, transparent 7px),
+      repeating-linear-gradient(91deg, rgba(255,200,160,0.04) 0px, transparent 3px, transparent 10px);
+    pointer-events:none;
+  }
+
+  .fret {
+    position: absolute;
+    top: 0; bottom: 0;
+    width: 4px;
+    background: linear-gradient(90deg, #b9b9c0, #f4f4f8 40%, #d6d6dc 60%, #8f8f97);
+    box-shadow: 0 0 4px rgba(255,255,255,0.4);
+    pointer-events: none;
+  }
+  .inlay {
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, #fff8ee, #d8c4a8);
+    box-shadow: inset 0 0 3px rgba(0,0,0,0.3);
+    pointer-events: none;
+  }
+
+  .strings {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+  }
+  .string {
+    position: absolute;
+    left: 0; right: 0;
+    height: 40px;
+    transform: translateY(-50%);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+  }
+  .string-line {
+    width: 100%;
+    border-radius: 4px;
+    background: linear-gradient(180deg, #fff 0%, #c9c9cf 30%, #8a8a90 55%, #efeff2 100%);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.35), 0 0 5px rgba(255,255,255,0.25);
+    transition: filter 0.2s;
+  }
+
+  /* ---- BOTTOM: VINYL + BUTTON ---- */
+  .bottom {
+    width: 100%;
+    max-width: 720px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.6vh;
+  }
+  .vinyl {
+    position: relative;
+    width: clamp(90px, 13vh, 120px);
+    height: clamp(90px, 13vh, 120px);
+    border-radius: 50%;
+    background:
+      repeating-radial-gradient(circle at 50% 50%, #1a1a1a 0px, #1a1a1a 2px, #262626 3px, #1a1a1a 4px),
+      radial-gradient(circle at 50% 50%, #2a2a2a, #0d0d0d);
+    box-shadow: 0 10px 26px rgba(0,0,0,0.4), inset 0 0 14px rgba(0,0,0,0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .vinyl::after {
+    content:'';
+    position:absolute;
+    top:8%; left:8%;
+    width:30%; height:18%;
+    background: linear-gradient(120deg, rgba(255,255,255,0.18), transparent);
+    border-radius:50%;
+    filter: blur(3px);
+  }
+  .vinyl-center {
+    width: 36%;
+    height: 36%;
+    border-radius: 50%;
+    background: radial-gradient(circle at 40% 35%, var(--pastel-pink), var(--bright-pink));
+    box-shadow: inset 0 0 6px rgba(255,255,255,0.5), 0 0 0 4px rgba(0,0,0,0.5);
+    display:flex; align-items:center; justify-content:center;
+  }
+  .vinyl-hole {
+    width: 14%; height: 14%;
+    border-radius: 50%;
+    background: #1a1a1a;
+  }
+
+  .continue-btn {
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 600;
+    font-size: clamp(14px, 2vw, 17px);
+    letter-spacing: 0.06em;
+    padding: 13px 40px;
+    border: none;
+    border-radius: 40px;
+    color: #fff;
+    background: linear-gradient(135deg, var(--earthy), var(--mahogany));
+    opacity: 0.35;
+    pointer-events: none;
+    cursor: not-allowed;
+    transition: transform 0.18s ease, box-shadow 0.25s ease, opacity 0.8s ease, background 0.5s ease;
+    box-shadow: 0 6px 16px rgba(107,59,46,0.25);
+  }
+  .continue-btn.unlocked {
+    opacity: 1;
+    pointer-events: auto;
+    cursor: pointer;
+    background: linear-gradient(135deg, var(--bright-pink), var(--mahogany));
+  }
+  .continue-btn.unlocked:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 26px rgba(232,134,155,0.45);
+  }
+  .continue-btn.unlocked:active {
+    transform: translateY(1px) scale(0.97);
+  }
+
+  .progress {
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--earthy);
+    opacity: 0.7;
+  }
+</style>
+</head>
+<body>
+
+<div class="studio-glow"></div>
+<canvas id="curtainCanvas"></canvas>
+<canvas id="sparkCanvas"></canvas>
+
+<div class="stage">
+  <!-- TOP -->
+  <div class="top">
+    <div class="guide"><span class="dot"></span>Swipe across the strings to play<span class="dot"></span></div>
+    <div class="poetry">
+      <div class="line" id="line1">Each chord remembers a hand that once held mine.</div>
+      <div class="line" id="line2">The silence between the notes still hums your name.</div>
+      <div class="line" id="line3">And so the song plays on, even when you're gone.</div>
+    </div>
+  </div>
+
+  <!-- CENTER -->
+  <div class="guitar-wrap">
+    <div class="fretboard" id="fretboard">
+      <div class="strings" id="strings"></div>
+    </div>
+  </div>
+
+  <!-- BOTTOM -->
+  <div class="bottom">
+    <div class="vinyl" id="vinyl">
+      <div class="vinyl-center"><div class="vinyl-hole"></div></div>
+    </div>
+    <button class="continue-btn" id="continueBtn">Continue →</button>
+    <div class="progress" id="progress">0 strums · 0 strings</div>
+  </div>
+</div>
+
+<script>
+(() => {
+  'use strict';
+
+  /* ============ AUDIO PRELOAD ============ */
+  const sounds = [];
+  for (let i = 1; i <= 6; i++) {
+    const a = new Audio(`String${i}.wav`);
+    a.preload = 'auto';
+    a.volume = 0.85;
+    sounds.push(a);
+  }
+  function playString(idx) {
+    const a = sounds[idx];
+    if (!a) return;
+    try { a.currentTime = 0; a.play().catch(()=>{}); } catch(e){}
+  }
+
+  /* ============ STRINGS BUILD ============ */
+  const fretboard = document.getElementById('fretboard');
+  const stringsContainer = document.getElementById('strings');
+  const STRING_COUNT = 6;
+  const stringEls = [];
+
+  function buildStrings() {
+    stringsContainer.innerHTML = '';
+    stringEls.length = 0;
+    for (let i = 0; i < STRING_COUNT; i++) {
+      const wrap = document.createElement('div');
+      wrap.className = 'string';
+      wrap.dataset.index = i;
+      // vertical position evenly distributed
+      const pct = (i + 0.5) / STRING_COUNT * 100;
+      wrap.style.top = pct + '%';
+
+      const line = document.createElement('div');
+      line.className = 'string-line';
+      // thickness varies: string 0 (top) thin -> string 5 thick
+      const thickness = 1.4 + i * 0.9;
+      line.style.height = thickness + 'px';
+      line.style.opacity = (0.75 + i * 0.04);
+
+      wrap.appendChild(line);
+      stringsContainer.appendChild(wrap);
+      stringEls.push({ wrap, line, vibrating: false, lastHit: 0 });
+    }
+  }
+  buildStrings();
+
+  /* ============ FRETS & INLAYS ============ */
+  function buildFrets() {
+    // remove old
+    fretboard.querySelectorAll('.fret,.inlay').forEach(e=>e.remove());
+    const fretCount = 7;
+    for (let f = 1; f <= fretCount; f++) {
+      const fr = document.createElement('div');
+      fr.className = 'fret';
+      fr.style.left = (f / (fretCount + 1) * 100) + '%';
+      fretboard.appendChild(fr);
+    }
+    [2.5, 4.5].forEach(pos => {
+      const dot = document.createElement('div');
+      dot.className = 'inlay';
+      dot.style.left = (pos / 8 * 100) + '%';
+      fretboard.appendChild(dot);
+    });
+  }
+  buildFrets();
+
+  /* ============ PROGRESS STATE ============ */
+  let totalStrums = 0;
+  const uniqueStrings = new Set();
+  const line1 = document.getElementById('line1');
+  const line2 = document.getElementById('line2');
+  const line3 = document.getElementById('line3');
+  const continueBtn = document.getElementById('continueBtn');
+  const progressEl = document.getElementById('progress');
+
+  function updateProgress() {
+    progressEl.textContent = `${totalStrums} strums · ${uniqueStrings.size} strings`;
+    if (totalStrums >= 2) line1.classList.add('unlocked');
+    if (totalStrums >= 5) line2.classList.add('unlocked');
+    if (totalStrums >= 8 && uniqueStrings.size >= 4) {
+      line3.classList.add('unlocked');
+      continueBtn.classList.add('unlocked');
+    }
+  }
+
+  /* ============ STRING VIBRATION ============ */
+  function vibrate(s) {
+    const line = s.line;
+    line.style.transition = 'none';
+    let t = 0;
+    const dur = 520;
+    const start = performance.now();
+    function ripple(now) {
+      const e = now - start;
+      if (e >= dur) {
+        line.style.transform = 'translateY(0) scaleY(1)';
+        line.style.filter = 'none';
+        s.vibrating = false;
+        return;
+      }
+      const damp = 1 - e / dur;
+      const wave = Math.sin(e * 0.06) * 6 * damp;
+      line.style.transform = `translateY(${wave}px) scaleY(${1 + damp*0.6})`;
+      line.style.filter = `drop-shadow(0 0 ${4*damp}px rgba(255,200,200,0.7))`;
+      requestAnimationFrame(ripple);
+    }
+    s.vibrating = true;
+    requestAnimationFrame(ripple);
+  }
+
+  /* ============ SPARKS ============ */
+  const sparkCanvas = document.getElementById('sparkCanvas');
+  const sctx = sparkCanvas.getContext('2d');
+  let sparks = [];
+  function resizeSpark() {
+    sparkCanvas.width = window.innerWidth;
+    sparkCanvas.height = window.innerHeight;
+  }
+  resizeSpark();
+
+  const sparkColors = ['#E8869B','#F6D6DC','#FDFBF7','#9A7B6A'];
+  function emitSparks(x, y) {
+    const n = 7 + Math.floor(Math.random()*5);
+    for (let i = 0; i < n; i++) {
+      sparks.push({
+        x, y,
+        vx: (Math.random()-0.5) * 1.6,
+        vy: -Math.random()*2.2 - 0.6,
+        life: 1,
+        decay: 0.012 + Math.random()*0.02,
+        size: 1.5 + Math.random()*2.5,
+        color: sparkColors[Math.floor(Math.random()*sparkColors.length)]
+      });
+    }
+  }
+
+  function renderSparks() {
+    sctx.clearRect(0,0,sparkCanvas.width,sparkCanvas.height);
+    sctx.globalCompositeOperation = 'lighter';
+    sparks = sparks.filter(p => p.life > 0);
+    for (const p of sparks) {
+      p.x += p.vx;
+      p.y += p.vy;
+      p.vy -= 0.012; // drift upward
+      p.life -= p.decay;
+      sctx.globalAlpha = Math.max(p.life, 0);
+      sctx.beginPath();
+      sctx.fillStyle = p.color;
+      sctx.arc(p.x, p.y, p.size * p.life, 0, Math.PI*2);
+      sctx.fill();
+    }
+    sctx.globalAlpha = 1;
+    sctx.globalCompositeOperation = 'source-over';
+    requestAnimationFrame(renderSparks);
+  }
+  renderSparks();
+
+  /* ============ STRUM HANDLING ============ */
+  function strumString(s, clientX, clientY) {
+    const now = performance.now();
+    // 120ms throttle per string for duplicate touch hits
+    if (now - s.lastHit < 120) return;
+    s.lastHit = now;
+
+    const idx = parseInt(s.wrap.dataset.index, 10);
+    playString(idx);
+    vibrate(s);
+    emitSparks(clientX, clientY);
+
+    totalStrums++;
+    uniqueStrings.add(idx);
+    updateProgress();
+
+    spinVinyl();
+  }
+
+  function detectStringAt(clientX, clientY) {
+    const rect = fretboard.getBoundingClientRect();
+    if (clientX < rect.left || clientX > rect.right) return;
+    if (clientY < rect.top || clientY > rect.bottom) return;
+    const relY = clientY - rect.top;
+    const bandH = rect.height / STRING_COUNT;
+    const idx = Math.floor(relY / bandH);
+    if (idx >= 0 && idx < STRING_COUNT) {
+      strumString(stringEls[idx], clientX, clientY);
+    }
+  }
+
+  // Mouse sweep
+  let mouseDown = false;
+  let lastStrummedIdx = -1;
+  fretboard.addEventListener('mousedown', e => { mouseDown = true; sweep(e.clientX, e.clientY); });
+  window.addEventListener('mouseup', () => { mouseDown = false; lastStrummedIdx = -1; });
+  fretboard.addEventListener('mousemove', e => { if (mouseDown) sweep(e.clientX, e.clientY); });
+
+  function sweep(x, y) {
+    const rect = fretboard.getBoundingClientRect();
+    if (y < rect.top || y > rect.bottom) return;
+    const bandH = rect.height / STRING_COUNT;
+    const idx = Math.floor((y - rect.top) / bandH);
+    if (idx >= 0 && idx < STRING_COUNT && idx !== lastStrummedIdx) {
+      lastStrummedIdx = idx;
+      strumString(stringEls[idx], x, y);
+    }
+  }
+  // allow hover-pluck even without mousedown
+  fretboard.addEventListener('mousemove', e => {
+    if (!mouseDown) detectStringAt(e.clientX, e.clientY);
+  });
+
+  // Touch
+  fretboard.addEventListener('touchstart', e => {
+    for (const t of e.changedTouches) detectStringAt(t.clientX, t.clientY);
+  }, { passive: true });
+  fretboard.addEventListener('touchmove', e => {
+    e.preventDefault();
+    for (const t of e.changedTouches) detectStringAt(t.clientX, t.clientY);
+  }, { passive: false });
+
+  /* ============ VINYL SPIN ============ */
+  const vinyl = document.getElementById('vinyl');
+  let angle = 0;
+  let spinSpeed = 0;
+  let lastSpinTime = 0;
+  let targetSpeed = 0;
+
+  function spinVinyl() {
+    targetSpeed = 6; // deg per frame
+    lastSpinTime = performance.now();
+  }
+  function vinylLoop() {
+    const now = performance.now();
+    // decelerate after 1.2s idle
+    if (now - lastSpinTime > 1200) {
+      targetSpeed *= 0.94;
+      if (targetSpeed < 0.02) targetSpeed = 0;
+    }
+    spinSpeed += (targetSpeed - spinSpeed) * 0.08;
+    angle = (angle + spinSpeed) % 360;
+    vinyl.style.transform = `rotate(${angle}deg)`;
+    requestAnimationFrame(vinylLoop);
+  }
+  vinylLoop();
+
+  /* ============ CONTINUE BUTTON ============ */
+  continueBtn.addEventListener('click', () => {
+    if (continueBtn.classList.contains('unlocked')) {
+      window.location.href = 'next2.html';
+    }
+  });
+
+  /* ============ CHIFFON CURTAIN ============ */
+  const curtain = document.getElementById('curtainCanvas');
+  const cctx = curtain.getContext('2d');
+  function resizeCurtain() {
+    curtain.width = window.innerWidth;
+    curtain.height = window.innerHeight;
+  }
+  resizeCurtain();
+
+  let cTime = 0;
+  function drawCurtain() {
+    cTime += 0.012;
+    const w = curtain.width, h = curtain.height;
+    cctx.clearRect(0,0,w,h);
+    const folds = 14;
+    const foldW = w / folds;
+    for (let i = 0; i <= folds; i++) {
+      const baseX = i * foldW;
+      cctx.beginPath();
+      cctx.moveTo(baseX, 0);
+      const seg = 20;
+      for (let s = 0; s <= seg; s++) {
+        const y = (s / seg) * h;
+        const sway = Math.sin(cTime + i * 0.5 + y * 0.004) * 18
+                   + Math.cos(cTime * 0.7 + y * 0.006) * 10;
+        cctx.lineTo(baseX + sway, y);
+      }
+      const grad = cctx.createLinearGradient(baseX-foldW/2, 0, baseX+foldW/2, 0);
+      grad.addColorStop(0, 'rgba(246,214,220,0.0)');
+      grad.addColorStop(0.5, 'rgba(253,251,247,0.10)');
+      grad.addColorStop(1, 'rgba(154,123,106,0.0)');
+      cctx.strokeStyle = grad;
+      cctx.lineWidth = foldW * 0.9;
+      cctx.lineCap = 'round';
+      cctx.stroke();
+    }
+    requestAnimationFrame(drawCurtain);
+  }
+  drawCurtain();
+
+  /* ============ RESIZE ============ */
+  window.addEventListener('resize', () => {
+    resizeSpark();
+    resizeCurtain();
+  });
+
+  updateProgress();
+})();
+</script>
+</body>
+</html>
