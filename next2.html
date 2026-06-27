@@ -1,0 +1,986 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Memory Journey — The Piano</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream:       #FDFBF7;
+    --pastel-pink: #FFD1DC;
+    --bright-pink: #F4A7B9;
+    --mahogany:    #362214;
+    --earthy:      #9A7B6A;
+    --gold:        #E8B455;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    width: 100%; height: 100%;
+    overflow: hidden;
+    font-family: 'DM Sans', sans-serif;
+    /* === UPDATED BACKGROUND === */
+background: radial-gradient(circle at center, #FDFBF7 30%, #F5EFEB 100%);
+    color: var(--mahogany);
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: none;
+  }
+
+  /* ─── WARM LIGHT RAYS (CSS conic, top-left source) ─── */
+  .light-rays {
+    position: fixed;
+    top: -60vh; left: -40vw;
+    width: 200vw; height: 260vh;
+    pointer-events: none;
+    z-index: 3;
+    transform-origin: 30% 25%;
+    background: conic-gradient(
+      from 0deg at 30% 25%,
+      transparent                  0deg,
+      rgba(255,235,185,0.000)      4deg,
+      rgba(255,235,185,0.055)      7deg,
+      rgba(255,245,200,0.070)      9deg,
+      rgba(255,235,185,0.055)     11deg,
+      rgba(255,235,185,0.000)     15deg,
+      transparent                 26deg,
+      rgba(255,228,170,0.000)     30deg,
+      rgba(255,228,170,0.040)     33deg,
+      rgba(255,235,185,0.050)     35deg,
+      rgba(255,228,170,0.040)     37deg,
+      rgba(255,228,170,0.000)     41deg,
+      transparent                 55deg,
+      rgba(255,240,195,0.000)     60deg,
+      rgba(255,240,195,0.035)     63deg,
+      rgba(255,245,205,0.045)     65deg,
+      rgba(255,240,195,0.035)     67deg,
+      rgba(255,240,195,0.000)     71deg,
+      transparent                360deg
+    );
+    animation: rayDrift 90s linear infinite;
+  }
+  @keyframes rayDrift {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+  }
+
+  /* ─── STUDIO WARM GLOW ─── */
+  .studio-glow {
+    position: fixed; inset: 0;
+    pointer-events: none; z-index: 5;
+    background: radial-gradient(ellipse 64% 52% at 50% 38%,
+      rgba(255,238,218,0.38) 0%,
+      rgba(255,222,200,0.08) 52%,
+      transparent 74%);
+    mix-blend-mode: screen;
+    animation: breathe 18s ease-in-out infinite;
+  }
+  @keyframes breathe {
+    0%,100% { opacity:.52; transform:scale(1);    }
+    50%     { opacity:.92; transform:scale(1.07); }
+  }
+
+  /* ─── VIGNETTE ─── */
+  .vignette {
+    position: fixed; inset: 0;
+    pointer-events: none; z-index: 9;
+    background: radial-gradient(ellipse 90% 80% at 50% 48%,
+      transparent 42%,
+      rgba(38,14,6,0.07) 68%,
+      rgba(38,14,6,0.16) 100%);
+  }
+
+  /* ─── CANVAS LAYERS ─── */
+  #curtainCanvas { position:fixed; inset:0; z-index:1; pointer-events:none; }
+  #butterflyLayer{ position:fixed; inset:0; z-index:2; pointer-events:none;
+                   width:100%; height:100%; overflow:visible; }
+  #sparkCanvas   { position:fixed; inset:0; z-index:8; pointer-events:none; }
+
+  /* ─── STAGE ─── */
+  .stage {
+    position: relative; z-index: 4;
+    width: 100%; height: 100vh;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: space-between;
+    padding: 2.4vh 4vw 2.6vh;
+  }
+
+  /* ─── TOP: TITLES + POETRY ─── */
+  .top {
+    width: 100%; max-width: 800px;
+    text-align: center;
+    display: flex; flex-direction: column;
+    align-items: center; gap: 1.2vh;
+  }
+
+  .title-lines {
+    display: flex; flex-direction: column;
+    align-items: center; gap: 0.5vh;
+  }
+
+  .title-line {
+    font-family: 'Playfair Display', serif;
+    font-weight: 700; font-style: normal;
+    font-size: clamp(24px, 4.4vw, 42px);
+    line-height: 1.28;
+    color: #221008;
+    letter-spacing: 0.015em;
+    opacity: 0; transform: translateY(14px);
+    animation: titleRise 1.15s cubic-bezier(.22,.82,.38,1) forwards;
+  }
+  .title-line:nth-child(2) { animation-delay: .38s; }
+
+  @keyframes titleRise {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .poetry {
+    margin-top: 1.2vh;
+    display: flex; flex-direction: column; gap: 0.75vh;
+  }
+  .line {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: clamp(16px, 2.6vw, 24px);
+    color: #4a2518;
+    line-height: 1.55;
+    filter: blur(8px);
+    opacity: 0.16;
+    transform: translateY(8px);
+    transition: filter 1.55s ease, opacity 1.55s ease, transform 1.55s ease;
+  }
+  .line.unlocked { filter: blur(0); opacity: 1; transform: translateY(0); }
+
+  /* ─── PIANO WRAP ─── */
+  .piano-wrap {
+    flex: 1; width: 100%; max-width: 960px;
+    display: flex; align-items: center; justify-content: center;
+    padding: 0.5vh 0; position: relative;
+  }
+
+  #pianoSVG {
+    width: 100%; height: 100%; max-height: 64vh;
+    display: block;
+    filter:
+      drop-shadow(0 22px 44px rgba(60,30,20,0.34))
+      drop-shadow(0 5px 14px rgba(90,40,20,0.20));
+    cursor: pointer;
+    touch-action: none;
+  }
+
+  .whiteKey {
+    fill: url(#whiteKeyGrad);
+    stroke: #d8c9ae; stroke-width: 1;
+    transition: filter .12s ease;
+  }
+  .whiteKey.pressed { filter: brightness(.80); }
+  .blackKey { fill: url(#blackKeyGrad); pointer-events: none; }
+  .keyLabel {
+    font-family: 'DM Sans', sans-serif; font-weight: 600;
+    font-size: 15px; fill: #8a6a4a;
+    pointer-events: none; user-select: none;
+  }
+
+  /* ─── BOTTOM / BUTTON ─── */
+  .bottom {
+    width: 100%; max-width: 720px;
+    display: flex; flex-direction: column;
+    align-items: center; gap: 1.2vh;
+  }
+
+  /* === UPDATED CONTINUE BUTTON === */
+  .continue-btn {
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 700;
+  font-size: clamp(14px, 2vw, 17px);
+  letter-spacing: 0.08em;
+  padding: 14px 46px;
+  border: 2.5px solid #362214; /* brown border */
+  border-radius: 40px;
+  color: #fff;
+  background: linear-gradient(180deg, #FFD1DC 0%, #F4A7B9 100%); /* baby pink gradient */
+  text-shadow: 0 1px 4px rgba(150,50,72,0.28);
+  opacity: .32;
+  pointer-events: none;
+  cursor: not-allowed;
+  transition: transform .20s cubic-bezier(.22,.82,.38,1),
+              box-shadow .25s ease,
+              opacity .95s ease;
+  box-shadow: 0 6px 0 rgba(54,34,20,0.3),
+              0 10px 20px rgba(54,34,20,0.18);
+}
+  .continue-btn.unlocked {
+    opacity: 1;
+    pointer-events: auto;
+    cursor: pointer;
+  }
+
+  .continue-btn.unlocked:hover {
+    background: linear-gradient(180deg, #FFDDE5 0%, #FFD1DC 100%);
+    transform: translateY(-3px);
+    box-shadow:
+      0 9px 0 rgba(54,34,20,0.26),
+      0 16px 28px rgba(54,34,20,0.20);
+  }
+
+  .continue-btn.unlocked:active {
+    background: linear-gradient(180deg, #F4A7B9 0%, #EE90A8 100%);
+    transform: translateY(2px);
+    box-shadow:
+      0 2px 0 rgba(54,34,20,0.30),
+      0 4px 10px rgba(54,34,20,0.14);
+  }
+</style>
+</head>
+<body>
+
+<!-- Visual atmosphere layers -->
+<div class="light-rays"></div>
+<div class="studio-glow"></div>
+<div class="vignette"></div>
+<canvas id="curtainCanvas"></canvas>
+
+<!-- Butterfly SVG layer -->
+<svg id="butterflyLayer" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="wg0" gradientUnits="userSpaceOnUse" cx="0" cy="0" r="50">
+      <stop offset="0%"   stop-color="rgba(255,252,248,0.96)"/>
+      <stop offset="38%"  stop-color="rgba(248,218,226,0.88)"/>
+      <stop offset="75%"  stop-color="rgba(232,134,158,0.64)"/>
+      <stop offset="100%" stop-color="rgba(208,88,120,0.40)"/>
+    </radialGradient>
+    <radialGradient id="wg1" gradientUnits="userSpaceOnUse" cx="0" cy="0" r="48">
+      <stop offset="0%"   stop-color="rgba(255,250,244,0.96)"/>
+      <stop offset="45%"  stop-color="rgba(252,222,214,0.86)"/>
+      <stop offset="80%"  stop-color="rgba(226,130,150,0.60)"/>
+      <stop offset="100%" stop-color="rgba(202,94,118,0.38)"/>
+    </radialGradient>
+    <radialGradient id="wg2" gradientUnits="userSpaceOnUse" cx="0" cy="0" r="52">
+      <stop offset="0%"   stop-color="rgba(255,249,245,0.97)"/>
+      <stop offset="42%"  stop-color="rgba(250,220,220,0.87)"/>
+      <stop offset="78%"  stop-color="rgba(238,145,164,0.60)"/>
+      <stop offset="100%" stop-color="rgba(214,108,136,0.40)"/>
+    </radialGradient>
+    <filter id="bfShadow" x="-70%" y="-70%" width="240%" height="240%">
+      <feDropShadow dx="0.8" dy="1.8" stdDeviation="1.4"
+                    flood-color="#4a1e10" flood-opacity="0.15"/>
+    </filter>
+  </defs>
+</svg>
+
+<canvas id="sparkCanvas"></canvas>
+
+<!-- Main content -->
+<div class="stage">
+
+  <!-- Titles + unlockable poetry -->
+  <div class="top">
+    <div class="title-lines">
+      <div class="title-line">When words fade, the piano speaks.</div>
+      <div class="title-line">Every note paints a memory in sound.</div>
+    </div>
+    <div class="poetry">
+      <div class="line" id="line1">Each note remembers the silence you left behind.</div>
+      <div class="line" id="line2">The melody drifts through curtains of memory.</div>
+      <div class="line" id="line3">And still, the piano waits for your touch.</div>
+    </div>
+  </div>
+
+  <!-- Grand Piano SVG -->
+  <div class="piano-wrap">
+    <svg id="pianoSVG" viewBox="0 0 900 420"
+         xmlns="http://www.w3.org/2000/svg"
+         xmlns:xlink="http://www.w3.org/1999/xlink">
+      <defs>
+        <radialGradient id="pianoBodyGrad" cx="38%" cy="35%" r="62%">
+          <stop offset="0%"   stop-color="#d9a06a"/>
+          <stop offset="35%"  stop-color="#a85a3c"/>
+          <stop offset="72%"  stop-color="#7a3a28"/>
+          <stop offset="100%" stop-color="#5a2618"/>
+        </radialGradient>
+        <radialGradient id="pianoBodyEdge" cx="50%" cy="50%" r="50%">
+          <stop offset="68%"  stop-color="rgba(0,0,0,0)"/>
+          <stop offset="100%" stop-color="rgba(0,0,0,0.5)"/>
+        </radialGradient>
+        <linearGradient id="pianoHighlight" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%"   stop-color="rgba(255,235,210,0.32)"/>
+          <stop offset="50%"  stop-color="rgba(255,235,210,0.07)"/>
+          <stop offset="100%" stop-color="rgba(0,0,0,0)"/>
+        </linearGradient>
+        <linearGradient id="lidGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%"   stop-color="#2a160c"/>
+          <stop offset="100%" stop-color="#120a06"/>
+        </linearGradient>
+        <linearGradient id="goldPlateGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%"   stop-color="#fff3c4"/>
+          <stop offset="40%"  stop-color="#e8b455"/>
+          <stop offset="70%"  stop-color="#b9772c"/>
+          <stop offset="100%" stop-color="#7a4a18"/>
+        </linearGradient>
+        <linearGradient id="pianoStrMetal" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%"   stop-color="#f5f5fa"/>
+          <stop offset="50%"  stop-color="#a8a8b4"/>
+          <stop offset="100%" stop-color="#f0f0f4"/>
+        </linearGradient>
+        <linearGradient id="cheekGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%"   stop-color="#5a3820"/>
+          <stop offset="40%"  stop-color="#3e2410"/>
+          <stop offset="100%" stop-color="#2a1a0a"/>
+        </linearGradient>
+        <linearGradient id="whiteKeyGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%"   stop-color="#fffdf8"/>
+          <stop offset="60%"  stop-color="#f7f0e4"/>
+          <stop offset="100%" stop-color="#e7dcc8"/>
+        </linearGradient>
+        <linearGradient id="blackKeyGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%"   stop-color="#3a2e28"/>
+          <stop offset="50%"  stop-color="#15100c"/>
+          <stop offset="100%" stop-color="#050402"/>
+        </linearGradient>
+        <linearGradient id="reflectionFade" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%"   stop-color="rgba(107,59,46,0.55)"/>
+          <stop offset="100%" stop-color="rgba(107,59,46,0)"/>
+        </linearGradient>
+        <radialGradient id="floorGlow" cx="50%" cy="50%" r="50%">
+          <stop offset="0%"   stop-color="rgba(255,225,190,0.5)"/>
+          <stop offset="100%" stop-color="rgba(255,225,190,0)"/>
+        </radialGradient>
+      </defs>
+
+      <!-- Floor / reflection -->
+      <ellipse cx="450" cy="402" rx="420" ry="16" fill="url(#floorGlow)" opacity="0.5"/>
+      <ellipse cx="450" cy="410" rx="500" ry="10" fill="url(#floorGlow)" opacity="0.3"/>
+      <g opacity="0.28">
+        <rect x="128" y="203" width="644" height="172" fill="url(#reflectionFade)"
+              transform="translate(0,471) scale(1,-0.25)"/>
+      </g>
+
+      <!-- Piano case -->
+      <g id="pianoBody">
+        <path d="M 150 225 C 120 195,100 160,95 120 C 92 95,85 70,90 48
+                 C 95 28,115 16,145 18 C 220 8,340 4,460 8
+                 C 590 12,700 26,780 60 C 820 78,838 105,832 138
+                 C 828 165,808 192,778 210 C 745 228,700 233,650 231 L 150 225 Z"
+              fill="rgba(0,0,0,0.16)" transform="translate(4,7)"/>
+        <path d="M 150 225 C 120 195,100 160,95 120 C 92 95,85 70,90 48
+                 C 95 28,115 16,145 18 C 220 8,340 4,460 8
+                 C 590 12,700 26,780 60 C 820 78,838 105,832 138
+                 C 828 165,808 192,778 210 C 745 228,700 233,650 231 L 150 225 Z"
+              fill="url(#pianoBodyGrad)"/>
+        <path d="M 150 225 C 120 195,100 160,95 120 C 92 95,85 70,90 48
+                 C 95 28,115 16,145 18 C 220 8,340 4,460 8
+                 C 590 12,700 26,780 60 C 820 78,838 105,832 138
+                 C 828 165,808 192,778 210 C 745 228,700 233,650 231 L 150 225 Z"
+              fill="none" stroke="#e8c070" stroke-width="2.2" opacity="0.5"/>
+        <path d="M 150 225 C 120 195,100 160,95 120 C 92 95,85 70,90 48
+                 C 95 28,115 16,145 18 C 220 8,340 4,460 8
+                 C 590 12,700 26,780 60 C 820 78,838 105,832 138
+                 C 828 165,808 192,778 210 C 745 228,700 233,650 231 L 150 225 Z"
+              fill="url(#pianoBodyEdge)"/>
+        <path d="M 165 215 C 140 188,122 158,118 122 C 115 98,110 75,114 55
+                 C 118 38,134 28,158 30 C 225 20,330 16,440 20
+                 C 560 24,660 36,730 65 C 762 80,775 100,770 125
+                 C 766 148,750 168,722 182 C 695 196,660 200,620 198 L 165 215 Z"
+              fill="url(#lidGrad)" opacity="0.93"/>
+        <g stroke="url(#pianoStrMetal)" opacity="0.75">
+          <line x1="120" y1="55"  x2="700" y2="205" stroke-width="3.2"/>
+          <line x1="125" y1="62"  x2="740" y2="195" stroke-width="2.8"/>
+          <line x1="130" y1="70"  x2="770" y2="180" stroke-width="2.4"/>
+          <line x1="138" y1="80"  x2="795" y2="165" stroke-width="2.0"/>
+          <line x1="148" y1="92"  x2="812" y2="145" stroke-width="1.6"/>
+          <line x1="160" y1="105" x2="818" y2="120" stroke-width="1.3"/>
+          <line x1="175" y1="118" x2="815" y2="95"  stroke-width="1.0"/>
+          <line x1="192" y1="128" x2="800" y2="72"  stroke-width="0.8"/>
+          <line x1="210" y1="135" x2="770" y2="52"  stroke-width="0.6"/>
+        </g>
+        <path d="M 140 60 C 300 30,550 25,760 70 C 790 80,805 100,800 125
+                 C 795 150,760 165,700 160 C 560 150,380 140,240 120
+                 C 180 110,145 90,140 60 Z"
+              fill="url(#goldPlateGrad)" opacity="0.5"/>
+        <line x1="300" y1="35" x2="268" y2="150"
+              stroke="#1c0f07" stroke-width="4" stroke-linecap="round"/>
+        <ellipse cx="300" cy="100" rx="190" ry="72"
+                 fill="url(#pianoHighlight)" opacity="0.55"
+                 transform="rotate(-10,300,100)"/>
+        <ellipse cx="650" cy="130" rx="110" ry="55"
+                 fill="url(#pianoHighlight)" opacity="0.35"
+                 transform="rotate(8,650,130)"/>
+      </g>
+
+      <!-- Fallboard & cheek blocks -->
+      <rect x="140" y="203" width="620" height="14" rx="3" fill="url(#cheekGrad)"/>
+      <rect x="140" y="203" width="620" height="3"  rx="1.5" fill="rgba(255,210,150,0.18)"/>
+      <rect x="128" y="203" width="22"  height="178" rx="4" fill="url(#cheekGrad)"/>
+      <rect x="750" y="203" width="22"  height="178" rx="4" fill="url(#cheekGrad)"/>
+
+      <!-- Legs & pedals -->
+      <rect x="140" y="381" width="16" height="26" rx="2" fill="url(#cheekGrad)"/>
+      <rect x="744" y="381" width="16" height="26" rx="2" fill="url(#cheekGrad)"/>
+      <line x1="450" y1="375" x2="450" y2="393" stroke="#3a2410" stroke-width="4" stroke-linecap="round"/>
+      <ellipse cx="432" cy="396" rx="7" ry="4" fill="#c8a060" stroke="#8a6030" stroke-width="0.8"/>
+      <ellipse cx="450" cy="398" rx="7" ry="4" fill="#c8a060" stroke="#8a6030" stroke-width="0.8"/>
+      <ellipse cx="468" cy="396" rx="7" ry="4" fill="#c8a060" stroke="#8a6030" stroke-width="0.8"/>
+
+      <!-- White keys -->
+      <g id="whiteKeys">
+        <rect id="wkey0" class="whiteKey" x="155" y="215" width="59" height="160" rx="3"/>
+        <rect id="wkey1" class="whiteKey" x="214" y="215" width="59" height="160" rx="3"/>
+        <rect id="wkey2" class="whiteKey" x="273" y="215" width="59" height="160" rx="3"/>
+        <rect id="wkey3" class="whiteKey" x="332" y="215" width="59" height="160" rx="3"/>
+        <rect id="wkey4" class="whiteKey" x="391" y="215" width="59" height="160" rx="3"/>
+        <rect id="wkey5" class="whiteKey" x="450" y="215" width="59" height="160" rx="3"/>
+        <rect id="wkey6" class="whiteKey" x="509" y="215" width="59" height="160" rx="3"/>
+        <rect id="wkey7" class="whiteKey" x="568" y="215" width="59" height="160" rx="3"/>
+        <rect id="wkey8" class="whiteKey" x="627" y="215" width="59" height="160" rx="3"/>
+        <rect id="wkey9" class="whiteKey" x="686" y="215" width="59" height="160" rx="3"/>
+      </g>
+
+      <!-- Black keys -->
+      <g id="blackKeys">
+        <rect class="blackKey" x="198" y="215" width="32" height="90" rx="2"/>
+        <rect class="blackKey" x="257" y="215" width="32" height="90" rx="2"/>
+        <rect class="blackKey" x="375" y="215" width="32" height="90" rx="2"/>
+        <rect class="blackKey" x="434" y="215" width="32" height="90" rx="2"/>
+        <rect class="blackKey" x="493" y="215" width="32" height="90" rx="2"/>
+        <rect class="blackKey" x="611" y="215" width="32" height="90" rx="2"/>
+        <rect class="blackKey" x="670" y="215" width="32" height="90" rx="2"/>
+      </g>
+
+      <!-- Key labels -->
+      <g id="keyLabels" text-anchor="middle">
+        <text class="keyLabel" x="184.5" y="362">Q</text>
+        <text class="keyLabel" x="243.5" y="362">W</text>
+        <text class="keyLabel" x="302.5" y="362">E</text>
+        <text class="keyLabel" x="361.5" y="362">R</text>
+        <text class="keyLabel" x="420.5" y="362">T</text>
+        <text class="keyLabel" x="479.5" y="362">Y</text>
+        <text class="keyLabel" x="538.5" y="362">U</text>
+        <text class="keyLabel" x="597.5" y="362">I</text>
+        <text class="keyLabel" x="656.5" y="362">O</text>
+        <text class="keyLabel" x="715.5" y="362">P</text>
+      </g>
+    </svg>
+  </div>
+
+  <!-- Continue button -->
+  <div class="bottom">
+    <button class="continue-btn" id="continueBtn">Continue →</button>
+  </div>
+
+</div><!-- .stage -->
+
+<script>
+(() => {
+  'use strict';
+
+  /* ═══════════════════════════════════════════════
+     AUDIO
+  ═══════════════════════════════════════════════ */
+  const NOTE_FILES = [
+    'note1.ogg','note2.ogg','note3.ogg','note4.ogg','note5.ogg',
+    'note6.ogg','note7.mp3','note8.mp3','note9.mp3','note10.mp3'
+  ];
+  const KEY_LETTERS = ['Q','W','E','R','T','Y','U','I','O','P'];
+
+  const sounds = NOTE_FILES.map(f => {
+    const a = new Audio(f);
+    a.preload = 'auto';
+    a.volume  = 0.9;
+    return a;
+  });
+
+  function playNote(idx) {
+    const base = sounds[idx];
+    if (!base) return;
+    try {
+      const clone = base.cloneNode(true);
+      clone.volume = base.volume;
+      clone.play().catch(() => {});
+    } catch (e) {}
+  }
+
+
+  /* ═══════════════════════════════════════════════
+     KEY PRESS SPRING ANIMATION
+  ═══════════════════════════════════════════════ */
+  const keyAnims = Array.from({ length: 10 }, () => ({ animId: null }));
+
+  function pressKeyVisual(idx) {
+    const s  = keyAnims[idx];
+    const el = document.getElementById(`wkey${idx}`);
+    if (!el) return;
+    if (s.animId) cancelAnimationFrame(s.animId);
+
+    el.classList.add('pressed');
+    setTimeout(() => el.classList.remove('pressed'), 130);
+
+    const t0 = performance.now(), dur = 580;
+    function frame(now) {
+      const t = now - t0;
+      if (t >= dur) { el.removeAttribute('transform'); s.animId = null; return; }
+      const y = 7 * Math.exp(-t / 120) * Math.cos((2 * Math.PI * t) / 260);
+      el.setAttribute('transform', `translate(0,${y.toFixed(2)})`);
+      s.animId = requestAnimationFrame(frame);
+    }
+    s.animId = requestAnimationFrame(frame);
+  }
+
+
+  /* ═══════════════════════════════════════════════
+     SPARKLES / MUSICAL DUST
+  ═══════════════════════════════════════════════ */
+  const sparkCanvas = document.getElementById('sparkCanvas');
+  const sctx = sparkCanvas.getContext('2d');
+  let sparks = [];
+
+  function resizeSpark() {
+    sparkCanvas.width  = window.innerWidth;
+    sparkCanvas.height = window.innerHeight;
+  }
+  resizeSpark();
+
+  const sparkPalette = [
+    '#f0c060','#ffe9b3','#E8869B','#FFD1DC','#FDFBF7',
+    '#f8c8d4','#ffd098','rgba(255,200,210,0.9)'
+  ];
+
+  function emitSparks(ox, oy) {
+    const n = 12 + Math.floor(Math.random() * 6);
+    for (let i = 0; i < n; i++) {
+      const angle = Math.random() * Math.PI * 2;
+      const spd   = 0.8 + Math.random() * 2.8;
+      sparks.push({
+        x: ox, y: oy,
+        vx: Math.cos(angle) * spd * 0.6,
+        vy: Math.sin(angle) * spd - 1.8,
+        life: 1,
+        decay: 0.010 + Math.random() * 0.022,
+        size:  1.2 + Math.random() * 2.8,
+        color: sparkPalette[Math.floor(Math.random() * sparkPalette.length)],
+        ring: false
+      });
+    }
+    for (let i = 0; i < 3; i++) {
+      sparks.push({
+        x: ox, y: oy,
+        vx: (Math.random() - 0.5) * 0.6,
+        vy: -(0.5 + Math.random() * 1.2),
+        life: 1,
+        decay: 0.007 + Math.random() * 0.009,
+        size:  4 + Math.random() * 6,
+        color: `rgba(255,${160 + Math.floor(Math.random()*60)},${185 + Math.floor(Math.random()*50)},0.55)`,
+        ring: true
+      });
+    }
+  }
+
+  function renderSparks() {
+    sctx.clearRect(0, 0, sparkCanvas.width, sparkCanvas.height);
+    sctx.globalCompositeOperation = 'lighter';
+
+    sparks = sparks.filter(p => p.life > 0);
+    for (const p of sparks) {
+      p.x  += p.vx;
+      p.y  += p.vy;
+      p.vy -= 0.016;
+      p.life -= p.decay;
+
+      const a = Math.max(p.life, 0);
+      sctx.globalAlpha = a;
+
+      if (p.ring) {
+        const r = p.size * (1 + (1 - p.life) * 4);
+        sctx.strokeStyle = p.color;
+        sctx.lineWidth   = 1.2;
+        sctx.beginPath();
+        sctx.arc(p.x, p.y, r, 0, Math.PI * 2);
+        sctx.stroke();
+      } else {
+        sctx.fillStyle = p.color;
+        sctx.beginPath();
+        sctx.arc(p.x, p.y, p.size * a, 0, Math.PI * 2);
+        sctx.fill();
+      }
+    }
+    sctx.globalAlpha = 1;
+    sctx.globalCompositeOperation = 'source-over';
+    requestAnimationFrame(renderSparks);
+  }
+  renderSparks();
+
+
+  /* ═══════════════════════════════════════════════
+     BUTTERFLIES
+  ═══════════════════════════════════════════════ */
+  const bflyLayer = document.getElementById('butterflyLayer');
+  const NS = 'http://www.w3.org/2000/svg';
+
+  function resizeBflyLayer() {
+    bflyLayer.setAttribute('viewBox', `0 0 ${window.innerWidth} ${window.innerHeight}`);
+  }
+  resizeBflyLayer();
+
+  const P_FWT = 'M 2,-1 C -2,-20 4,-44 16,-42 C 28,-40 30,-18 20,-4 C 12,3 4,3 2,-1 Z';
+  const P_FWB = 'M 2,1 C -2,20 4,44 16,42 C 28,40 30,18 20,4 C 12,-3 4,-3 2,1 Z';
+  const P_HWT = 'M -3,-1 C -7,-14 -2,-28 8,-24 C 16,-20 14,-6 4,2 C -1,5 -3,2 -3,-1 Z';
+  const P_HWB = 'M -3,1 C -7,14 -2,28 8,24 C 16,20 14,6 4,-2 C -1,-5 -3,-2 -3,1 Z';
+  const P_VT  = 'M 2,-1 Q 10,-24 14,-40';
+  const P_VB  = 'M 2,1 Q 10,24 14,40';
+
+  const GRAD_IDS = ['wg0', 'wg1', 'wg2'];
+
+  function mkEl(tag, attrs) {
+    const el = document.createElementNS(NS, tag);
+    Object.entries(attrs).forEach(([k, v]) => el.setAttribute(k, v));
+    return el;
+  }
+
+  function buildButterfly(gradId) {
+    const g = mkEl('g', { filter: 'url(#bfShadow)' });
+    const wgTop = mkEl('g', {});
+    const wgBot = mkEl('g', {});
+    const wFill   = `url(#${gradId})`;
+    const wStroke = 'rgba(210,108,138,0.38)';
+
+    wgTop.appendChild(mkEl('path', { d: P_FWT, fill: wFill,
+      stroke: wStroke, 'stroke-width': '0.55', opacity: '0.93' }));
+    wgBot.appendChild(mkEl('path', { d: P_FWB, fill: wFill,
+      stroke: wStroke, 'stroke-width': '0.55', opacity: '0.93' }));
+
+    const hFill   = `url(#${gradId})`;
+    const hStroke = 'rgba(195,95,125,0.30)';
+    wgTop.appendChild(mkEl('path', { d: P_HWT, fill: hFill,
+      stroke: hStroke, 'stroke-width': '0.45', opacity: '0.82' }));
+    wgBot.appendChild(mkEl('path', { d: P_HWB, fill: hFill,
+      stroke: hStroke, 'stroke-width': '0.45', opacity: '0.82' }));
+
+    wgTop.appendChild(mkEl('path', { d: P_VT, fill: 'none',
+      stroke: 'rgba(170,72,100,0.12)', 'stroke-width': '0.5' }));
+    wgBot.appendChild(mkEl('path', { d: P_VB, fill: 'none',
+      stroke: 'rgba(170,72,100,0.12)', 'stroke-width': '0.5' }));
+
+    g.appendChild(wgTop);
+    g.appendChild(wgBot);
+
+    g.appendChild(mkEl('ellipse', {
+      cx: '6', cy: '0', rx: '14', ry: '2.2',
+      fill: '#5a2e1e', opacity: '0.80'
+    }));
+    g.appendChild(mkEl('ellipse', {
+      cx: '6', cy: '-0.5', rx: '5', ry: '1.2',
+      fill: 'rgba(160,80,50,0.35)'
+    }));
+    g.appendChild(mkEl('circle', {
+      cx: '20', cy: '0', r: '2.8', fill: '#3e1e10'
+    }));
+
+    [[-1, -1], [1, 1]].forEach(([sy, ty]) => {
+      g.appendChild(mkEl('line', {
+        x1: '20', y1: String(sy * 1.5),
+        x2: '28', y2: String(ty * 8),
+        stroke: '#3e1e10', 'stroke-width': '0.65', 'stroke-linecap': 'round'
+      }));
+      g.appendChild(mkEl('circle', {
+        cx: '28', cy: String(ty * 8), r: '1.4', fill: '#3e1e10'
+      }));
+    });
+
+    bflyLayer.appendChild(g);
+    return { el: g, wgTop, wgBot };
+  }
+
+  const BFLY_COUNT = 8;
+  const butterflies = [];
+
+  for (let i = 0; i < BFLY_COUNT; i++) {
+    const gid  = GRAD_IDS[i % GRAD_IDS.length];
+    const bfly = buildButterfly(gid);
+    butterflies.push({
+      ...bfly,
+      x:         Math.random() * window.innerWidth,
+      y:         Math.random() * window.innerHeight,
+      vx:        (Math.random() - 0.5) * 0.38,
+      vy:        (Math.random() - 0.5) * 0.38,
+      scale:     0.28 + Math.random() * 0.22,
+      angle:     Math.random() * Math.PI * 2,
+      flapPhase: Math.random() * Math.PI * 2,
+      flapSpeed: 0.09 + Math.random() * 0.11
+    });
+  }
+
+  function updateBflies() {
+    const w = window.innerWidth, h = window.innerHeight;
+    const margin = 65, maxSpd = 0.62;
+
+    for (const b of butterflies) {
+      b.vx += (Math.random() - 0.5) * 0.038;
+      b.vy += (Math.random() - 0.5) * 0.038 - 0.0008;
+
+      const sp = Math.hypot(b.vx, b.vy);
+      if (sp > maxSpd) { b.vx *= maxSpd / sp; b.vy *= maxSpd / sp; }
+
+      if (b.x < margin)   b.vx += 0.030;
+      if (b.x > w-margin) b.vx -= 0.030;
+      if (b.y < margin)   b.vy += 0.030;
+      if (b.y > h-margin) b.vy -= 0.030;
+
+      for (const o of butterflies) {
+        if (o === b) continue;
+        const dx = b.x - o.x, dy = b.y - o.y;
+        const d  = Math.hypot(dx, dy) + 0.001;
+        const minD = (b.scale + o.scale) * 28;
+        if (d < minD) {
+          const push = (minD - d) * 0.011;
+          b.vx += (dx / d) * push;
+          b.vy += (dy / d) * push;
+        }
+      }
+
+      b.x += b.vx;
+      b.y += b.vy;
+
+      let da = Math.atan2(b.vy, b.vx) - b.angle;
+      while (da >  Math.PI) da -= Math.PI * 2;
+      while (da < -Math.PI) da += Math.PI * 2;
+      b.angle += da * 0.09;
+
+      b.flapPhase += b.flapSpeed;
+    }
+  }
+
+  function drawBflies() {
+    for (const b of butterflies) {
+      const deg = (b.angle * 180) / Math.PI;
+      b.el.setAttribute('transform',
+        `translate(${b.x.toFixed(1)},${b.y.toFixed(1)}) ` +
+        `rotate(${deg.toFixed(1)}) ` +
+        `scale(${b.scale.toFixed(3)})`
+      );
+      const flap = 0.22 + 0.78 * Math.abs(Math.sin(b.flapPhase));
+      b.wgTop.setAttribute('transform', `scale(1,${flap.toFixed(3)})`);
+      b.wgBot.setAttribute('transform', `scale(1,${flap.toFixed(3)})`);
+    }
+  }
+
+  (function bflyLoop() {
+    updateBflies();
+    drawBflies();
+    requestAnimationFrame(bflyLoop);
+  })();
+
+
+  /* ═══════════════════════════════════════════════
+     CHIFFON CURTAINS + SHIMMER
+  ═══════════════════════════════════════════════ */
+  const curtain = document.getElementById('curtainCanvas');
+  const cctx    = curtain.getContext('2d');
+  let   cTime   = 0;
+
+  function resizeCurtain() {
+    curtain.width  = window.innerWidth;
+    curtain.height = window.innerHeight;
+  }
+  resizeCurtain();
+
+  function drawCurtain() {
+    cTime += 0.009;
+    const w = curtain.width, h = curtain.height;
+    cctx.clearRect(0, 0, w, h);
+
+    const folds = 16, fw = w / folds;
+    for (let i = 0; i <= folds; i++) {
+      const bx = i * fw;
+      cctx.beginPath();
+      cctx.moveTo(bx, 0);
+
+      const seg = 28;
+      for (let s = 0; s <= seg; s++) {
+        const y    = (s / seg) * h;
+        const sway =
+          Math.sin(cTime + i * 0.46 + y * 0.0040) * 22 +
+          Math.cos(cTime * 0.58 + y * 0.0055 + i * 0.28) * 12 +
+          Math.sin(cTime * 1.3  + i * 0.9  + y * 0.002) * 4;
+        cctx.lineTo(bx + sway, y);
+      }
+
+      const g = cctx.createLinearGradient(bx - fw * 0.55, 0, bx + fw * 0.55, 0);
+      g.addColorStop(0,   'rgba(252,240,236,0.000)');
+      g.addColorStop(0.35,'rgba(254,248,245,0.065)');
+      g.addColorStop(0.50,'rgba(255,252,250,0.115)');
+      g.addColorStop(0.65,'rgba(254,248,245,0.065)');
+      g.addColorStop(1,   'rgba(252,240,236,0.000)');
+      cctx.strokeStyle = g;
+      cctx.lineWidth   = fw * 0.90;
+      cctx.lineCap     = 'round';
+      cctx.stroke();
+    }
+
+    const sx = w * 0.50 + Math.sin(cTime * 0.32) * w * 0.30;
+    const sy = h * 0.44 + Math.cos(cTime * 0.25) * h * 0.09;
+    const sg = cctx.createRadialGradient(sx, sy, 0, sx, sy, w * 0.44);
+    sg.addColorStop(0,   'rgba(255,250,242,0.080)');
+    sg.addColorStop(0.4, 'rgba(255,244,236,0.040)');
+    sg.addColorStop(1,   'rgba(255,244,236,0.000)');
+    cctx.fillStyle = sg;
+    cctx.fillRect(0, 0, w, h);
+
+    const sx2 = w * 0.65 + Math.cos(cTime * 0.20 + 1.5) * w * 0.22;
+    const sy2 = h * 0.55 + Math.sin(cTime * 0.18 + 0.8) * h * 0.12;
+    const sg2 = cctx.createRadialGradient(sx2, sy2, 0, sx2, sy2, w * 0.30);
+    sg2.addColorStop(0,   'rgba(255,245,235,0.055)');
+    sg2.addColorStop(1,   'rgba(255,245,235,0.000)');
+    cctx.fillStyle = sg2;
+    cctx.fillRect(0, 0, w, h);
+
+    requestAnimationFrame(drawCurtain);
+  }
+  drawCurtain();
+
+
+  /* ═══════════════════════════════════════════════
+     PROGRESS TRACKING
+  ═══════════════════════════════════════════════ */
+  const uniqueKeys  = new Set();
+  const line1       = document.getElementById('line1');
+  const line2       = document.getElementById('line2');
+  const line3       = document.getElementById('line3');
+  const continueBtn = document.getElementById('continueBtn');
+
+  function updateProgress() {
+    if (uniqueKeys.size >= 3)  line1.classList.add('unlocked');
+    if (uniqueKeys.size >= 6)  line2.classList.add('unlocked');
+    if (uniqueKeys.size >= 10) {
+      line3.classList.add('unlocked');
+      continueBtn.classList.add('unlocked');
+    }
+  }
+
+
+  /* ═══════════════════════════════════════════════
+     TRIGGER A KEY
+  ═══════════════════════════════════════════════ */
+  const lastHit = {};
+
+  function triggerKey(idx, cx, cy) {
+    if (idx < 0 || idx > 9) return;
+    const now = performance.now();
+    if (now - (lastHit[idx] || 0) < 110) return;
+    lastHit[idx] = now;
+
+    playNote(idx);
+    pressKeyVisual(idx);
+
+    if (cx == null || cy == null) {
+      const r = document.getElementById(`wkey${idx}`).getBoundingClientRect();
+      cx = r.left + r.width  * 0.5;
+      cy = r.top  + r.height * 0.65;
+    }
+    emitSparks(cx, cy);
+
+    uniqueKeys.add(idx);
+    updateProgress();
+  }
+
+
+  /* ═══════════════════════════════════════════════
+     SVG HIT-TESTING
+  ═══════════════════════════════════════════════ */
+  const pianoSVG = document.getElementById('pianoSVG');
+
+  function svgPoint(cx, cy) {
+    const r = pianoSVG.getBoundingClientRect();
+    return {
+      x: ((cx - r.left) / r.width)  * 900,
+      y: ((cy - r.top)  / r.height) * 420
+    };
+  }
+
+  const KEY_BOUNDS = [
+    { x0:155, x1:214, i:0 }, { x0:214, x1:273, i:1 },
+    { x0:273, x1:332, i:2 }, { x0:332, x1:391, i:3 },
+    { x0:391, x1:450, i:4 }, { x0:450, x1:509, i:5 },
+    { x0:509, x1:568, i:6 }, { x0:568, x1:627, i:7 },
+    { x0:627, x1:686, i:8 }, { x0:686, x1:745, i:9 }
+  ];
+
+  function getKeyAt(sx, sy) {
+    if (sy < 212 || sy > 380) return -1;
+    for (const k of KEY_BOUNDS) {
+      if (sx >= k.x0 && sx < k.x1) return k.i;
+    }
+    return -1;
+  }
+
+  let pointerDown = false, lastSwept = -1;
+
+  function handlePointer(cx, cy, isMove) {
+    const { x, y } = svgPoint(cx, cy);
+    const idx = getKeyAt(x, y);
+    if (idx === -1) return;
+    if (isMove && idx === lastSwept) return;
+    lastSwept = idx;
+    triggerKey(idx, cx, cy);
+  }
+
+  pianoSVG.addEventListener('mousedown', e => {
+    pointerDown = true; lastSwept = -1;
+    handlePointer(e.clientX, e.clientY, false);
+  });
+  window.addEventListener('mouseup', () => { pointerDown = false; lastSwept = -1; });
+  pianoSVG.addEventListener('mousemove', e => {
+    if (pointerDown) handlePointer(e.clientX, e.clientY, true);
+  });
+
+  pianoSVG.addEventListener('touchstart', e => {
+    e.preventDefault(); lastSwept = -1;
+    for (const t of e.changedTouches) handlePointer(t.clientX, t.clientY, false);
+  }, { passive: false });
+  pianoSVG.addEventListener('touchmove', e => {
+    e.preventDefault();
+    for (const t of e.changedTouches) handlePointer(t.clientX, t.clientY, true);
+  }, { passive: false });
+
+
+  /* ═══════════════════════════════════════════════
+     KEYBOARD
+  ═══════════════════════════════════════════════ */
+  const held = new Set();
+  window.addEventListener('keydown', e => {
+    const k   = e.key.toUpperCase();
+    const idx = KEY_LETTERS.indexOf(k);
+    if (idx === -1 || held.has(k)) return;
+    held.add(k);
+    triggerKey(idx);
+  });
+  window.addEventListener('keyup', e => held.delete(e.key.toUpperCase()));
+
+
+  /* ═══════════════════════════════════════════════
+     CONTINUE BUTTON
+  ═══════════════════════════════════════════════ */
+  continueBtn.addEventListener('click', () => {
+    if (continueBtn.classList.contains('unlocked')) {
+      window.location.href = 'next3.html';
+    }
+  });
+
+
+  /* ═══════════════════════════════════════════════
+     RESIZE
+  ═══════════════════════════════════════════════ */
+  window.addEventListener('resize', () => {
+    resizeSpark();
+    resizeCurtain();
+    resizeBflyLayer();
+  });
+
+  updateProgress();
+
+})();
+</script>
+</body>
+</html>
