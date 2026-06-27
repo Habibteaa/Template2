@@ -6,7 +6,7 @@
 <title>Memory Journey — The Strings</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
     --cream: #FDFBF7;
@@ -30,35 +30,25 @@
     touch-action: none;
   }
 
-  /* Studio glow breathing overlay */
   .studio-glow {
     position: fixed;
     inset: 0;
     pointer-events: none;
     z-index: 5;
-    background: radial-gradient(ellipse at 50% 35%, rgba(255, 240, 230, 0.35) 0%, rgba(255, 220, 210, 0.08) 40%, transparent 70%);
+    background: radial-gradient(ellipse at 50% 35%, rgba(255,240,230,0.35) 0%, rgba(255,220,210,0.08) 40%, transparent 70%);
     mix-blend-mode: screen;
     animation: breathe 16s ease-in-out infinite;
   }
   @keyframes breathe {
-    0%, 100% { opacity: 0.55; transform: scale(1); }
-    50% { opacity: 1; transform: scale(1.08); }
+    0%,100%{opacity:.55;transform:scale(1);}
+    50%{opacity:1;transform:scale(1.08);}
   }
 
-  /* Chiffon curtain canvas */
   #curtainCanvas {
-    position: fixed;
-    inset: 0;
-    z-index: 1;
-    pointer-events: none;
-    opacity: 0.5;
+    position: fixed; inset: 0; z-index: 1; pointer-events: none; opacity: 0.5;
   }
-
   #sparkCanvas {
-    position: fixed;
-    inset: 0;
-    z-index: 8;
-    pointer-events: none;
+    position: fixed; inset: 0; z-index: 8; pointer-events: none;
   }
 
   .stage {
@@ -76,46 +66,49 @@
   /* ---- TOP ---- */
   .top {
     width: 100%;
-    max-width: 720px;
+    max-width: 780px;
     text-align: center;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 0.6vh;
+    gap: 1.2vh;
   }
+
   .guide {
     font-family: 'DM Sans', sans-serif;
-    font-weight: 500;
-    font-size: clamp(13px, 1.7vw, 17px);
-    letter-spacing: 0.12em;
+    font-weight: 700;
+    font-size: clamp(15px, 2.1vw, 21px);
+    letter-spacing: 0.13em;
     text-transform: uppercase;
-    color: var(--earthy);
+    color: var(--mahogany);
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
   }
   .guide .dot {
-    width: 6px; height: 6px; border-radius: 50%;
+    width: 7px; height: 7px; border-radius: 50%;
     background: var(--bright-pink);
     animation: pulse 2s ease-in-out infinite;
+    flex-shrink: 0;
   }
-  @keyframes pulse { 0%,100%{opacity:.3;} 50%{opacity:1;} }
+  @keyframes pulse {0%,100%{opacity:.3;}50%{opacity:1;}}
 
   .poetry {
-    margin-top: 0.8vh;
+    margin-top: 1.4vh;
     display: flex;
     flex-direction: column;
-    gap: 0.4vh;
+    gap: 0.7vh;
   }
   .line {
     font-family: 'Playfair Display', serif;
     font-style: italic;
-    font-size: clamp(15px, 2.4vw, 22px);
-    color: var(--mahogany);
+    font-size: clamp(17px, 2.8vw, 26px);
+    color: #4a2518;
     filter: blur(7px);
-    opacity: 0.25;
+    opacity: 0.22;
     transform: translateY(8px);
     transition: filter 1.4s ease, opacity 1.4s ease, transform 1.4s ease;
+    line-height: 1.5;
   }
   .line.unlocked {
     filter: blur(0);
@@ -123,83 +116,29 @@
     transform: translateY(0);
   }
 
-  /* ---- CENTER: GUITAR ---- */
+  /* ---- GUITAR WRAP ---- */
   .guitar-wrap {
     flex: 1;
     width: 100%;
-    max-width: 880px;
+    max-width: 900px;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 1.5vh 0;
-  }
-  .fretboard {
+    padding: 0.5vh 0;
     position: relative;
+  }
+
+  #guitarSVG {
     width: 100%;
-    height: clamp(180px, 32vh, 300px);
-    border-radius: 14px;
-    background:
-      linear-gradient(180deg, rgba(0,0,0,0.18), transparent 12%, transparent 88%, rgba(0,0,0,0.25)),
-      linear-gradient(90deg, #3a2218 0%, #5a3221 18%, #6e3f29 40%, #5a3221 62%, #44281c 85%, #2e1a12 100%);
-    box-shadow:
-      0 18px 40px rgba(60,30,20,0.35),
-      inset 0 2px 6px rgba(255,220,190,0.18),
-      inset 0 -8px 18px rgba(0,0,0,0.4);
-    overflow: hidden;
+    height: 100%;
+    max-height: 62vh;
+    display: block;
+    filter: drop-shadow(0 18px 36px rgba(60,30,20,0.32)) drop-shadow(0 4px 10px rgba(90,40,20,0.18));
     cursor: crosshair;
-  }
-  /* wood grain */
-  .fretboard::before {
-    content:'';
-    position:absolute; inset:0;
-    background-image:
-      repeating-linear-gradient(88deg, rgba(0,0,0,0.05) 0px, rgba(0,0,0,0.05) 1px, transparent 2px, transparent 7px),
-      repeating-linear-gradient(91deg, rgba(255,200,160,0.04) 0px, transparent 3px, transparent 10px);
-    pointer-events:none;
+    touch-action: none;
   }
 
-  .fret {
-    position: absolute;
-    top: 0; bottom: 0;
-    width: 4px;
-    background: linear-gradient(90deg, #b9b9c0, #f4f4f8 40%, #d6d6dc 60%, #8f8f97);
-    box-shadow: 0 0 4px rgba(255,255,255,0.4);
-    pointer-events: none;
-  }
-  .inlay {
-    position: absolute;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    width: 12px; height: 12px;
-    border-radius: 50%;
-    background: radial-gradient(circle at 35% 35%, #fff8ee, #d8c4a8);
-    box-shadow: inset 0 0 3px rgba(0,0,0,0.3);
-    pointer-events: none;
-  }
-
-  .strings {
-    position: absolute;
-    inset: 0;
-    z-index: 3;
-  }
-  .string {
-    position: absolute;
-    left: 0; right: 0;
-    height: 40px;
-    transform: translateY(-50%);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-  }
-  .string-line {
-    width: 100%;
-    border-radius: 4px;
-    background: linear-gradient(180deg, #fff 0%, #c9c9cf 30%, #8a8a90 55%, #efeff2 100%);
-    box-shadow: 0 1px 3px rgba(0,0,0,0.35), 0 0 5px rgba(255,255,255,0.25);
-    transition: filter 0.2s;
-  }
-
-  /* ---- BOTTOM: VINYL + BUTTON ---- */
+  /* ---- BOTTOM ---- */
   .bottom {
     width: 100%;
     max-width: 720px;
@@ -208,10 +147,11 @@
     align-items: center;
     gap: 1.6vh;
   }
+
   .vinyl {
     position: relative;
-    width: clamp(90px, 13vh, 120px);
-    height: clamp(90px, 13vh, 120px);
+    width: clamp(82px, 12vh, 112px);
+    height: clamp(82px, 12vh, 112px);
     border-radius: 50%;
     background:
       repeating-radial-gradient(circle at 50% 50%, #1a1a1a 0px, #1a1a1a 2px, #262626 3px, #1a1a1a 4px),
@@ -231,17 +171,14 @@
     filter: blur(3px);
   }
   .vinyl-center {
-    width: 36%;
-    height: 36%;
+    width: 36%; height: 36%;
     border-radius: 50%;
     background: radial-gradient(circle at 40% 35%, var(--pastel-pink), var(--bright-pink));
     box-shadow: inset 0 0 6px rgba(255,255,255,0.5), 0 0 0 4px rgba(0,0,0,0.5);
     display:flex; align-items:center; justify-content:center;
   }
   .vinyl-hole {
-    width: 14%; height: 14%;
-    border-radius: 50%;
-    background: #1a1a1a;
+    width:14%; height:14%; border-radius:50%; background:#1a1a1a;
   }
 
   .continue-btn {
@@ -273,14 +210,6 @@
   .continue-btn.unlocked:active {
     transform: translateY(1px) scale(0.97);
   }
-
-  .progress {
-    font-size: 11px;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: var(--earthy);
-    opacity: 0.7;
-  }
 </style>
 </head>
 <body>
@@ -300,11 +229,392 @@
     </div>
   </div>
 
-  <!-- CENTER -->
+  <!-- GUITAR -->
   <div class="guitar-wrap">
-    <div class="fretboard" id="fretboard">
-      <div class="strings" id="strings"></div>
-    </div>
+    <!--
+      Inline SVG acoustic guitar — landscape orientation, strings horizontal.
+      String layout is built on a single shared grid so every string is
+      perfectly straight, perfectly parallel, and evenly spaced:
+        CENTER_Y = 263   (shared vertical center for hole / bridge / strings)
+        SPACING  = 22    (constant vertical gap between adjacent strings)
+        STRING_Y = [208, 230, 252, 274, 296, 318]
+      All hardware (nut, frets, headstock pegs, bridge pins, sound hole)
+      is aligned to this same grid for visual realism.
+    -->
+    <svg id="guitarSVG" viewBox="0 0 900 420" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+      <defs>
+        <!-- Body wood gradient warm -->
+        <radialGradient id="bodyGrad" cx="42%" cy="45%" r="56%" fx="38%" fy="38%">
+          <stop offset="0%"  stop-color="#e8c48a"/>
+          <stop offset="35%" stop-color="#c8964a"/>
+          <stop offset="72%" stop-color="#a06a38"/>
+          <stop offset="100%" stop-color="#7a4e28"/>
+        </radialGradient>
+        <!-- Body edge shadow -->
+        <radialGradient id="bodyEdge" cx="50%" cy="50%" r="50%">
+          <stop offset="70%" stop-color="rgba(0,0,0,0)"/>
+          <stop offset="100%" stop-color="rgba(0,0,0,0.45)"/>
+        </radialGradient>
+        <!-- Neck gradient -->
+        <linearGradient id="neckGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%"  stop-color="#5a3820"/>
+          <stop offset="40%" stop-color="#3e2410"/>
+          <stop offset="100%" stop-color="#2a1a0a"/>
+        </linearGradient>
+        <!-- Headstock gradient -->
+        <linearGradient id="headGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%"  stop-color="#4a2e18"/>
+          <stop offset="100%" stop-color="#2e1c0a"/>
+        </linearGradient>
+        <!-- Sound hole gradient -->
+        <radialGradient id="holeGrad" cx="50%" cy="50%" r="50%">
+          <stop offset="0%"  stop-color="#0a0503"/>
+          <stop offset="100%" stop-color="#180e06"/>
+        </radialGradient>
+        <!-- Metallic string gradient -->
+        <linearGradient id="strMetal" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%"  stop-color="#f8f8fc"/>
+          <stop offset="30%" stop-color="#c8c8d4"/>
+          <stop offset="55%" stop-color="#8a8a96"/>
+          <stop offset="100%" stop-color="#f0f0f4"/>
+        </linearGradient>
+        <!-- Tuning peg metal -->
+        <radialGradient id="pegMetal" cx="40%" cy="35%" r="60%">
+          <stop offset="0%"  stop-color="#e8e8ec"/>
+          <stop offset="60%" stop-color="#a0a0a8"/>
+          <stop offset="100%" stop-color="#606068"/>
+        </radialGradient>
+        <!-- Nut / saddle -->
+        <linearGradient id="nutGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%"  stop-color="#f0ece4"/>
+          <stop offset="100%" stop-color="#c8c0b0"/>
+        </linearGradient>
+        <!-- Body highlight -->
+        <linearGradient id="bodyHighlight" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%"  stop-color="rgba(255,240,200,0.28)"/>
+          <stop offset="50%" stop-color="rgba(255,240,200,0.06)"/>
+          <stop offset="100%" stop-color="rgba(0,0,0,0)"/>
+        </linearGradient>
+        <!-- Fret inlay dots gradient -->
+        <radialGradient id="inlayGrad" cx="40%" cy="35%" r="60%">
+          <stop offset="0%"  stop-color="#fff8ee"/>
+          <stop offset="100%" stop-color="#d0b888"/>
+        </radialGradient>
+
+        <!-- String vibration filter -->
+        <filter id="stringGlow" x="-20%" y="-200%" width="140%" height="500%">
+          <feGaussianBlur in="SourceGraphic" stdDeviation="1.2" result="blur"/>
+          <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+      </defs>
+
+      <!-- ===================== HEADSTOCK ===================== -->
+      <!-- Headstock body — sized to comfortably frame all 6 tuning pegs,
+           which now sit in line with their own string (y = 208…318) -->
+      <rect x="18" y="193" width="78" height="140" rx="6" ry="6" fill="url(#headGrad)"/>
+      <ellipse cx="57" cy="193" rx="39" ry="10" fill="#3a2010"/>
+      <rect x="30" y="317" width="54" height="16" rx="3" fill="url(#neckGrad)"/>
+
+      <!-- Tuning pegs — one per string, aligned to that string's Y so the
+           line from peg → nut → bridge stays a single straight, parallel run -->
+      <g id="pegs">
+        <rect x="6" y="204.5" width="20" height="7" rx="3.5" fill="#888890"/>
+        <rect x="6" y="226.5" width="20" height="7" rx="3.5" fill="#888890"/>
+        <rect x="6" y="248.5" width="20" height="7" rx="3.5" fill="#888890"/>
+        <rect x="6" y="270.5" width="20" height="7" rx="3.5" fill="#888890"/>
+        <rect x="6" y="292.5" width="20" height="7" rx="3.5" fill="#888890"/>
+        <rect x="6" y="314.5" width="20" height="7" rx="3.5" fill="#888890"/>
+
+        <ellipse cx="5" cy="208" rx="5" ry="5.5" fill="url(#pegMetal)" stroke="#666" stroke-width="0.5"/>
+        <ellipse cx="5" cy="230" rx="5" ry="5.5" fill="url(#pegMetal)" stroke="#666" stroke-width="0.5"/>
+        <ellipse cx="5" cy="252" rx="5" ry="5.5" fill="url(#pegMetal)" stroke="#666" stroke-width="0.5"/>
+        <ellipse cx="5" cy="274" rx="5" ry="5.5" fill="url(#pegMetal)" stroke="#666" stroke-width="0.5"/>
+        <ellipse cx="5" cy="296" rx="5" ry="5.5" fill="url(#pegMetal)" stroke="#666" stroke-width="0.5"/>
+        <ellipse cx="5" cy="318" rx="5" ry="5.5" fill="url(#pegMetal)" stroke="#666" stroke-width="0.5"/>
+      </g>
+
+      <!-- ===================== NUT ===================== -->
+      <rect x="96" y="197" width="10" height="132" rx="2" fill="url(#nutGrad)" stroke="#c8b89a" stroke-width="0.5"/>
+
+      <!-- ===================== NECK ===================== -->
+      <rect x="96" y="199" width="176" height="128" rx="4" fill="url(#neckGrad)"/>
+      <rect x="96" y="199" width="176" height="4" rx="2" fill="rgba(255,200,140,0.18)"/>
+      <rect x="96" y="323" width="176" height="4" rx="2" fill="rgba(0,0,0,0.25)"/>
+
+      <!-- Frets on neck — span the full, equally-spaced string range -->
+      <g stroke="#c0b090" stroke-width="2.5" opacity="0.85">
+        <line x1="128" y1="199" x2="128" y2="327"/>
+        <line x1="152" y1="199" x2="152" y2="327"/>
+        <line x1="174" y1="199" x2="174" y2="327"/>
+        <line x1="194" y1="199" x2="194" y2="327"/>
+        <line x1="213" y1="199" x2="213" y2="327"/>
+        <line x1="231" y1="199" x2="231" y2="327"/>
+        <line x1="248" y1="199" x2="248" y2="327"/>
+        <line x1="262" y1="199" x2="262" y2="327"/>
+      </g>
+      <!-- Fret inlay dots, centered on the string grid -->
+      <circle cx="163" cy="263" r="4.5" fill="url(#inlayGrad)" opacity="0.85"/>
+      <circle cx="221" cy="263" r="4.5" fill="url(#inlayGrad)" opacity="0.85"/>
+
+      <!-- ===================== GUITAR BODY ===================== -->
+      <g id="guitarBody">
+        <!-- Shadow/depth layer -->
+        <path d="
+          M 272 175
+          C 295 162, 330 155, 358 158
+          C 388 161, 408 172, 422 183
+          C 448 162, 478 152, 508 153
+          C 548 154, 582 170, 604 196
+          C 626 222, 632 256, 628 284
+          C 626 302, 618 320, 606 334
+          C 590 352, 566 364, 540 370
+          C 510 377, 476 376, 448 368
+          C 428 362, 410 351, 398 336
+          C 382 354, 360 368, 332 374
+          C 304 380, 276 374, 254 360
+          C 232 346, 218 324, 214 300
+          C 208 268, 218 234, 238 210
+          C 252 192, 264 180, 272 175 Z
+        " fill="rgba(0,0,0,0.18)" transform="translate(4,6)"/>
+
+        <!-- Main body fill -->
+        <path id="bodyPath" d="
+          M 272 175
+          C 295 162, 330 155, 358 158
+          C 388 161, 408 172, 422 183
+          C 448 162, 478 152, 508 153
+          C 548 154, 582 170, 604 196
+          C 626 222, 632 256, 628 284
+          C 626 302, 618 320, 606 334
+          C 590 352, 566 364, 540 370
+          C 510 377, 476 376, 448 368
+          C 428 362, 410 351, 398 336
+          C 382 354, 360 368, 332 374
+          C 304 380, 276 374, 254 360
+          C 232 346, 218 324, 214 300
+          C 208 268, 218 234, 238 210
+          C 252 192, 264 180, 272 175 Z
+        " fill="url(#bodyGrad)"/>
+
+        <!-- Wood grain subtle lines -->
+        <path d="
+          M 272 175
+          C 295 162, 330 155, 358 158
+          C 388 161, 408 172, 422 183
+          C 448 162, 478 152, 508 153
+          C 548 154, 582 170, 604 196
+          C 626 222, 632 256, 628 284
+          C 626 302, 618 320, 606 334
+          C 590 352, 566 364, 540 370
+          C 510 377, 476 376, 448 368
+          C 428 362, 410 351, 398 336
+          C 382 354, 360 368, 332 374
+          C 304 380, 276 374, 254 360
+          C 232 346, 218 324, 214 300
+          C 208 268, 218 234, 238 210
+          C 252 192, 264 180, 272 175 Z
+        " fill="none" stroke="rgba(120,70,20,0.07)" stroke-width="3"
+          stroke-dasharray="900 4" pathLength="900"/>
+        <path d="
+          M 272 175
+          C 295 162, 330 155, 358 158
+          C 388 161, 408 172, 422 183
+          C 448 162, 478 152, 508 153
+          C 548 154, 582 170, 604 196
+          C 626 222, 632 256, 628 284
+          C 626 302, 618 320, 606 334
+          C 590 352, 566 364, 540 370
+          C 510 377, 476 376, 448 368
+          C 428 362, 410 351, 398 336
+          C 382 354, 360 368, 332 374
+          C 304 380, 276 374, 254 360
+          C 232 346, 218 324, 214 300
+          C 208 268, 218 234, 238 210
+          C 252 192, 264 180, 272 175 Z
+        " fill="none" stroke="rgba(200,140,60,0.05)" stroke-width="6"
+          stroke-dasharray="450 8" stroke-dashoffset="200" pathLength="900"/>
+
+        <!-- Body edge/binding highlight -->
+        <path d="
+          M 272 175
+          C 295 162, 330 155, 358 158
+          C 388 161, 408 172, 422 183
+          C 448 162, 478 152, 508 153
+          C 548 154, 582 170, 604 196
+          C 626 222, 632 256, 628 284
+          C 626 302, 618 320, 606 334
+          C 590 352, 566 364, 540 370
+          C 510 377, 476 376, 448 368
+          C 428 362, 410 351, 398 336
+          C 382 354, 360 368, 332 374
+          C 304 380, 276 374, 254 360
+          C 232 346, 218 324, 214 300
+          C 208 268, 218 234, 238 210
+          C 252 192, 264 180, 272 175 Z
+        " fill="none" stroke="#e8c070" stroke-width="2.5" opacity="0.55"/>
+        <!-- Inner binding line -->
+        <path d="
+          M 276 178
+          C 298 165, 332 158, 359 161
+          C 387 164, 406 175, 420 185
+          C 447 165, 477 155, 508 156
+          C 546 157, 579 173, 601 198
+          C 622 223, 628 256, 624 283
+          C 622 300, 615 317, 603 331
+          C 587 349, 564 361, 538 367
+          C 509 374, 476 373, 449 365
+          C 429 359, 412 348, 400 334
+          C 384 351, 362 365, 334 371
+          C 307 377, 279 371, 257 358
+          C 236 344, 223 323, 218 299
+          C 213 268, 222 235, 242 212
+          C 256 195, 268 183, 276 178 Z
+        " fill="none" stroke="rgba(240,200,120,0.3)" stroke-width="1.5"/>
+
+        <!-- Body edge darkness -->
+        <path d="
+          M 272 175
+          C 295 162, 330 155, 358 158
+          C 388 161, 408 172, 422 183
+          C 448 162, 478 152, 508 153
+          C 548 154, 582 170, 604 196
+          C 626 222, 632 256, 628 284
+          C 626 302, 618 320, 606 334
+          C 590 352, 566 364, 540 370
+          C 510 377, 476 376, 448 368
+          C 428 362, 410 351, 398 336
+          C 382 354, 360 368, 332 374
+          C 304 380, 276 374, 254 360
+          C 232 346, 218 324, 214 300
+          C 208 268, 218 234, 238 210
+          C 252 192, 264 180, 272 175 Z
+        " fill="url(#bodyEdge)"/>
+
+        <!-- Body top surface highlight -->
+        <ellipse cx="370" cy="220" rx="100" ry="65" fill="url(#bodyHighlight)" opacity="0.7" transform="rotate(-12,370,220)"/>
+        <ellipse cx="530" cy="250" rx="70" ry="45" fill="url(#bodyHighlight)" opacity="0.45" transform="rotate(8,530,250)"/>
+      </g>
+
+      <!-- ===================== WAIST line decoration ===================== -->
+      <path d="M 416 178 C 412 194, 410 210, 412 228 C 414 246, 418 258, 420 270 C 421 280, 422 290, 422 300 C 421 310, 420 326, 418 341"
+            fill="none" stroke="rgba(0,0,0,0.12)" stroke-width="3"/>
+
+      <!-- ===================== SOUND HOLE ===================== -->
+      <!-- Centered on the shared string grid (cy = 263), radius enlarged so
+           the full evenly-spaced string set passes cleanly through it -->
+      <g id="soundHole">
+        <circle cx="422" cy="263" r="80" fill="none" stroke="#c89040" stroke-width="3" opacity="0.6"/>
+        <circle cx="422" cy="263" r="76" fill="none" stroke="#f0c060" stroke-width="1.2" opacity="0.5"/>
+        <circle cx="422" cy="263" r="72" fill="url(#holeGrad)"/>
+        <circle cx="422" cy="263" r="68" fill="none" stroke="#a07030" stroke-width="1.5" opacity="0.7"/>
+        <circle cx="422" cy="263" r="72" fill="none" stroke="#e0a040" stroke-width="2"
+                stroke-dasharray="8 4" opacity="0.55"/>
+        <circle cx="422" cy="263" r="65" fill="none" stroke="#c08030" stroke-width="1"
+                stroke-dasharray="5 3" opacity="0.4"/>
+        <radialGradient id="holeDepth" cx="40%" cy="35%" r="65%">
+          <stop offset="0%"  stop-color="rgba(60,30,10,0.0)"/>
+          <stop offset="100%" stop-color="rgba(0,0,0,0.7)"/>
+        </radialGradient>
+        <circle cx="422" cy="263" r="72" fill="url(#holeDepth)"/>
+        <path d="M 378 210 C 392 202, 412 199, 428 202"
+              fill="none" stroke="rgba(255,220,140,0.4)" stroke-width="3" stroke-linecap="round"/>
+      </g>
+
+      <!-- ===================== PICKGUARD ===================== -->
+      <path d="
+        M 440 343
+        C 462 338, 490 336, 508 344
+        C 520 350, 524 362, 516 370
+        C 506 380, 484 382, 464 378
+        C 444 374, 430 364, 432 352
+        C 433 348, 436 344, 440 343 Z
+      " fill="#0e0a06" opacity="0.82"/>
+      <path d="
+        M 440 343
+        C 462 338, 490 336, 508 344
+        C 520 350, 524 362, 516 370
+      " fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="1.5" stroke-linecap="round"/>
+
+      <!-- ===================== BRIDGE ===================== -->
+      <!-- Bridge plate is tall enough to receive the full string spread;
+           saddle and pins are now oriented along that spread, each pin
+           sitting directly in line with its own string -->
+      <g id="bridge">
+        <rect x="550" y="198" width="64" height="130" rx="4" fill="#3a2010"/>
+        <rect x="550" y="198" width="64" height="130" rx="4" fill="none" stroke="#6a4020" stroke-width="1.5"/>
+        <!-- Saddle (the bar each string rests on) -->
+        <rect x="578" y="198" width="8" height="130" rx="2" fill="url(#nutGrad)"/>
+        <!-- Bridge pins — one per string, aligned to that string's Y -->
+        <circle cx="600" cy="208" r="3.2" fill="#c8a060" stroke="#8a6030" stroke-width="0.8"/>
+        <circle cx="600" cy="230" r="3.2" fill="#c8a060" stroke="#8a6030" stroke-width="0.8"/>
+        <circle cx="600" cy="252" r="3.2" fill="#c8a060" stroke="#8a6030" stroke-width="0.8"/>
+        <circle cx="600" cy="274" r="3.2" fill="#c8a060" stroke="#8a6030" stroke-width="0.8"/>
+        <circle cx="600" cy="296" r="3.2" fill="#c8a060" stroke="#8a6030" stroke-width="0.8"/>
+        <circle cx="600" cy="318" r="3.2" fill="#c8a060" stroke="#8a6030" stroke-width="0.8"/>
+        <!-- Bridge highlight -->
+        <rect x="552" y="201" width="3" height="124" rx="1.5" fill="rgba(255,200,100,0.2)"/>
+      </g>
+
+      <!-- ===================== STRING SHADOWS (depth) ===================== -->
+      <!-- Soft dark shadow just beneath each string for a sense of depth -->
+      <g opacity="0.22" pointer-events="none">
+        <line x1="26" y1="209.5" x2="614" y2="209.5" stroke="#3a1f10" stroke-width="3.5" stroke-linecap="round"/>
+        <line x1="26" y1="231.5" x2="614" y2="231.5" stroke="#3a1f10" stroke-width="3.1" stroke-linecap="round"/>
+        <line x1="26" y1="253.5" x2="614" y2="253.5" stroke="#3a1f10" stroke-width="2.7" stroke-linecap="round"/>
+        <line x1="26" y1="275.5" x2="614" y2="275.5" stroke="#3a1f10" stroke-width="2.3" stroke-linecap="round"/>
+        <line x1="26" y1="297.5" x2="614" y2="297.5" stroke="#3a1f10" stroke-width="1.9" stroke-linecap="round"/>
+        <line x1="26" y1="319.5" x2="614" y2="319.5" stroke="#3a1f10" stroke-width="1.5" stroke-linecap="round"/>
+      </g>
+
+      <!-- ===================== STRINGS ===================== -->
+      <!-- 6 perfectly straight, perfectly parallel, evenly-spaced (22px) strings
+           running from peg (x=26) to bridge (x=614).
+           Thickness progresses smoothly from 4.5px (top) to 1.5px (bottom). -->
+      <g id="stringsGroup">
+        <line id="str0" x1="26" y1="208" x2="614" y2="208"
+              stroke="url(#strMetal)" stroke-width="4.5"
+              stroke-linecap="round" filter="url(#stringGlow)"/>
+        <line id="str1" x1="26" y1="230" x2="614" y2="230"
+              stroke="url(#strMetal)" stroke-width="3.9"
+              stroke-linecap="round" filter="url(#stringGlow)"/>
+        <line id="str2" x1="26" y1="252" x2="614" y2="252"
+              stroke="url(#strMetal)" stroke-width="3.3"
+              stroke-linecap="round" filter="url(#stringGlow)"/>
+        <line id="str3" x1="26" y1="274" x2="614" y2="274"
+              stroke="url(#strMetal)" stroke-width="2.7"
+              stroke-linecap="round" filter="url(#stringGlow)"/>
+        <line id="str4" x1="26" y1="296" x2="614" y2="296"
+              stroke="url(#strMetal)" stroke-width="2.1"
+              stroke-linecap="round" filter="url(#stringGlow)"/>
+        <line id="str5" x1="26" y1="318" x2="614" y2="318"
+              stroke="url(#strMetal)" stroke-width="1.5"
+              stroke-linecap="round" filter="url(#stringGlow)"/>
+      </g>
+
+      <!-- String shine overlay — a thin highlight riding just above each string -->
+      <g opacity="0.55" pointer-events="none">
+        <line x1="26" y1="206.8" x2="614" y2="206.8" stroke="rgba(255,255,255,0.7)" stroke-width="0.9"/>
+        <line x1="26" y1="228.8" x2="614" y2="228.8" stroke="rgba(255,255,255,0.6)" stroke-width="0.8"/>
+        <line x1="26" y1="250.8" x2="614" y2="250.8" stroke="rgba(255,255,255,0.5)" stroke-width="0.7"/>
+        <line x1="26" y1="272.8" x2="614" y2="272.8" stroke="rgba(255,255,255,0.45)" stroke-width="0.6"/>
+        <line x1="26" y1="294.8" x2="614" y2="294.8" stroke="rgba(255,255,255,0.35)" stroke-width="0.5"/>
+        <line x1="26" y1="316.8" x2="614" y2="316.8" stroke="rgba(255,255,255,0.25)" stroke-width="0.4"/>
+      </g>
+
+      <!-- ===================== NECK / FRETBOARD on body ===================== -->
+      <rect x="267" y="199" width="12" height="128" rx="2" fill="#2a1a08" opacity="0.5"/>
+
+      <!-- ===================== INVISIBLE HIT ZONES for strings ===================== -->
+      <!-- Six equal 22px-tall zones, perfectly tiled edge-to-edge with no
+           gaps and no overlap, so each string has its own clean touch lane -->
+      <rect id="hitZone0" x="106" y="197" width="508" height="22" fill="transparent" data-string="0" class="strumZone"/>
+      <rect id="hitZone1" x="106" y="219" width="508" height="22" fill="transparent" data-string="1" class="strumZone"/>
+      <rect id="hitZone2" x="106" y="241" width="508" height="22" fill="transparent" data-string="2" class="strumZone"/>
+      <rect id="hitZone3" x="106" y="263" width="508" height="22" fill="transparent" data-string="3" class="strumZone"/>
+      <rect id="hitZone4" x="106" y="285" width="508" height="22" fill="transparent" data-string="4" class="strumZone"/>
+      <rect id="hitZone5" x="106" y="307" width="508" height="22" fill="transparent" data-string="5" class="strumZone"/>
+
+    </svg>
   </div>
 
   <!-- BOTTOM -->
@@ -313,7 +623,6 @@
       <div class="vinyl-center"><div class="vinyl-hole"></div></div>
     </div>
     <button class="continue-btn" id="continueBtn">Continue →</button>
-    <div class="progress" id="progress">0 strums · 0 strings</div>
   </div>
 </div>
 
@@ -321,10 +630,10 @@
 (() => {
   'use strict';
 
-  /* ============ AUDIO PRELOAD ============ */
+  /* ============ AUDIO ============ */
   const sounds = [];
   for (let i = 1; i <= 6; i++) {
-    const a = new Audio(`String${i}.wav`);
+    const a = new Audio(`String${i}.mp3`);
     a.preload = 'auto';
     a.volume = 0.85;
     sounds.push(a);
@@ -332,143 +641,115 @@
   function playString(idx) {
     const a = sounds[idx];
     if (!a) return;
-    try { a.currentTime = 0; a.play().catch(()=>{}); } catch(e){}
+    try { a.currentTime = 0; a.play().catch(() => {}); } catch(e) {}
   }
 
-  /* ============ STRINGS BUILD ============ */
-  const fretboard = document.getElementById('fretboard');
-  const stringsContainer = document.getElementById('strings');
+  /* ============ STRING ELEMENTS ============ */
   const STRING_COUNT = 6;
-  const stringEls = [];
-
-  function buildStrings() {
-    stringsContainer.innerHTML = '';
-    stringEls.length = 0;
-    for (let i = 0; i < STRING_COUNT; i++) {
-      const wrap = document.createElement('div');
-      wrap.className = 'string';
-      wrap.dataset.index = i;
-      // vertical position evenly distributed
-      const pct = (i + 0.5) / STRING_COUNT * 100;
-      wrap.style.top = pct + '%';
-
-      const line = document.createElement('div');
-      line.className = 'string-line';
-      // thickness varies: string 0 (top) thin -> string 5 thick
-      const thickness = 1.4 + i * 0.9;
-      line.style.height = thickness + 'px';
-      line.style.opacity = (0.75 + i * 0.04);
-
-      wrap.appendChild(line);
-      stringsContainer.appendChild(wrap);
-      stringEls.push({ wrap, line, vibrating: false, lastHit: 0 });
-    }
-  }
-  buildStrings();
-
-  /* ============ FRETS & INLAYS ============ */
-  function buildFrets() {
-    // remove old
-    fretboard.querySelectorAll('.fret,.inlay').forEach(e=>e.remove());
-    const fretCount = 7;
-    for (let f = 1; f <= fretCount; f++) {
-      const fr = document.createElement('div');
-      fr.className = 'fret';
-      fr.style.left = (f / (fretCount + 1) * 100) + '%';
-      fretboard.appendChild(fr);
-    }
-    [2.5, 4.5].forEach(pos => {
-      const dot = document.createElement('div');
-      dot.className = 'inlay';
-      dot.style.left = (pos / 8 * 100) + '%';
-      fretboard.appendChild(dot);
+  const stringLines = [];
+  for (let i = 0; i < STRING_COUNT; i++) {
+    stringLines.push({
+      el: document.getElementById(`str${i}`),
+      vibrating: false,
+      lastHit: 0,
+      animId: null
     });
   }
-  buildFrets();
 
-  /* ============ PROGRESS STATE ============ */
-  let totalStrums = 0;
-  const uniqueStrings = new Set();
-  const line1 = document.getElementById('line1');
-  const line2 = document.getElementById('line2');
-  const line3 = document.getElementById('line3');
-  const continueBtn = document.getElementById('continueBtn');
-  const progressEl = document.getElementById('progress');
-
-  function updateProgress() {
-    progressEl.textContent = `${totalStrums} strums · ${uniqueStrings.size} strings`;
-    if (totalStrums >= 2) line1.classList.add('unlocked');
-    if (totalStrums >= 5) line2.classList.add('unlocked');
-    if (totalStrums >= 8 && uniqueStrings.size >= 4) {
-      line3.classList.add('unlocked');
-      continueBtn.classList.add('unlocked');
-    }
-  }
-
-  /* ============ STRING VIBRATION ============ */
-  function vibrate(s) {
-    const line = s.line;
-    line.style.transition = 'none';
-    let t = 0;
-    const dur = 520;
+  /* ============ STRING VIBRATION (SVG) ============ */
+  function vibrateString(s, strIdx) {
+    if (s.animId) cancelAnimationFrame(s.animId);
+    const el = s.el;
+    const dur = 600;
     const start = performance.now();
-    function ripple(now) {
-      const e = now - start;
-      if (e >= dur) {
-        line.style.transform = 'translateY(0) scaleY(1)';
-        line.style.filter = 'none';
+    // Original Y is identical at both ends now (strings are perfectly
+    // horizontal), so the midpoint is simply that shared Y.
+    const baseY1 = parseFloat(el.getAttribute('y1'));
+    const baseY2 = parseFloat(el.getAttribute('y2'));
+    const x1 = parseFloat(el.getAttribute('x1'));
+    const x2 = parseFloat(el.getAttribute('x2'));
+    const strokeW = el.getAttribute('stroke-width');
+    const origStroke = el.getAttribute('stroke');
+    const filter = el.getAttribute('filter');
+
+    // Create a temporary path
+    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    path.setAttribute('stroke', origStroke);
+    path.setAttribute('stroke-width', strokeW);
+    path.setAttribute('fill', 'none');
+    path.setAttribute('stroke-linecap', 'round');
+    if (filter) path.setAttribute('filter', filter);
+    el.style.display = 'none';
+    el.parentNode.insertBefore(path, el.nextSibling);
+
+    function frame(now) {
+      const elapsed = now - start;
+      if (elapsed >= dur) {
+        path.remove();
+        el.style.display = '';
         s.vibrating = false;
+        s.animId = null;
         return;
       }
-      const damp = 1 - e / dur;
-      const wave = Math.sin(e * 0.06) * 6 * damp;
-      line.style.transform = `translateY(${wave}px) scaleY(${1 + damp*0.6})`;
-      line.style.filter = `drop-shadow(0 0 ${4*damp}px rgba(255,200,200,0.7))`;
-      requestAnimationFrame(ripple);
+      const damp = 1 - elapsed / dur;
+      const freq = 0.055 + strIdx * 0.006;
+      const amp = 9 * damp;
+      // Build wavy path between x1 and x2
+      const segments = 32;
+      let d = `M ${x1} ${baseY1}`;
+      for (let i = 1; i <= segments; i++) {
+        const t = i / segments;
+        const x = x1 + (x2 - x1) * t;
+        const sway = Math.sin(elapsed * freq + t * Math.PI * 3) * amp * Math.sin(t * Math.PI);
+        const y = baseY1 + (baseY2 - baseY1) * t + sway;
+        d += ` L ${x} ${y}`;
+      }
+      path.setAttribute('d', d);
+      // Glow
+      path.setAttribute('filter', `drop-shadow(0 0 ${4*damp}px rgba(255,200,180,${0.8*damp}))`);
+      s.animId = requestAnimationFrame(frame);
     }
     s.vibrating = true;
-    requestAnimationFrame(ripple);
+    s.animId = requestAnimationFrame(frame);
   }
 
   /* ============ SPARKS ============ */
   const sparkCanvas = document.getElementById('sparkCanvas');
   const sctx = sparkCanvas.getContext('2d');
   let sparks = [];
+
   function resizeSpark() {
     sparkCanvas.width = window.innerWidth;
     sparkCanvas.height = window.innerHeight;
   }
   resizeSpark();
 
-  const sparkColors = ['#E8869B','#F6D6DC','#FDFBF7','#9A7B6A'];
+  const sparkColors = ['#E8869B','#F6D6DC','#FDFBF7','#9A7B6A','#f0c060'];
   function emitSparks(x, y) {
-    const n = 7 + Math.floor(Math.random()*5);
+    const n = 7 + Math.floor(Math.random() * 5);
     for (let i = 0; i < n; i++) {
       sparks.push({
         x, y,
-        vx: (Math.random()-0.5) * 1.6,
-        vy: -Math.random()*2.2 - 0.6,
+        vx: (Math.random() - 0.5) * 2.2,
+        vy: -Math.random() * 2.6 - 0.5,
         life: 1,
-        decay: 0.012 + Math.random()*0.02,
-        size: 1.5 + Math.random()*2.5,
-        color: sparkColors[Math.floor(Math.random()*sparkColors.length)]
+        decay: 0.012 + Math.random() * 0.022,
+        size: 1.5 + Math.random() * 2.8,
+        color: sparkColors[Math.floor(Math.random() * sparkColors.length)]
       });
     }
   }
 
   function renderSparks() {
-    sctx.clearRect(0,0,sparkCanvas.width,sparkCanvas.height);
+    sctx.clearRect(0, 0, sparkCanvas.width, sparkCanvas.height);
     sctx.globalCompositeOperation = 'lighter';
     sparks = sparks.filter(p => p.life > 0);
     for (const p of sparks) {
-      p.x += p.vx;
-      p.y += p.vy;
-      p.vy -= 0.012; // drift upward
-      p.life -= p.decay;
+      p.x += p.vx; p.y += p.vy; p.vy -= 0.014; p.life -= p.decay;
       sctx.globalAlpha = Math.max(p.life, 0);
       sctx.beginPath();
       sctx.fillStyle = p.color;
-      sctx.arc(p.x, p.y, p.size * p.life, 0, Math.PI*2);
+      sctx.arc(p.x, p.y, p.size * p.life, 0, Math.PI * 2);
       sctx.fill();
     }
     sctx.globalAlpha = 1;
@@ -477,86 +758,113 @@
   }
   renderSparks();
 
-  /* ============ STRUM HANDLING ============ */
-  function strumString(s, clientX, clientY) {
+  /* ============ PROGRESS ============ */
+  let totalStrums = 0;
+  const uniqueStrings = new Set();
+  const line1 = document.getElementById('line1');
+  const line2 = document.getElementById('line2');
+  const line3 = document.getElementById('line3');
+  const continueBtn = document.getElementById('continueBtn');
+
+  function updateProgress() {
+    if (totalStrums >= 2) line1.classList.add('unlocked');
+    if (totalStrums >= 5) line2.classList.add('unlocked');
+    if (totalStrums >= 8 && uniqueStrings.size >= 4) {
+      line3.classList.add('unlocked');
+      continueBtn.classList.add('unlocked');
+    }
+  }
+
+  /* ============ STRUM ============ */
+  const lastHitMap = {};
+  function strumString(idx, clientX, clientY) {
     const now = performance.now();
-    // 120ms throttle per string for duplicate touch hits
-    if (now - s.lastHit < 120) return;
-    s.lastHit = now;
+    if ((now - (lastHitMap[idx] || 0)) < 130) return;
+    lastHitMap[idx] = now;
 
-    const idx = parseInt(s.wrap.dataset.index, 10);
     playString(idx);
-    vibrate(s);
+    vibrateString(stringLines[idx], idx);
     emitSparks(clientX, clientY);
-
     totalStrums++;
     uniqueStrings.add(idx);
     updateProgress();
-
     spinVinyl();
   }
 
-  function detectStringAt(clientX, clientY) {
-    const rect = fretboard.getBoundingClientRect();
-    if (clientX < rect.left || clientX > rect.right) return;
-    if (clientY < rect.top || clientY > rect.bottom) return;
-    const relY = clientY - rect.top;
-    const bandH = rect.height / STRING_COUNT;
-    const idx = Math.floor(relY / bandH);
-    if (idx >= 0 && idx < STRING_COUNT) {
-      strumString(stringEls[idx], clientX, clientY);
-    }
+  /* ============ SVG COORDINATE MAPPING ============ */
+  const guitarSVG = document.getElementById('guitarSVG');
+
+  function svgPoint(clientX, clientY) {
+    const rect = guitarSVG.getBoundingClientRect();
+    // Map client coords to SVG viewBox (900 x 420) — this keeps every
+    // string's hit zone proportionally identical at any screen size.
+    const sx = ((clientX - rect.left) / rect.width) * 900;
+    const sy = ((clientY - rect.top) / rect.height) * 420;
+    return { x: sx, y: sy };
   }
 
-  // Mouse sweep
-  let mouseDown = false;
-  let lastStrummedIdx = -1;
-  fretboard.addEventListener('mousedown', e => { mouseDown = true; sweep(e.clientX, e.clientY); });
-  window.addEventListener('mouseup', () => { mouseDown = false; lastStrummedIdx = -1; });
-  fretboard.addEventListener('mousemove', e => { if (mouseDown) sweep(e.clientX, e.clientY); });
+  // String Y zones in SVG space — six equal 22px bands, perfectly tiled
+  // (no gaps, no overlap) and centered exactly on each string's Y.
+  const zoneRanges = [
+    { top: 197, bottom: 219, idx: 0 },
+    { top: 219, bottom: 241, idx: 1 },
+    { top: 241, bottom: 263, idx: 2 },
+    { top: 263, bottom: 285, idx: 3 },
+    { top: 285, bottom: 307, idx: 4 },
+    { top: 307, bottom: 329, idx: 5 },
+  ];
 
-  function sweep(x, y) {
-    const rect = fretboard.getBoundingClientRect();
-    if (y < rect.top || y > rect.bottom) return;
-    const bandH = rect.height / STRING_COUNT;
-    const idx = Math.floor((y - rect.top) / bandH);
-    if (idx >= 0 && idx < STRING_COUNT && idx !== lastStrummedIdx) {
-      lastStrummedIdx = idx;
-      strumString(stringEls[idx], x, y);
+  function getStringAtSVG(sx, sy) {
+    // Must be within fretboard/body x range
+    if (sx < 106 || sx > 614) return -1;
+    for (const z of zoneRanges) {
+      if (sy >= z.top && sy < z.bottom) return z.idx;
     }
+    return -1;
   }
-  // allow hover-pluck even without mousedown
-  fretboard.addEventListener('mousemove', e => {
-    if (!mouseDown) detectStringAt(e.clientX, e.clientY);
+
+  // Sweep tracking
+  let isPointerDown = false;
+  let lastSweptIdx = -1;
+
+  function handlePointer(clientX, clientY, isMove) {
+    const pt = svgPoint(clientX, clientY);
+    const idx = getStringAtSVG(pt.x, pt.y);
+    if (idx === -1) return;
+    if (isMove && idx === lastSweptIdx) return;
+    lastSweptIdx = idx;
+    strumString(idx, clientX, clientY);
+  }
+
+  // Mouse
+  guitarSVG.addEventListener('mousedown', e => {
+    isPointerDown = true;
+    lastSweptIdx = -1;
+    handlePointer(e.clientX, e.clientY, false);
+  });
+  window.addEventListener('mouseup', () => { isPointerDown = false; lastSweptIdx = -1; });
+  guitarSVG.addEventListener('mousemove', e => {
+    if (isPointerDown) handlePointer(e.clientX, e.clientY, true);
   });
 
   // Touch
-  fretboard.addEventListener('touchstart', e => {
-    for (const t of e.changedTouches) detectStringAt(t.clientX, t.clientY);
-  }, { passive: true });
-  fretboard.addEventListener('touchmove', e => {
+  guitarSVG.addEventListener('touchstart', e => {
     e.preventDefault();
-    for (const t of e.changedTouches) detectStringAt(t.clientX, t.clientY);
+    lastSweptIdx = -1;
+    for (const t of e.changedTouches) handlePointer(t.clientX, t.clientY, false);
+  }, { passive: false });
+  guitarSVG.addEventListener('touchmove', e => {
+    e.preventDefault();
+    for (const t of e.changedTouches) handlePointer(t.clientX, t.clientY, true);
   }, { passive: false });
 
   /* ============ VINYL SPIN ============ */
   const vinyl = document.getElementById('vinyl');
-  let angle = 0;
-  let spinSpeed = 0;
-  let lastSpinTime = 0;
-  let targetSpeed = 0;
-
-  function spinVinyl() {
-    targetSpeed = 6; // deg per frame
-    lastSpinTime = performance.now();
-  }
+  let angle = 0, spinSpeed = 0, targetSpeed = 0, lastSpinTime = 0;
+  function spinVinyl() { targetSpeed = 6; lastSpinTime = performance.now(); }
   function vinylLoop() {
     const now = performance.now();
-    // decelerate after 1.2s idle
-    if (now - lastSpinTime > 1200) {
-      targetSpeed *= 0.94;
-      if (targetSpeed < 0.02) targetSpeed = 0;
-    }
+    if (now - lastSpinTime > 1200) { targetSpeed *= 0.93; if (targetSpeed < 0.02) targetSpeed = 0; }
     spinSpeed += (targetSpeed - spinSpeed) * 0.08;
     angle = (angle + spinSpeed) % 360;
     vinyl.style.transform = `rotate(${angle}deg)`;
@@ -564,41 +872,32 @@
   }
   vinylLoop();
 
-  /* ============ CONTINUE BUTTON ============ */
+  /* ============ CONTINUE ============ */
   continueBtn.addEventListener('click', () => {
-    if (continueBtn.classList.contains('unlocked')) {
-      window.location.href = 'next2.html';
-    }
+    if (continueBtn.classList.contains('unlocked')) window.location.href = 'next2.html';
   });
 
   /* ============ CHIFFON CURTAIN ============ */
   const curtain = document.getElementById('curtainCanvas');
   const cctx = curtain.getContext('2d');
-  function resizeCurtain() {
-    curtain.width = window.innerWidth;
-    curtain.height = window.innerHeight;
-  }
+  function resizeCurtain() { curtain.width = window.innerWidth; curtain.height = window.innerHeight; }
   resizeCurtain();
-
   let cTime = 0;
   function drawCurtain() {
     cTime += 0.012;
     const w = curtain.width, h = curtain.height;
-    cctx.clearRect(0,0,w,h);
-    const folds = 14;
-    const foldW = w / folds;
+    cctx.clearRect(0, 0, w, h);
+    const folds = 14, foldW = w / folds;
     for (let i = 0; i <= folds; i++) {
       const baseX = i * foldW;
-      cctx.beginPath();
-      cctx.moveTo(baseX, 0);
+      cctx.beginPath(); cctx.moveTo(baseX, 0);
       const seg = 20;
       for (let s = 0; s <= seg; s++) {
         const y = (s / seg) * h;
-        const sway = Math.sin(cTime + i * 0.5 + y * 0.004) * 18
-                   + Math.cos(cTime * 0.7 + y * 0.006) * 10;
+        const sway = Math.sin(cTime + i * 0.5 + y * 0.004) * 18 + Math.cos(cTime * 0.7 + y * 0.006) * 10;
         cctx.lineTo(baseX + sway, y);
       }
-      const grad = cctx.createLinearGradient(baseX-foldW/2, 0, baseX+foldW/2, 0);
+      const grad = cctx.createLinearGradient(baseX - foldW/2, 0, baseX + foldW/2, 0);
       grad.addColorStop(0, 'rgba(246,214,220,0.0)');
       grad.addColorStop(0.5, 'rgba(253,251,247,0.10)');
       grad.addColorStop(1, 'rgba(154,123,106,0.0)');
@@ -612,10 +911,7 @@
   drawCurtain();
 
   /* ============ RESIZE ============ */
-  window.addEventListener('resize', () => {
-    resizeSpark();
-    resizeCurtain();
-  });
+  window.addEventListener('resize', () => { resizeSpark(); resizeCurtain(); });
 
   updateProgress();
 })();
