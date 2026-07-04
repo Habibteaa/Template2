@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no" />
+  <title>Love Maze</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Berkshire+Swash&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --cream-base:#FDFBF7;
+      --cream-deep:#F5EFEB;
+      --taupe:#E8DDD2;
+      --pink-soft:#FFD1DC;
+      --pink-deep:#F4A7B9;
+      --pink-neon:#FF8FB0;
+      --brown-primary:#362214;
+      --brown-muted:#9C7B67;
+    }
+
+    *{ box-sizing:border-box; }
+
+    html,body{
+      margin:0; padding:0;
+      width:100%; height:100%;
+      min-height:100vh; min-height:100dvh;
+      background:
+        radial-gradient(120% 90% at 50% -10%, var(--cream-base) 0%, var(--cream-deep) 55%, var(--taupe) 100%);
+      font-family:'DM Sans', sans-serif;
+      overflow:hidden;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      gap:clamp(10px,2vh,22px);
+    }
+
+    .glow-blob{
+      position:fixed; border-radius:50%;
+      filter:blur(80px); opacity:.52;
+      pointer-events:none; z-index:0;
+      animation:blobDrift 18s ease-in-out infinite alternate;
+    }
+    .glow-blob.a{ width:420px;height:420px;background:var(--pink-soft);top:-130px;left:-110px; }
+    .glow-blob.b{ width:380px;height:380px;background:var(--pink-deep);bottom:-150px;right:-110px;animation-delay:3s; }
+    .glow-blob.c{ width:260px;height:260px;background:var(--taupe);top:38%;left:58%;animation-delay:6s; }
+    @keyframes blobDrift{
+      0%{  transform:translate(0,0) scale(1); }
+      100%{ transform:translate(30px,-20px) scale(1.08); }
+    }
+
+    #instructions{
+      position:relative; z-index:10;
+      font-family:'Berkshire Swash', cursive;
+      font-size:clamp(14px,3.4vw,28px);
+      font-weight:400; letter-spacing:.02em; margin:0;
+      background:linear-gradient(120deg,var(--pink-neon),var(--pink-deep) 45%,var(--pink-neon));
+      -webkit-background-clip:text; background-clip:text; color:transparent;
+      overflow:hidden; animation:textGlow 2.4s ease-in-out infinite;
+    }
+    #instructions::after{
+      content:''; position:absolute; top:0; left:-40%;
+      width:35%; height:100%;
+      background:linear-gradient(120deg,transparent,rgba(255,255,255,.88),transparent);
+      animation:shimmerSweep 3.2s ease-in-out infinite;
+      pointer-events:none; mix-blend-mode:overlay;
+    }
+    @keyframes textGlow{
+      0%,100%{ filter:drop-shadow(0 0 6px rgba(255,143,176,.35)); }
+      50%{     filter:drop-shadow(0 0 18px rgba(255,143,176,.9)); }
+    }
+    @keyframes shimmerSweep{
+      0%{ left:-40%; } 60%,100%{ left:120%; }
+    }
+
+    #maze{
+      position:relative;
+      z-index:10;
+      width:  min(400px, 90vw, 56vh);
+      height: min(400px, 90vw, 56vh);
+      background:linear-gradient(180deg, rgba(253,251,247,.98) 0%, rgba(245,239,235,.99) 100%);
+      border:2px solid var(--pink-deep);
+      border-radius:min(20px,5%);
+      overflow:hidden;
+      box-shadow:
+        0 1px 0 rgba(255,255,255,.7) inset,
+        0 0 0 1px rgba(255,143,176,.12),
+        0 18px 44px -16px rgba(54,34,20,.22);
+    }
+
+    .wall{
+      position:absolute;
+      background:linear-gradient(135deg, var(--brown-muted), var(--pink-deep));
+      border-radius:4px;
+      box-shadow:0 0 8px rgba(255,143,176,.6);
+    }
+
+    #player{
+      position:absolute;
+      font-size:clamp(22px,6vw,28px);
+      z-index:5;
+      transition:left .08s linear, top .08s linear;
+      text-shadow:0 0 6px rgba(255,143,176,.7), 0 0 16px rgba(255,143,176,.35);
+      animation:entityPulse 1.4s ease-in-out infinite;
+      user-select:none; -webkit-user-select:none;
+    }
+
+    #goal{
+      position:absolute;
+      font-size:clamp(22px,6vw,28px);
+      text-shadow:0 0 6px rgba(255,143,176,.7), 0 0 16px rgba(255,143,176,.35);
+      animation:entityPulse 1.4s ease-in-out infinite;
+      animation-delay:.7s;
+      user-select:none; -webkit-user-select:none;
+    }
+
+    @keyframes entityPulse{
+      0%,100%{ transform:scale(1); filter:brightness(1); }
+      50%{     transform:scale(1.2); filter:brightness(1.1); }
+    }
+
+    #popup{
+      position:fixed; top:0; left:0; width:100%; height:100%;
+      background:rgba(54,34,20,.32); backdrop-filter:blur(5px);
+      display:flex; justify-content:center; align-items:center;
+      opacity:0; visibility:hidden;
+      transition:opacity .5s ease, visibility .5s ease;
+      z-index:20;
+    }
+    #popup.active{ opacity:1; visibility:visible; }
+
+    .popup-content{
+      background:rgba(253,251,247,.97);
+      border:1.5px solid var(--pink-deep);
+      padding:clamp(22px,4vh,38px) clamp(28px,6vw,52px);
+      border-radius:26px; text-align:center;
+      box-shadow:
+        0 1px 0 rgba(255,255,255,.8) inset,
+        0 20px 50px -16px rgba(244,167,185,.55),
+        0 0 60px -10px rgba(255,143,176,.3);
+      position:relative; overflow:hidden;
+      transform:scale(.8); animation:popIn .5s forwards;
+    }
+    .popup-content h2{
+      font-family:'Berkshire Swash', cursive;
+      font-size:clamp(18px,4vw,26px); font-weight:400; margin:0 0 6px;
+      background:linear-gradient(120deg,var(--pink-neon),var(--pink-deep) 50%,var(--pink-neon));
+      -webkit-background-clip:text; background-clip:text; color:transparent;
+      animation:textGlow 2.4s ease-in-out infinite;
+    }
+    .popup-content p{
+      font-size:clamp(13px,2.6vw,15px); color:var(--brown-muted);
+      margin:0 0 20px; font-weight:500;
+    }
+    @keyframes popIn{
+      from{ transform:scale(.8); opacity:0; }
+      to{   transform:scale(1);  opacity:1; }
+    }
+
+    .popup-sparkle{
+      position:absolute; width:8px; height:8px; border-radius:50%;
+      background:radial-gradient(circle, #FFFFFF 0%, var(--pink-neon) 55%, transparent 75%);
+      pointer-events:none; opacity:0;
+      animation:sparkleTwinkle 1.8s ease-in-out infinite, sparkleDrift 6s linear infinite;
+    }
+    @keyframes sparkleTwinkle{
+      0%,100%{ opacity:0; transform:scale(.3) rotate(0deg); }
+      50%{     opacity:1; transform:scale(1.15) rotate(180deg); }
+    }
+    @keyframes sparkleDrift{
+      0%{   transform:translate(0,0); }
+      100%{ transform:translate(50px,-40px); }
+    }
+
+    .continue-btn{
+      margin-top:16px;
+      margin-left:auto;
+      margin-right:auto;
+      display:flex; align-items:center; justify-content:center;
+      width:66px; height:66px; border-radius:50%; position:relative;
+      background:linear-gradient(135deg,var(--pink-neon),var(--pink-deep));
+      box-shadow:
+        0 1px 0 rgba(255,255,255,.5) inset,
+        0 14px 28px -10px rgba(244,167,185,.7);
+      cursor:pointer; border:none;
+      animation:arrowFloat 2.4s ease-in-out infinite;
+      transition:transform .25s ease, box-shadow .25s ease, filter .25s ease;
+    }
+    .continue-btn::before{
+      content:''; position:absolute; inset:-8px; border-radius:50%;
+      background:linear-gradient(135deg,var(--pink-neon),var(--pink-deep));
+      opacity:.4; filter:blur(12px); z-index:-1;
+      animation:arrowGlowPulse 2.4s ease-in-out infinite;
+    }
+    .continue-btn svg{
+      width:26px; height:26px; color:var(--cream-base);
+      transition:transform .25s ease;
+    }
+    .continue-btn:hover{
+      transform:translateY(-5px) scale(1.08) rotate(-4deg);
+      box-shadow:
+        0 1px 0 rgba(255,255,255,.6) inset,
+        0 20px 40px -10px rgba(255,143,176,.85);
+      filter:brightness(1.05);
+    }
+    .continue-btn:hover svg{ transform:translateX(4px) rotate(8deg); }
+    .continue-btn:active{ transform:translateY(-2px) scale(.95); }
+
+    @keyframes arrowFloat{
+      0%,100%{ transform:translateY(0); }
+      50%{     transform:translateY(-7px); }
+    }
+    @keyframes arrowGlowPulse{
+      0%,100%{ opacity:.3; transform:scale(1); }
+      50%{     opacity:.6; transform:scale(1.18); }
+    }
+
+    @media (prefers-reduced-motion:reduce){
+      .glow-blob,#instructions,#instructions::after,
+      #player,#goal,.popup-sparkle,.continue-btn,.continue-btn::before
+      { animation:none !important; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="glow-blob a"></div>
+  <div class="glow-blob b"></div>
+  <div class="glow-blob c"></div>
+
+  <h2 id="instructions">Guide the heart through the maze…</h2>
+
+  <div id="maze">
+    <div class="wall" style="top:20%; left:0;   width:75%; height:4.5%;"></div>
+    <div class="wall" style="top:40%; left:25%; width:75%; height:4.5%;"></div>
+    <div class="wall" style="top:60%; left:0;   width:75%; height:4.5%;"></div>
+
+    <div id="player" style="top:10px; left:10px;">❤️</div>
+    <div id="goal"   style="bottom:10px; right:10px;">💖</div>
+  </div>
+
+  <div id="popup">
+    <div class="popup-content">
+      <h2>Found my way to you ❤️</h2>
+      <p>Every path leads back to you.</p>
+      <button class="continue-btn" onclick="goToNext()" aria-label="Continue">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M5 12h14"/><path d="M13 6l6 6-6 6"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <script>
+    const player = document.getElementById("player");
+    const goal   = document.getElementById("goal");
+    const popup  = document.getElementById("popup");
+    const maze   = document.getElementById("maze");
+    const walls  = document.querySelectorAll(".wall");
+
+    const PLAYER_SIZE = 28;
+    const STEP        = 20;
+    const SWIPE_MIN   = 22;
+
+    let playerPos = { top: 10, left: 10 };
+
+    function movePlayer(key) {
+      let newTop  = playerPos.top;
+      let newLeft = playerPos.left;
+
+      if (key === "ArrowUp")    newTop  -= STEP;
+      if (key === "ArrowDown")  newTop  += STEP;
+      if (key === "ArrowLeft")  newLeft -= STEP;
+      if (key === "ArrowRight") newLeft += STEP;
+
+      const mazeSize = maze.offsetWidth;
+      const mazeRect = maze.getBoundingClientRect();
+
+      const p = {
+        top:    newTop,
+        left:   newLeft,
+        right:  newLeft + PLAYER_SIZE,
+        bottom: newTop  + PLAYER_SIZE
+      };
+
+      let collides = false;
+      walls.forEach(w => {
+        const wr = w.getBoundingClientRect();
+        const wl = wr.left   - mazeRect.left;
+        const wt = wr.top    - mazeRect.top;
+        const wr2 = wr.right  - mazeRect.left;
+        const wb  = wr.bottom - mazeRect.top;
+
+        if (p.left < wr2 && p.right > wl && p.top < wb && p.bottom > wt) {
+          collides = true;
+        }
+      });
+
+      if (!collides &&
+          newTop  >= 0 && newTop  + PLAYER_SIZE <= mazeSize &&
+          newLeft >= 0 && newLeft + PLAYER_SIZE <= mazeSize) {
+        playerPos = { top: newTop, left: newLeft };
+        player.style.top  = playerPos.top  + "px";
+        player.style.left = playerPos.left + "px";
+      }
+
+      const gr = goal.getBoundingClientRect();
+      const gl = gr.left   - mazeRect.left;
+      const gt = gr.top    - mazeRect.top;
+      const gr2 = gr.right  - mazeRect.left;
+      const gb  = gr.bottom - mazeRect.top;
+
+      if (p.left < gr2 && p.right > gl && p.top < gb && p.bottom > gt) {
+        showWin();
+      }
+    }
+
+    function showWin() {
+      if (popup.classList.contains("active")) return;
+      const card = document.querySelector(".popup-content");
+      for (let i = 0; i < 12; i++) {
+        const s = document.createElement("div");
+        s.className = "popup-sparkle";
+        s.style.left              = (Math.random() * 86 + 4) + "%";
+        s.style.top               = (Math.random() * 80 + 4) + "%";
+        s.style.animationDelay    = (Math.random() * 1.8) + "s";
+        s.style.animationDuration = `${1.4 + Math.random() * 0.8}s, ${4 + Math.random() * 3}s`;
+        card.appendChild(s);
+      }
+      popup.classList.add("active");
+    }
+
+    function goToNext() {
+      window.location.href = "puzzle.html";
+    }
+
+    document.addEventListener("keydown", (e) => {
+      if (["ArrowUp","ArrowDown","ArrowLeft","ArrowRight"].includes(e.key)) {
+        e.preventDefault();
+        movePlayer(e.key);
+      }
+    });
+
+    let touchStartX = 0, touchStartY = 0;
+
+    document.addEventListener("touchstart", (e) => {
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+    }, { passive: true });
+
+    document.addEventListener("touchend", (e) => {
+      const dx = e.changedTouches[0].clientX - touchStartX;
+      const dy = e.changedTouches[0].clientY - touchStartY;
+      const ax = Math.abs(dx), ay = Math.abs(dy);
+
+      if (ax < SWIPE_MIN && ay < SWIPE_MIN) return;
+
+      if (ax > ay * 1.4) {
+        movePlayer(dx > 0 ? "ArrowRight" : "ArrowLeft");
+      } else if (ay > ax * 1.4) {
+        movePlayer(dy > 0 ? "ArrowDown"  : "ArrowUp");
+      }
+    }, { passive: true });
+
+    let isDragging = false, startX = 0, startY = 0;
+
+    document.addEventListener("mousedown", (e) => {
+      isDragging = true; startX = e.clientX; startY = e.clientY;
+    });
+    document.addEventListener("mouseup", (e) => {
+      if (!isDragging) return;
+      isDragging = false;
+      const dx = e.clientX - startX;
+      const dy = e.clientY - startY;
+      const ax = Math.abs(dx), ay = Math.abs(dy);
+
+      if (ax < SWIPE_MIN && ay < SWIPE_MIN) return;
+
+      if (ax > ay * 1.4) {
+        movePlayer(dx > 0 ? "ArrowRight" : "ArrowLeft");
+      } else if (ay > ax * 1.4) {
+        movePlayer(dy > 0 ? "ArrowDown"  : "ArrowUp");
+      }
+    });
+  </script>
+</body>
+</html>
