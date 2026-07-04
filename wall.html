@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Our Memory Wall</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Berkshire+Swash&family=DM+Sans:wght@300;400;700&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --cream-base:    #FDFBF7;
+      --cream-deep:    #F5EFEB;
+      --taupe:         #E8DDD2;
+      --pink-soft:     #FFD1DC;
+      --pink-deep:     #F4A7B9;
+      --pink-neon:     #FF8FB0;
+      --brown-primary: #362214;
+      --brown-muted:   #9C7B67;
+      --rope-1:        #a06a38;
+      --rope-2:        #b8864b;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      width: 100%; height: 100%;
+      background: radial-gradient(120% 90% at 50% -10%, var(--cream-base) 0%, var(--cream-deep) 55%, var(--taupe) 100%);
+      font-family: 'DM Sans', sans-serif;
+      color: var(--brown-primary);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .glow-blob {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: .52;
+      pointer-events: none;
+      z-index: 0;
+      animation: blobDrift 18s ease-in-out infinite alternate;
+    }
+    .glow-blob.a { width: 420px; height: 420px; background: var(--pink-soft);  top: -130px; left: -110px; }
+    .glow-blob.b { width: 380px; height: 380px; background: var(--pink-deep);  bottom: -150px; right: -110px; animation-delay: 3s; }
+    .glow-blob.c { width: 260px; height: 260px; background: var(--taupe);      top: 38%; left: 58%; animation-delay: 6s; }
+    @keyframes blobDrift {
+      0%   { transform: translate(0,0) scale(1); }
+      100% { transform: translate(30px,-20px) scale(1.08); }
+    }
+
+    #chiffon-canvas {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      pointer-events: none; z-index: 1; opacity: 0.45;
+      mix-blend-mode: soft-light;
+    }
+
+    #app-shell {
+      position: relative; z-index: 10;
+      width: 100vw; height: 100vh;
+      max-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      overflow: hidden;
+    }
+
+    .page-header {
+      position: relative; z-index: 10;
+      text-align: center;
+      flex: 0 0 auto;
+      padding: clamp(0.8rem, 2vh, 1.6rem) 1rem clamp(0.4rem, 1vh, 0.8rem);
+    }
+    .page-title {
+      font-family: 'Berkshire Swash', cursive;
+      font-weight: 400;
+      font-size: clamp(1.6rem, 4vh, 2.6rem);
+      letter-spacing: -0.02em;
+      line-height: 1.1;
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(120deg, var(--pink-neon), var(--pink-deep) 45%, var(--pink-neon));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      animation: textGlow 2.4s ease-in-out infinite;
+    }
+    .page-title::after {
+      content: '';
+      position: absolute;
+      top: 0; left: -40%;
+      width: 35%; height: 100%;
+      background: linear-gradient(120deg, transparent, rgba(255,255,255,.88), transparent);
+      animation: shimmerSweep 3.2s ease-in-out infinite;
+      pointer-events: none;
+      mix-blend-mode: overlay;
+    }
+    @keyframes textGlow {
+      0%,100% { filter: drop-shadow(0 0 6px rgba(255,143,176,.35)); }
+      50%      { filter: drop-shadow(0 0 18px rgba(255,143,176,.9)); }
+    }
+    @keyframes shimmerSweep {
+      0%       { left: -40%; }
+      60%,100% { left: 120%; }
+    }
+
+    .wall {
+      position: relative; z-index: 10;
+      flex: 1 1 auto;
+      width: 100%;
+      max-width: 1300px;
+      margin: 0 auto;
+      padding: clamp(0.4rem, 1.5vh, 1rem) clamp(0.8rem, 3vw, 2.5rem);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-evenly;
+      align-items: center;
+      gap: clamp(0.6rem, 2vh, 1.8rem);
+      overflow: hidden;
+    }
+
+    .rope-row {
+      position: relative;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      padding-top: clamp(1rem, 2.4vh, 1.8rem);
+    }
+
+    .rope {
+      position: absolute;
+      top: clamp(1rem, 2.4vh, 1.8rem);
+      left: 0; right: 0;
+      height: 6px;
+      border-radius: 3px;
+      background:
+        repeating-linear-gradient(
+          60deg,
+          var(--rope-1) 0px,
+          var(--rope-2) 3px,
+          #c99a5e 6px,
+          var(--rope-1) 9px
+        );
+      box-shadow:
+        0 4px 6px rgba(54,34,20,0.22),
+        inset 0 -1px 1px rgba(54,34,20,0.3),
+        inset 0 1px 1px rgba(255,240,210,0.4);
+      z-index: 11;
+    }
+
+    .photo-line {
+      position: relative;
+      width: 100%;
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: clamp(0.4rem, 1.6vw, 1.4rem);
+      align-items: start;
+      justify-items: center;
+      justify-content: center;
+      z-index: 12;
+      margin: 0 auto;
+    }
+
+    .polaroid-wrap {
+      position: relative;
+      width: 100%;
+      max-width: clamp(70px, 15vw, 165px);
+      padding-top: clamp(0.7rem, 1.6vh, 1.2rem);
+      display: flex;
+      justify-content: center;
+      transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1);
+      transform-origin: top center;
+      cursor: pointer;
+    }
+    .polaroid-wrap:hover {
+      transform: translateY(5px) rotate(0deg) scale(1.05) !important;
+      z-index: 30;
+    }
+    .polaroid {
+      background: #FFFDFA;
+      padding: clamp(3px, 0.7vw, 7px) clamp(3px, 0.7vw, 7px) clamp(9px, 1.6vw, 18px);
+      border-radius: 3px;
+      box-shadow:
+        0 6px 14px rgba(54,34,20,0.25),
+        0 2px 4px rgba(54,34,20,0.18);
+      width: 100%;
+      position: relative;
+    }
+    .polaroid-photo {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      object-fit: cover;
+      display: block;
+      background: linear-gradient(135deg, var(--cream-deep), var(--taupe));
+      border: 1px solid rgba(54,34,20,0.06);
+    }
+    .polaroid-cap { display: none; }
+
+    .peg {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: clamp(12px, 2.4vw, 18px);
+      height: clamp(22px, 4.4vh, 36px);
+      z-index: 20;
+      filter: drop-shadow(0 2px 2px rgba(54,34,20,0.35));
+    }
+
+    #modal {
+      position: fixed; inset: 0;
+      z-index: 100;
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(40,25,15,0.72);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.4s ease;
+      padding: 1.5rem;
+    }
+    #modal.open { opacity: 1; pointer-events: auto; }
+
+    .modal-inner {
+      position: relative;
+      display: flex; flex-direction: column; align-items: center;
+      gap: 1.2rem;
+      max-width: 92vw;
+      transform: scale(0.85);
+      transition: transform 0.45s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    #modal.open .modal-inner { transform: scale(1); }
+
+    .modal-cap {
+      font-family: 'Berkshire Swash', cursive;
+      font-style: italic;
+      font-weight: 400;
+      color: var(--cream-base);
+      text-align: center;
+      font-size: clamp(1.2rem, 3.5vw, 1.9rem);
+      line-height: 1.4;
+      max-width: 620px;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.6);
+    }
+    .modal-frame {
+      background: #FFFDFA;
+      padding: clamp(10px, 2vw, 18px) clamp(10px, 2vw, 18px) clamp(28px, 4vw, 46px);
+      border-radius: 5px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+      transform: rotate(-1.2deg);
+    }
+    .modal-img {
+      display: block;
+      max-width: min(72vw, 460px);
+      max-height: 58vh;
+      width: auto; height: auto;
+      object-fit: contain;
+      background: var(--cream-deep);
+    }
+    .modal-close {
+      position: absolute;
+      top: -45px; right: 0px;
+      width: 44px; height: 44px;
+      border-radius: 50%;
+      border: 2px solid var(--cream-base);
+      background: var(--pink-deep);
+      color: var(--cream-base);
+      font-size: 1.3rem;
+      font-family: 'DM Sans', sans-serif;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+      transition: transform 0.2s ease, background 0.2s ease;
+      z-index: 5;
+    }
+    .modal-close:hover { transform: scale(1.12) rotate(90deg); background: var(--brown-primary); }
+
+    .nav-terminal {
+      position: relative; z-index: 10;
+      flex: 0 0 auto;
+      display: flex; justify-content: center;
+      padding: clamp(0.6rem, 1.6vh, 1.2rem) 1rem clamp(0.9rem, 2.2vh, 1.8rem);
+    }
+
+    .continue-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width:  66px;
+      height: 66px;
+      border-radius: 50%;
+      position: relative;
+      background: linear-gradient(135deg, var(--pink-neon), var(--pink-deep));
+      box-shadow:
+        0 1px 0 rgba(255,255,255,.5) inset,
+        0 14px 28px -10px rgba(244,167,185,.7);
+      text-decoration: none;
+      cursor: pointer;
+      border: none;
+      animation: arrowFloat 2.4s ease-in-out infinite;
+      transition: transform .25s ease, box-shadow .25s ease, filter .25s ease;
+    }
+    .continue-btn::before {
+      content: '';
+      position: absolute;
+      inset: -8px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--pink-neon), var(--pink-deep));
+      opacity: .4;
+      filter: blur(12px);
+      z-index: -1;
+      animation: arrowGlowPulse 2.4s ease-in-out infinite;
+    }
+    .continue-btn svg {
+      width: 26px; height: 26px;
+      color: var(--cream-base);
+      transition: transform .25s ease;
+    }
+    .continue-btn:hover {
+      transform: translateY(-5px) scale(1.08) rotate(-4deg);
+      box-shadow:
+        0 1px 0 rgba(255,255,255,.6) inset,
+        0 20px 40px -10px rgba(255,143,176,.85);
+      filter: brightness(1.05);
+    }
+    .continue-btn:hover svg { transform: translateX(4px) rotate(8deg); }
+    .continue-btn:active    { transform: translateY(-2px) scale(.95); }
+    @keyframes arrowFloat {
+      0%,100% { transform: translateY(0); }
+      50%      { transform: translateY(-7px); }
+    }
+    @keyframes arrowGlowPulse {
+      0%,100% { opacity: .3; transform: scale(1); }
+      50%      { opacity: .6; transform: scale(1.18); }
+    }
+
+    @media (max-width: 600px) {
+      .wall { padding: 0.4rem 0.4rem; gap: 0.6rem; }
+      .photo-line { gap: 0.3rem; }
+      .polaroid-wrap { max-width: 18vw; }
+      .polaroid { padding: 2px 2px 6px; }
+      .rope { height: 4px; }
+      .peg { width: 11px; height: 20px; }
+    }
+    @media (max-width: 380px) {
+      .photo-line { gap: 0.2rem; }
+      .peg { width: 10px; height: 18px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .glow-blob, .page-title, .page-title::after,
+      .continue-btn, .continue-btn::before { animation: none !important; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="glow-blob a"></div>
+  <div class="glow-blob b"></div>
+  <div class="glow-blob c"></div>
+
+  <canvas id="chiffon-canvas"></canvas>
+
+  <div id="app-shell">
+    <header class="page-header">
+      <div class="page-title">Our Memory Wall</div>
+    </header>
+
+    <main class="wall" id="wall"></main>
+
+    <div class="nav-terminal">
+      <a href="music.html" class="continue-btn" aria-label="Continue">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8"
+             stroke-linecap="round" stroke-linejoin="round">
+          <path d="M5 12h14"/><path d="M13 6l6 6-6 6"/>
+        </svg>
+      </a>
+    </div>
+  </div>
+
+  <div id="modal">
+    <div class="modal-inner">
+      <button class="modal-close" id="modal-close" aria-label="Close">✕</button>
+      <div class="modal-cap" id="modal-cap"></div>
+      <div class="modal-frame">
+        <img class="modal-img" id="modal-img" src="" alt="Memory" />
+      </div>
+    </div>
+  </div>
+
+<script>
+(function () {
+  'use strict';
+
+  const PHOTOS = [
+    { src: './pic1.png',  cap: 'Holding on tight, chasing the night breeze, and laughing through every turn.' },
+    { src: './pic2.png',  cap: 'Warm mugs, shared smiles, and conversations that made time completely stand still.' },
+    { src: './pic3.png',  cap: 'A gentle reminder that the most beautiful things in life bloom quietly by your side.' },
+    { src: './pic4.png',  cap: 'Playful rivalries, competitive streaks, and the absolute best teammate I could ever ask for.' },
+    { src: './pic5.png',  cap: 'Flickering screens, shared popcorn, and a shoulder that always feels just like home.' },
+    { src: './pic6.png',  cap: 'Sweet mornings, messy kitchens, and the perfect recipe for a happy heart.' },
+    { src: './pic7.png',  cap: 'Losing the game but winning the absolute jackpot of a lifetime.' },
+    { src: './pic8.png',  cap: 'The true ruler of our little world, bringing endless warmth and fuzzy cuddles.' },
+    { src: './pic9.png',  cap: 'Soft acoustic chords strumming to the rhythm of our favorite unwritten love song.' },
+    { src: './pic10.png', cap: 'Chilly nights made incredibly warm by golden embers and your hand slipped into mine.' },
+    { src: './pic11.png', cap: 'Conquering new heights together and realizing the best view is always just looking at you.' },
+    { src: './pic12.png', cap: 'Woven with patience, wrapped in comfort, and carrying the cozy scent of your embrace.' },
+    { src: './pic13.png', cap: 'Ink on paper, pouring out a love that words can barely begin to contain.' },
+    { src: './pic14.png', cap: 'A quiet, cinematic pause in the rush of life, sharing a single heartbeat in the dark.' },
+    { src: './pic15.png', cap: 'Sweet milestones, bright candles, and celebrating another beautiful chapter of us.' }
+  ];
+
+  const PEG_SVG = `
+    <svg class="peg" viewBox="0 0 24 46" xmlns="http://www.w3.org/2000/svg">
+      <path d="M4 2 Q4 1 6 1 L11.5 1 L11.5 45 L6 45 Q4 45 4 44 Z" fill="#e2a76f"/>
+      <path d="M20 2 Q20 1 18 1 L12.5 1 L12.5 45 L18 45 Q20 45 20 44 Z" fill="#c68a4c"/>
+      <path d="M7 6 L7 40" stroke="#c68a4c" stroke-width="0.5" opacity="0.4"/>
+      <path d="M9 5 L9 41" stroke="#c68a4c" stroke-width="0.4" opacity="0.3"/>
+      <path d="M16 6 L16 40" stroke="#a06a38" stroke-width="0.5" opacity="0.45"/>
+      <path d="M17.5 5 L17.5 41" stroke="#a06a38" stroke-width="0.4" opacity="0.35"/>
+      <line x1="12" y1="1" x2="12" y2="45" stroke="#7a4a22" stroke-width="0.9"/>
+      <path d="M4 2 Q4 1 6 1 L11.5 1 L11.5 45 L6 45 Q4 45 4 44 Z" fill="none" stroke="#a06a38" stroke-width="0.6" opacity="0.5"/>
+      <path d="M20 2 Q20 1 18 1 L12.5 1 L12.5 45 L18 45 Q20 45 20 44 Z" fill="none" stroke="#7a4a22" stroke-width="0.6" opacity="0.5"/>
+      <rect x="2.5" y="20" width="19" height="6.5" rx="1.5" fill="none" stroke="#9aa0a6" stroke-width="1.6"/>
+      <rect x="2.5" y="20" width="19" height="6.5" rx="1.5" fill="none" stroke="#d8dde2" stroke-width="0.6"/>
+      <line x1="5" y1="20.5" x2="5" y2="26" stroke="#c2c7cc" stroke-width="0.9"/>
+      <line x1="19" y1="20.5" x2="19" y2="26" stroke="#c2c7cc" stroke-width="0.9"/>
+      <circle cx="12" cy="23.2" r="1.4" fill="#bfc4c9" stroke="#8c9197" stroke-width="0.5"/>
+    </svg>
+  `;
+
+  const wall = document.getElementById('wall');
+  const TILTS = [-2.3, 1.8, -1.2, 2.5, -2.0,
+                  2.1, -1.6, 0.0,  1.4, -2.5,
+                 -1.9, 2.3, -1.1,  1.7, -2.2];
+
+  for (let row = 0; row < 3; row++) {
+    const ropeRow = document.createElement('div');
+    ropeRow.className = 'rope-row';
+
+    const rope = document.createElement('div');
+    rope.className = 'rope';
+    ropeRow.appendChild(rope);
+
+    const line = document.createElement('div');
+    line.className = 'photo-line';
+
+    for (let col = 0; col < 5; col++) {
+      const idx  = row * 5 + col;
+      const data = PHOTOS[idx];
+
+      const wrap = document.createElement('div');
+      wrap.className = 'polaroid-wrap';
+      wrap.style.transform = 'rotate(' + TILTS[idx] + 'deg)';
+      wrap.dataset.index = idx;
+
+      wrap.innerHTML =
+        PEG_SVG +
+        '<div class="polaroid">' +
+          '<img class="polaroid-photo" src="' + data.src + '" alt="Memory ' + (idx + 1) + '" ' +
+            'onerror="this.style.background=\'linear-gradient(135deg,#F5EFEB,#E8DDD2)\';this.removeAttribute(\'src\');" />' +
+          '<div class="polaroid-cap">' + data.cap + '</div>' +
+        '</div>';
+
+      wrap.addEventListener('click', function () {
+        openModal(parseInt(this.dataset.index, 10));
+      });
+
+      line.appendChild(wrap);
+    }
+
+    ropeRow.appendChild(line);
+    wall.appendChild(ropeRow);
+  }
+
+  const modal      = document.getElementById('modal');
+  const modalImg   = document.getElementById('modal-img');
+  const modalCap   = document.getElementById('modal-cap');
+  const modalClose = document.getElementById('modal-close');
+
+  function openModal(index) {
+    const data = PHOTOS[index];
+    modalImg.src = data.src;
+    modalCap.textContent = data.cap;
+    modal.classList.add('open');
+  }
+  function closeModal() { modal.classList.remove('open'); }
+
+  modalClose.addEventListener('click', closeModal);
+  modal.addEventListener('click', function (e) { if (e.target === modal) closeModal(); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeModal(); });
+
+  const chiffon = document.getElementById('chiffon-canvas');
+  const cctx    = chiffon.getContext('2d');
+  let chiffonT  = 0;
+
+  function sizeChiffon() {
+    chiffon.width  = window.innerWidth;
+    chiffon.height = window.innerHeight;
+  }
+  sizeChiffon();
+  window.addEventListener('resize', sizeChiffon);
+
+  function drawChiffon() {
+    cctx.clearRect(0, 0, chiffon.width, chiffon.height);
+    const W = chiffon.width, H = chiffon.height;
+    const folds = 14;
+    const foldW = W / folds;
+
+    for (let i = 0; i <= folds; i++) {
+      const baseX = i * foldW;
+      const sway  = Math.sin(chiffonT * 0.6 + i * 0.55) * (foldW * 0.32);
+      const sway2 = Math.cos(chiffonT * 0.4 + i * 0.4)  * (foldW * 0.15);
+
+      const grad = cctx.createLinearGradient(baseX - foldW/2, 0, baseX + foldW/2, 0);
+      grad.addColorStop(0,   'rgba(255,253,247,0.0)');
+      grad.addColorStop(0.5, 'rgba(255,225,232,0.16)');
+      grad.addColorStop(1,   'rgba(255,253,247,0.0)');
+
+      cctx.beginPath();
+      cctx.moveTo(baseX + sway, 0);
+      cctx.bezierCurveTo(
+        baseX + sway + sway2, H * 0.35,
+        baseX + sway - sway2, H * 0.65,
+        baseX + sway, H
+      );
+      cctx.lineTo(baseX + foldW + sway, H);
+      cctx.bezierCurveTo(
+        baseX + foldW + sway - sway2, H * 0.65,
+        baseX + foldW + sway + sway2, H * 0.35,
+        baseX + foldW + sway, 0
+      );
+      cctx.closePath();
+      cctx.fillStyle = grad;
+      cctx.fill();
+
+      cctx.beginPath();
+      cctx.moveTo(baseX + sway, 0);
+      cctx.bezierCurveTo(
+        baseX + sway + sway2, H * 0.35,
+        baseX + sway - sway2, H * 0.65,
+        baseX + sway, H
+      );
+      cctx.strokeStyle = 'rgba(156,123,103,0.06)';
+      cctx.lineWidth = 1.5;
+      cctx.stroke();
+    }
+
+    chiffonT += 0.012;
+    requestAnimationFrame(drawChiffon);
+  }
+  drawChiffon();
+
+})();
+</script>
+</body>
+</html>
