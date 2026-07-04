@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>The Strings Of Love</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Berkshire+Swash&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream-base:   #FDFBF7;
+    --cream-deep:   #F5EFEB;
+    --taupe:        #E8DDD2;
+    --pink-soft:    #FFD1DC;
+    --pink-deep:    #F4A7B9;
+    --pink-neon:    #FF8FB0;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    width: 100%; height: 100%;
+    overflow: hidden;
+    font-family: 'DM Sans', sans-serif;
+    background: radial-gradient(120% 90% at 50% -10%, var(--cream-base) 0%, var(--cream-deep) 55%, var(--taupe) 100%);
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: none;
+  }
+
+  .glow-blob {
+    position: fixed; border-radius: 50%; filter: blur(80px); opacity: .5;
+    pointer-events: none; z-index: 0;
+    animation: drift 15s ease-in-out infinite alternate;
+  }
+  .glow-blob.a { width:400px; height:400px; background:var(--pink-soft); top:-100px; left:-100px; }
+  .glow-blob.b { width:350px; height:350px; background:var(--pink-deep); bottom:-100px; right:-100px; animation-delay:2s; }
+  @keyframes drift { 0% { transform: translate(0,0); } 100% { transform: translate(40px,-20px); } }
+
+  #curtainCanvas, #sparkCanvas { position: fixed; inset: 0; pointer-events: none; }
+  #curtainCanvas { z-index: 1; opacity: 0.4; }
+  #sparkCanvas   { z-index: 8; }
+
+  .stage {
+    position: relative; z-index: 4;
+    width: 100%; height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding-top: 14vh;
+    padding-bottom: 14vh;
+    padding-left: 4vw;
+    padding-right: 4vw;
+  }
+
+  .title-main {
+    position: absolute;
+    top: 4.5vh;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'Berkshire Swash', cursive;
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    background: linear-gradient(135deg, #5c2e16, #bd6528, var(--pink-neon), #5c2e16);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: shimmer 6s linear infinite;
+    white-space: nowrap;
+    z-index: 10;
+  }
+  @keyframes shimmer { 0% { background-position: 0% center; } 100% { background-position: 200% center; } }
+
+  .guitar-wrap {
+    width: 100%;
+    max-width: 900px;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  #guitarSVG {
+    width: 100%;
+    height: auto;
+    max-height: 62vh;
+    filter: drop-shadow(0 20px 40px rgba(36,15,5,0.3));
+    cursor: crosshair;
+  }
+
+  .continue-btn {
+    position: absolute;
+    bottom: 5vh;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex; align-items: center; justify-content: center;
+    width: 66px; height: 66px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--pink-neon), var(--pink-deep));
+    box-shadow:
+      0 1px 0 rgba(255,255,255,.5) inset,
+      0 14px 28px -10px rgba(244,167,185,.7);
+    border: none;
+    cursor: pointer;
+    z-index: 10;
+    transition: box-shadow .25s ease, filter .25s ease;
+    animation: arrowFloat 2.4s ease-in-out infinite;
+  }
+
+  .continue-btn::before {
+    content: '';
+    position: absolute; inset: -8px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--pink-neon), var(--pink-deep));
+    opacity: .4;
+    filter: blur(12px);
+    z-index: -1;
+    animation: arrowGlowPulse 2.4s ease-in-out infinite;
+  }
+
+  .continue-btn svg {
+    width: 26px; height: 26px;
+    color: var(--cream-base);
+    transition: transform .25s ease;
+  }
+
+  .continue-btn:hover {
+    box-shadow:
+      0 1px 0 rgba(255,255,255,.6) inset,
+      0 20px 40px -10px rgba(255,143,176,.85);
+    filter: brightness(1.07);
+  }
+  .continue-btn:hover svg { transform: translateX(4px) rotate(8deg); }
+  .continue-btn:active    { filter: brightness(.95); }
+
+  @keyframes arrowFloat {
+    0%,100% { transform: translateX(-50%) translateY(0);    }
+    50%      { transform: translateX(-50%) translateY(-7px); }
+  }
+
+  @keyframes arrowGlowPulse {
+    0%,100% { opacity: .3; transform: scale(1);    }
+    50%      { opacity: .6; transform: scale(1.18); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .glow-blob, .title-main, .continue-btn, .continue-btn::before
+    { animation: none !important; }
+    .continue-btn { transform: translateX(-50%); }
+  }
+</style>
+</head>
+<body>
+
+<div class="glow-blob a"></div>
+<div class="glow-blob b"></div>
+<canvas id="curtainCanvas"></canvas>
+<canvas id="sparkCanvas"></canvas>
+
+<div class="stage">
+  <h1 class="title-main">The Strings Of Love</h1>
+
+  <div class="guitar-wrap">
+    <svg id="guitarSVG" viewBox="0 0 900 420" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <radialGradient id="claudesSunburst" cx="65%" cy="50%" r="70%">
+          <stop offset="0%"   stop-color="#fcedc0"/>
+          <stop offset="40%"  stop-color="#d47a32"/>
+          <stop offset="75%"  stop-color="#612b11"/>
+          <stop offset="100%" stop-color="#1f0a02"/>
+        </radialGradient>
+        <linearGradient id="neckWood" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%"   stop-color="#3d1f10"/>
+          <stop offset="100%" stop-color="#1c0c05"/>
+        </linearGradient>
+        <filter id="holeShadow" x="-20%" y="-20%" width="140%" height="140%">
+          <feDropShadow dx="2" dy="3" stdDeviation="5" flood-color="#000" flood-opacity="0.7"/>
+        </filter>
+        <filter id="stringGlow" x="-20%" y="-200%" width="140%" height="500%">
+          <feGaussianBlur in="SourceGraphic" stdDeviation="1.2" result="blur"/>
+          <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+      </defs>
+
+      <g id="headstock">
+        <path d="M 15 200 C 15 180, 40 180, 55 183 C 70 185, 85 175, 96 195 L 96 331 C 85 351, 70 341, 55 343 C 40 346, 15 346, 15 326 Z"
+              fill="url(#neckWood)"/>
+        <circle cx="40" cy="170" r="5" fill="#ccc"/>
+        <circle cx="60" cy="169" r="5" fill="#ccc"/>
+        <circle cx="80" cy="170" r="5" fill="#ccc"/>
+        <circle cx="40" cy="356" r="5" fill="#ccc"/>
+        <circle cx="60" cy="357" r="5" fill="#ccc"/>
+        <circle cx="80" cy="356" r="5" fill="#ccc"/>
+      </g>
+
+      <rect x="96" y="198" width="6" height="130" fill="#fffff0" rx="1"/>
+
+      <g id="neck">
+        <rect x="102" y="200" width="170" height="126" fill="#1a1614"/>
+        <path d="M 130 200 L 130 326 M 160 200 L 160 326 M 190 200 L 190 326
+                 M 220 200 L 220 326 M 248 200 L 248 326 M 272 200 L 272 326"
+              stroke="#c5b396" stroke-width="2"/>
+        <circle cx="145" cy="263" r="3" fill="#fff" opacity="0.8"/>
+        <circle cx="205" cy="263" r="3" fill="#fff" opacity="0.8"/>
+      </g>
+
+      <path d="M 272 200 C 255 155, 315 130, 365 140 C 420 150, 435 185, 455 195
+               C 475 185, 495 140, 560 145 C 635 150, 680 200, 680 263
+               C 680 326, 635 376, 560 381 C 495 386, 475 341, 455 331
+               C 435 341, 420 376, 365 386 C 315 396, 255 371, 272 326 Z"
+            fill="url(#claudesSunburst)" stroke="#1f0a02" stroke-width="4"/>
+
+      <g id="rosette">
+        <circle cx="425" cy="263" r="71" fill="#140702" filter="url(#holeShadow)"/>
+        <circle cx="425" cy="263" r="83" fill="none" stroke="#612b11"  stroke-width="2"/>
+        <circle cx="425" cy="263" r="79" fill="none" stroke="#bd6528"  stroke-width="3"/>
+        <circle cx="425" cy="263" r="75" fill="none" stroke="#fcedc0"  stroke-width="1.5" stroke-dasharray="3 3"/>
+        <circle cx="425" cy="263" r="71" fill="none" stroke="#a07030"  stroke-width="1.5" opacity="0.7"/>
+        <circle cx="425" cy="263" r="71" fill="none" stroke="#e0a040"  stroke-width="2" stroke-dasharray="8 4" opacity="0.5"/>
+      </g>
+
+      <path d="M 440 320 C 480 320, 515 335, 525 360 C 500 385, 460 380, 445 365 Z"
+            fill="#150b05" opacity="0.9"/>
+
+      <g id="bridge">
+        <path d="M 550 195 L 575 200 L 575 326 L 550 331 Z" fill="#2b1408"/>
+        <rect x="556" y="203" width="4" height="120" fill="#fff8e7" rx="1"/>
+        <circle cx="567" cy="209" r="2.5" fill="#fff"/>
+        <circle cx="567" cy="231" r="2.5" fill="#fff"/>
+        <circle cx="567" cy="253" r="2.5" fill="#fff"/>
+        <circle cx="567" cy="275" r="2.5" fill="#fff"/>
+        <circle cx="567" cy="297" r="2.5" fill="#fff"/>
+        <circle cx="567" cy="319" r="2.5" fill="#fff"/>
+      </g>
+
+      <g id="hitZonesGroup">
+        <rect id="hitZone0" x="102" y="198" width="458" height="22" fill="transparent" data-string="0"/>
+        <rect id="hitZone1" x="102" y="220" width="458" height="22" fill="transparent" data-string="1"/>
+        <rect id="hitZone2" x="102" y="242" width="458" height="22" fill="transparent" data-string="2"/>
+        <rect id="hitZone3" x="102" y="264" width="458" height="22" fill="transparent" data-string="3"/>
+        <rect id="hitZone4" x="102" y="286" width="458" height="22" fill="transparent" data-string="4"/>
+        <rect id="hitZone5" x="102" y="308" width="458" height="22" fill="transparent" data-string="5"/>
+      </g>
+
+      <g opacity="0.18" pointer-events="none">
+        <line x1="26" y1="210.5" x2="560" y2="210.5" stroke="#1a0a04" stroke-width="4.5" stroke-linecap="round"/>
+        <line x1="26" y1="232.5" x2="560" y2="232.5" stroke="#1a0a04" stroke-width="4.0" stroke-linecap="round"/>
+        <line x1="26" y1="254.5" x2="560" y2="254.5" stroke="#1a0a04" stroke-width="3.5" stroke-linecap="round"/>
+        <line x1="26" y1="276.5" x2="560" y2="276.5" stroke="#1a0a04" stroke-width="3.0" stroke-linecap="round"/>
+        <line x1="26" y1="298.5" x2="560" y2="298.5" stroke="#1a0a04" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="26" y1="320.5" x2="560" y2="320.5" stroke="#1a0a04" stroke-width="2.0" stroke-linecap="round"/>
+      </g>
+
+      <g id="stringsGroup">
+        <path id="str0" d="M 26 209 Q 293 209.01 560 209" fill="none" stroke="#FFFFFF"   stroke-width="4.0" stroke-linecap="round" filter="url(#stringGlow)"/>
+        <path id="str1" d="M 26 231 Q 293 231.01 560 231" fill="none" stroke="#FAFAFA"   stroke-width="3.4" stroke-linecap="round" filter="url(#stringGlow)"/>
+        <path id="str2" d="M 26 253 Q 293 253.01 560 253" fill="none" stroke="#F4F4F6"   stroke-width="2.8" stroke-linecap="round" filter="url(#stringGlow)"/>
+        <path id="str3" d="M 26 275 Q 293 275.01 560 275" fill="none" stroke="#EAEAEA"   stroke-width="2.2" stroke-linecap="round" filter="url(#stringGlow)"/>
+        <path id="str4" d="M 26 297 Q 293 297.01 560 297" fill="none" stroke="#DFDFE3"   stroke-width="1.6" stroke-linecap="round" filter="url(#stringGlow)"/>
+        <path id="str5" d="M 26 319 Q 293 319.01 560 319" fill="none" stroke="#D3D3DB"   stroke-width="1.2" stroke-linecap="round" filter="url(#stringGlow)"/>
+      </g>
+
+      <g opacity="0.5" pointer-events="none">
+        <line x1="26" y1="207.8" x2="560" y2="207.8" stroke="rgba(255,255,255,0.7)" stroke-width="0.8"/>
+        <line x1="26" y1="229.8" x2="560" y2="229.8" stroke="rgba(255,255,255,0.6)" stroke-width="0.7"/>
+        <line x1="26" y1="251.8" x2="560" y2="251.8" stroke="rgba(255,255,255,0.5)" stroke-width="0.6"/>
+        <line x1="26" y1="273.8" x2="560" y2="273.8" stroke="rgba(255,255,255,0.4)" stroke-width="0.5"/>
+        <line x1="26" y1="295.8" x2="560" y2="295.8" stroke="rgba(255,255,255,0.3)" stroke-width="0.4"/>
+        <line x1="26" y1="317.8" x2="560" y2="317.8" stroke="rgba(255,255,255,0.2)" stroke-width="0.35"/>
+      </g>
+    </svg>
+  </div>
+
+  <button class="continue-btn" id="continueBtn" aria-label="Continue">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8"
+         stroke-linecap="round" stroke-linejoin="round">
+      <path d="M5 12h14"/><path d="M13 6l6 6-6 6"/>
+    </svg>
+  </button>
+</div>
+
+<script>
+(() => {
+  'use strict';
+
+  const sounds = [];
+  for (let i = 1; i <= 6; i++) {
+    const a = new Audio(`String${i}.wav`);
+    a.preload = 'auto';
+    sounds.push(a);
+  }
+  function playString(idx) {
+    const a = sounds[idx]; if (!a) return;
+    try { a.currentTime = 0; a.play().catch(() => {}); } catch(e) {}
+  }
+
+  const stringLines = [];
+  for (let i = 0; i < 6; i++) {
+    stringLines.push({ el: document.getElementById(`str${i}`), animId: null });
+  }
+
+  function vibrateString(s, idx) {
+    if (s.animId) cancelAnimationFrame(s.animId);
+    const el = s.el;
+    const startTime = performance.now();
+    const duration  = 600;
+    const baseY     = 209 + (idx * 22);
+
+    function animate(now) {
+      const elapsed  = now - startTime;
+      if (elapsed >= duration) {
+        el.setAttribute('d', `M 26 ${baseY} Q 293 ${baseY}.01 560 ${baseY}`);
+        s.animId = null;
+        return;
+      }
+      const progress = elapsed / duration;
+      const amp      = 14 * Math.exp(-progress * 4.5) * Math.sin(progress * Math.PI * 24);
+      el.setAttribute('d', `M 26 ${baseY} Q 293 ${baseY + amp} 560 ${baseY}`);
+      s.animId = requestAnimationFrame(animate);
+    }
+    s.animId = requestAnimationFrame(animate);
+  }
+
+  const canvas = document.getElementById('sparkCanvas');
+  const ctx    = canvas.getContext('2d');
+  let particles = [];
+
+  function resizeSpark() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+  window.addEventListener('resize', resizeSpark);
+  resizeSpark();
+
+  const SPARK_COLS = ['#FF8FB0','#FFD1DC','#F4A7B9','#FDFBF7','#E8DDD2'];
+  function createSparks(x, y) {
+    const n = 8 + Math.floor(Math.random() * 5);
+    for (let i = 0; i < n; i++) {
+      particles.push({
+        x, y,
+        vx: (Math.random() - 0.5) * 3.2,
+        vy: -Math.random() * 3.2 - 0.5,
+        alpha: 1,
+        decay: 0.014 + Math.random() * 0.02,
+        r: 1.5 + Math.random() * 2.5,
+        color: SPARK_COLS[Math.floor(Math.random() * SPARK_COLS.length)]
+      });
+    }
+  }
+
+  function renderSparks() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.globalCompositeOperation = 'lighter';
+    particles = particles.filter(p => p.alpha > 0);
+    for (const p of particles) {
+      p.x += p.vx; p.y += p.vy; p.vy += 0.1; p.alpha -= p.decay;
+      ctx.globalAlpha = Math.max(0, p.alpha);
+      ctx.fillStyle = p.color;
+      ctx.beginPath(); ctx.arc(p.x, p.y, p.r * p.alpha, 0, Math.PI * 2); ctx.fill();
+    }
+    ctx.globalAlpha = 1; ctx.globalCompositeOperation = 'source-over';
+    requestAnimationFrame(renderSparks);
+  }
+  renderSparks();
+
+  const guitarSVG = document.getElementById('guitarSVG');
+  const lastHitMap = {};
+
+  function getSVGPoint(e) {
+    const rect  = guitarSVG.getBoundingClientRect();
+    const touch = e.touches ? e.touches[0] : e;
+    return {
+      svgX: ((touch.clientX - rect.left) / rect.width)  * 900,
+      svgY: ((touch.clientY - rect.top)  / rect.height) * 420,
+      cx: touch.clientX,
+      cy: touch.clientY
+    };
+  }
+
+  function matchString(sy) {
+    if (sy >= 198 && sy < 220) return 0;
+    if (sy >= 220 && sy < 242) return 1;
+    if (sy >= 242 && sy < 264) return 2;
+    if (sy >= 264 && sy < 286) return 3;
+    if (sy >= 286 && sy < 308) return 4;
+    if (sy >= 308 && sy < 330) return 5;
+    return -1;
+  }
+
+  let isStrumming = false, lastString = -1;
+
+  function handleStrum(e) {
+    const pt  = getSVGPoint(e);
+    if (pt.svgX < 102 || pt.svgX > 560) return;
+    const idx = matchString(pt.svgY);
+    if (idx === -1 || idx === lastString) return;
+    const now = performance.now();
+    if ((now - (lastHitMap[idx] || 0)) < 110) return;
+    lastHitMap[idx] = now;
+    lastString = idx;
+    playString(idx);
+    vibrateString(stringLines[idx], idx);
+    createSparks(pt.cx, pt.cy);
+  }
+
+  guitarSVG.addEventListener('mousedown',  e => { isStrumming = true; lastString = -1; handleStrum(e); });
+  window.addEventListener   ('mousemove',  e => { if (isStrumming) handleStrum(e); });
+  window.addEventListener   ('mouseup',    () => { isStrumming = false; lastString = -1; });
+  guitarSVG.addEventListener('touchstart', e => { lastString = -1; handleStrum(e); }, { passive: true });
+  guitarSVG.addEventListener('touchmove',  e => { handleStrum(e); },                   { passive: true });
+  window.addEventListener   ('touchend',   () => { lastString = -1; });
+
+  document.getElementById('continueBtn').addEventListener('click', () => {
+    window.location.href = 'piano.html';
+  });
+
+  const cCanvas = document.getElementById('curtainCanvas');
+  const cCtx    = cCanvas.getContext('2d');
+  function resizeCurtain() { cCanvas.width = window.innerWidth; cCanvas.height = window.innerHeight; }
+  window.addEventListener('resize', resizeCurtain);
+  resizeCurtain();
+
+  let phase = 0;
+  function drawCurtain() {
+    phase += 0.009;
+    cCtx.clearRect(0, 0, cCanvas.width, cCanvas.height);
+    const folds = 13, foldW = cCanvas.width / folds;
+    for (let i = 0; i <= folds; i++) {
+      const x = i * foldW;
+      cCtx.beginPath(); cCtx.moveTo(x, 0);
+      for (let y = 0; y < cCanvas.height; y += 20) {
+        const sway = Math.sin(phase + i * 0.45 + y * 0.004) * 14
+                   + Math.cos(phase * 0.7 + y * 0.006) * 8;
+        cCtx.lineTo(x + sway, y);
+      }
+      const grad = cCtx.createLinearGradient(x - foldW/2, 0, x + foldW/2, 0);
+      grad.addColorStop(0,   'rgba(255,209,220,0.0)');
+      grad.addColorStop(0.5, 'rgba(253,251,247,0.08)');
+      grad.addColorStop(1,   'rgba(232,221,210,0.0)');
+      cCtx.strokeStyle = grad;
+      cCtx.lineWidth   = foldW * 0.9;
+      cCtx.lineCap     = 'round';
+      cCtx.stroke();
+    }
+    requestAnimationFrame(drawCurtain);
+  }
+  drawCurtain();
+})();
+</script>
+</body>
+</html>
