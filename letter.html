@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no" />
+  <title>Letter from the Sky</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Berkshire+Swash&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --cream-base:     #FDFBF7;
+      --cream-deep:     #F5EFEB;
+      --taupe:          #E8DDD2;
+      --pink-soft:      #FFD1DC;
+      --pink-deep:      #F4A7B9;
+      --pink-neon:      #FF8FB0;
+      --brown-primary:  #362214;
+      --brown-muted:    #9C7B67;
+
+      --env-w:   clamp(240px, 68vw, 380px);
+      --env-h:   clamp(178px, 47vw, 275px);
+      --flap-h:  clamp(94px,  25vw, 146px);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      width: 100%; height: 100%;
+      min-height: 100vh; min-height: 100dvh;
+      background:
+        radial-gradient(120% 90% at 50% -10%,
+          var(--cream-base) 0%,
+          var(--cream-deep) 55%,
+          var(--taupe)      100%);
+      font-family: 'DM Sans', sans-serif;
+      color: var(--brown-primary);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .glow-blob {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: .52;
+      pointer-events: none;
+      z-index: 0;
+      animation: blobDrift 18s ease-in-out infinite alternate;
+    }
+    .glow-blob.a { width:420px; height:420px; background:var(--pink-soft);  top:-130px;  left:-110px;                }
+    .glow-blob.b { width:380px; height:380px; background:var(--pink-deep);  bottom:-150px; right:-110px; animation-delay:3s; }
+    .glow-blob.c { width:260px; height:260px; background:var(--taupe);      top:38%;     left:58%;   animation-delay:6s; }
+
+    @keyframes blobDrift {
+      0%   { transform: translate(0,0) scale(1); }
+      100% { transform: translate(30px,-20px) scale(1.08); }
+    }
+
+    #airplane {
+      position: fixed;
+      top: clamp(22px, 7vh, 62px);
+      left: -130px;
+      z-index: 30;
+      font-size: clamp(38px, 8vw, 64px);
+      line-height: 1;
+      filter: drop-shadow(0 0 14px rgba(255,143,176,.75))
+              drop-shadow(0 2px 6px rgba(255,143,176,.4));
+      animation: flyAcross 4.2s cubic-bezier(.42,0,.58,1) forwards;
+      pointer-events: none;
+      user-select: none;
+      will-change: left;
+    }
+
+    #airplane::after {
+      content: '⋆ ⋆ ⋆';
+      position: absolute;
+      right: calc(100% + 6px);
+      top: 50%;
+      transform: translateY(-44%);
+      font-size: .38em;
+      letter-spacing: 7px;
+      color: var(--pink-neon);
+      opacity: .55;
+    }
+
+    @keyframes flyAcross {
+      from { left: -130px; }
+      to   { left: calc(100vw + 130px); }
+    }
+
+    #stage {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: clamp(14px, 3vh, 28px);
+    }
+
+    #hint {
+      font-family: 'Berkshire Swash', cursive;
+      font-size: clamp(13px, 3.2vw, 17px);
+      color: var(--pink-neon);
+      letter-spacing: .03em;
+      opacity: 0;
+      transition: opacity .7s ease;
+      pointer-events: none;
+      user-select: none;
+    }
+    #hint.vis  { opacity: 1; animation: hintGlow 2.4s ease-in-out infinite; }
+    #hint.gone { opacity: 0 !important; animation: none; }
+
+    @keyframes hintGlow {
+      0%,100% { text-shadow: 0 0 6px  rgba(255,143,176,.35); }
+      50%     { text-shadow: 0 0 18px rgba(255,143,176,.9),
+                             0 0 34px rgba(255,143,176,.35); }
+    }
+
+    #env-container {
+      position: relative;
+      width: var(--env-w);
+      height: var(--env-h);
+      cursor: pointer;
+      opacity: 0;
+      transform: translateY(-220px);
+      transition: opacity .45s ease,
+                  transform .95s cubic-bezier(.34,1.52,.64,1);
+    }
+    #env-container.land {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    #env-container:not(.opened):hover {
+      transform: translateY(-4px) scale(1.01);
+      filter: drop-shadow(0 0 18px rgba(255,143,176,.3));
+      transition: transform .3s ease, filter .3s ease;
+    }
+
+    .env-body {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(168deg, #fffafc 0%, #ffe5f0 100%);
+      border: 2px solid var(--pink-deep);
+      border-radius: 10px;
+      box-shadow:
+        0 2px 0 rgba(255,255,255,.82) inset,
+        0 16px 48px -12px rgba(255,143,176,.42),
+        0  0   0   1px  rgba(255,143,176,.14);
+      overflow: hidden;
+      z-index: 1;
+    }
+
+    .env-body::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(135deg,
+          transparent calc(50% - 1px),
+          rgba(244,167,185,.22) calc(50% - 1px),
+          rgba(244,167,185,.22) calc(50% + 1px),
+          transparent calc(50% + 1px)),
+        linear-gradient(45deg,
+          transparent calc(50% - 1px),
+          rgba(244,167,185,.22) calc(50% - 1px),
+          rgba(244,167,185,.22) calc(50% + 1px),
+          transparent calc(50% + 1px));
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .env-paper {
+      position: absolute;
+      top: 8px; left: 8px; right: 8px; bottom: 8px;
+      background: rgba(255, 252, 254, 0.97);
+      border-radius: 7px;
+      border: 1px solid rgba(244, 167, 185, .32);
+      box-shadow:
+        0 1px 0 rgba(255,255,255,.9) inset,
+        0 3px 12px rgba(255,143,176,.13);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: clamp(6px, 1.4vh, 11px);
+      padding: clamp(14px, 3vh, 22px) clamp(14px, 3.5vw, 26px);
+      z-index: 2;
+      transform: translateY(110%);
+      opacity: 0;
+      transition: transform .75s cubic-bezier(.34,1.22,.64,1),
+                  opacity   .35s ease;
+    }
+    .env-paper.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    .env-paper::before {
+      content: '';
+      position: absolute;
+      top: clamp(9px, 1.8vh, 15px);
+      left: 15%; right: 15%;
+      height: 1px;
+      background: linear-gradient(90deg,
+        transparent,
+        rgba(255,143,176,.42) 28%,
+        rgba(255,143,176,.42) 72%,
+        transparent);
+    }
+    .env-paper::after {
+      content: '';
+      position: absolute;
+      bottom: clamp(9px, 1.8vh, 15px);
+      left: 15%; right: 15%;
+      height: 1px;
+      background: linear-gradient(90deg,
+        transparent,
+        rgba(255,143,176,.42) 28%,
+        rgba(255,143,176,.42) 72%,
+        transparent);
+    }
+
+    .letter-line {
+      font-family: 'Berkshire Swash', cursive;
+      font-size: clamp(11.5px, 2.9vw, 17.5px);
+      color: var(--pink-neon);
+      text-shadow:
+        0 0 8px  rgba(255,143,176,.65),
+        0 0 24px rgba(255,143,176,.28);
+      text-align: center;
+      line-height: 1.35;
+      opacity: 0;
+      transform: translateY(9px);
+      transition: opacity .62s ease, transform .62s ease;
+      white-space: nowrap;
+    }
+    .letter-line.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .env-flap-wrap {
+      position: absolute;
+      top: -1px; left: -1px; right: -1px;
+      height: var(--flap-h);
+      z-index: 10;
+      perspective: 960px;
+      pointer-events: none;
+    }
+
+    .env-flap {
+      width: 100%;
+      height: 100%;
+      transform-origin: top center;
+      transform: rotateX(0deg);
+      transition: transform .78s cubic-bezier(.4,0,.2,1);
+      pointer-events: none;
+      will-change: transform;
+    }
+    .env-flap.open {
+      transform: rotateX(-178deg);
+    }
+
+    .env-flap svg {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    .env-seal {
+      position: absolute;
+      left: 50%;
+      top: 66%;
+      transform: translate(-50%, -50%);
+      font-size: clamp(14px, 3.6vw, 20px);
+      z-index: 11;
+      filter: drop-shadow(0 0 8px rgba(255,143,176,.72));
+      transition: opacity .22s ease;
+      pointer-events: none;
+      user-select: none;
+    }
+    .env-seal.hide { opacity: 0; }
+
+    @media (max-width: 360px) {
+      :root {
+        --env-w:  215px;
+        --env-h:  158px;
+        --flap-h:  83px;
+      }
+      .letter-line { white-space: normal; font-size: 10.5px; }
+    }
+
+    @media (max-height: 600px) {
+      #stage { gap: 10px; }
+      :root { --env-h: clamp(148px, 44vw, 220px); --flap-h: clamp(78px, 23vw, 116px); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .glow-blob,
+      #airplane,
+      #hint {
+        animation: none !important;
+        transition: none !important;
+      }
+      #env-container { transition: opacity .3s ease !important; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="glow-blob a"></div>
+  <div class="glow-blob b"></div>
+  <div class="glow-blob c"></div>
+
+  <div id="airplane" role="img" aria-label="Airplane flying across the sky">✈</div>
+
+  <div id="stage">
+
+    <p id="hint" aria-live="polite">Tap the envelope to open it</p>
+
+    <div id="env-container"
+         role="button"
+         tabindex="0"
+         aria-label="Closed envelope — click to open"
+         onclick="openEnvelope()"
+         onkeydown="if(event.key==='Enter'||event.key===' ')openEnvelope()">
+
+      <div class="env-flap-wrap">
+        <div class="env-flap" id="flap">
+          <svg viewBox="0 0 380 200"
+               xmlns="http://www.w3.org/2000/svg"
+               preserveAspectRatio="none"
+               aria-hidden="true">
+            <defs>
+              <linearGradient id="flapGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%"   stop-color="#fff5f9"/>
+                <stop offset="100%" stop-color="#ffd8e9"/>
+              </linearGradient>
+              <linearGradient id="flapGradSheen" x1="0%" y1="0%" x2="60%" y2="100%">
+                <stop offset="0%"   stop-color="rgba(255,255,255,.55)"/>
+                <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
+              </linearGradient>
+            </defs>
+            <polygon points="0,0 380,0 190,200"
+                     fill="url(#flapGrad)"
+                     stroke="#F4A7B9" stroke-width="2.2"/>
+            <polygon points="0,0 190,0 95,100"
+                     fill="url(#flapGradSheen)"/>
+          </svg>
+        </div>
+
+        <span class="env-seal" id="seal" aria-hidden="true">❤</span>
+      </div>
+
+      <div class="env-body">
+        <div class="env-paper" id="paper" aria-label="Love letter from the sky">
+          <span class="letter-line">Thank you for existing, Scarlet 🌸</span>
+          <span class="letter-line">The world got softer the day you were in it</span>
+          <span class="letter-line">You are my favourite kind of magic</span>
+          <span class="letter-line">Every moment with you feels like home</span>
+          <span class="letter-line">I'd choose you in every lifetime ❤️</span>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <script>
+    const PLANE_DUR       = 4200;
+    const DROP_AT         = PLANE_DUR * 0.46;
+    const HINT_DELAY      = DROP_AT + 980;
+    const OPEN_FLAP_MS    = 560;
+    const LINE_STAGGER_MS = 430;
+
+    let opened = false;
+
+    setTimeout(() => {
+      document.getElementById('env-container').classList.add('land');
+    }, DROP_AT);
+
+    setTimeout(() => {
+      document.getElementById('hint').classList.add('vis');
+    }, HINT_DELAY);
+
+    function openEnvelope() {
+      if (opened) return;
+      opened = true;
+
+      document.getElementById('env-container').classList.add('opened');
+      document.getElementById('env-container').setAttribute('aria-label', 'Opened envelope');
+
+      const hint = document.getElementById('hint');
+      hint.classList.remove('vis');
+      hint.classList.add('gone');
+
+      document.getElementById('seal').classList.add('hide');
+      document.getElementById('flap').classList.add('open');
+
+      setTimeout(() => {
+        document.getElementById('paper').classList.add('show');
+
+        const lines = document.querySelectorAll('.letter-line');
+        lines.forEach((line, i) => {
+          setTimeout(() => {
+            line.classList.add('show');
+          }, i * LINE_STAGGER_MS + 80);
+        });
+      }, OPEN_FLAP_MS);
+    }
+  </script>
+
+</body>
+</html>
