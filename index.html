@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Hear Me Once</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Berkshire+Swash&family=DM+Sans:wght@300;400;700&display=swap" rel="stylesheet" />
+ 
+  <style>
+    :root {
+     --cream-base:    #FDFBF7;
+     --cream-deep:    #F5EFEB;
+      --taupe:         #E8DDD2;
+     --pink-soft:     #FFD1DC;
+     --pink-deep:     #F4A7B9;
+     --pink-neon:     #FF8FB0;
+      --brown-primary: #362214;
+     --brown-muted:   #9C7B67;
+      --metal-1:       #F3ECE4;
+      --metal-2:       #DACDBF;
+    }
+ 
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+ 
+    html, body {
+      width: 100%; height: 100%;
+      min-height: 100vh; min-height: 100dvh;
+      background: radial-gradient(120% 90% at 50% -10%, var(--cream-base) 0%, var(--cream-deep) 55%, var(--taupe) 100%);
+      font-family: 'DM Sans', sans-serif;
+      color: var(--brown-primary);
+      overflow: hidden;
+      position: relative;
+    }
+ 
+    .glow-blob {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: .52;
+      pointer-events: none;
+      z-index: 0;
+      animation: blobDrift 18s ease-in-out infinite alternate;
+    }
+    .glow-blob.a { width: 420px; height: 420px; background: var(--pink-soft);  top: -130px; left: -110px; }
+    .glow-blob.b { width: 380px; height: 380px; background: var(--pink-deep);  bottom: -150px; right: -110px; animation-delay: 3s; }
+    .glow-blob.c { width: 260px; height: 260px; background: var(--taupe);      top: 38%; left: 58%; animation-delay: 6s; }
+    @keyframes blobDrift {
+      0%   { transform: translate(0,0) scale(1); }
+      100% { transform: translate(30px,-20px) scale(1.08); }
+    }
+ 
+    #page-wrap {
+      width: 100vw; height: 100vh;
+      display: flex; align-items: center; justify-content: center;
+      position: relative; z-index: 10;
+      padding: 2rem;
+    }
+    .card {
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 2.5rem; width: 100%; max-width: 450px;
+    }
+    .left-panel {
+      width: 100%; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 1.5rem;
+    }
+    .puppy-wrap {
+      width: 100%; display: flex; align-items: center; justify-content: center;
+    }
+    .responsive-puppy { width: 100%; max-width: 170px; height: auto; }
+    .right-panel {
+      width: 100%; display: flex; flex-direction: column;
+      align-items: center; gap: 1.6rem;
+    }
+ 
+    .headline {
+      font-family: 'Berkshire Swash', cursive;
+      font-weight: 400;
+      font-size: clamp(2.2rem, 5vw, 3.2rem);
+      letter-spacing: -0.02em;
+      line-height: 1.1;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(120deg, var(--pink-neon), var(--pink-deep) 45%, var(--pink-neon));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      animation: textGlow 2.4s ease-in-out infinite;
+    }
+    .headline::after {
+      content: '';
+      position: absolute;
+      top: 0; left: -40%;
+      width: 35%; height: 100%;
+      background: linear-gradient(120deg, transparent, rgba(255,255,255,.88), transparent);
+      animation: shimmerSweep 3.2s ease-in-out infinite;
+      pointer-events: none;
+      mix-blend-mode: overlay;
+    }
+    @keyframes textGlow {
+      0%,100% { filter: drop-shadow(0 0 6px rgba(255,143,176,.35)); }
+      50%      { filter: drop-shadow(0 0 18px rgba(255,143,176,.9)); }
+    }
+    @keyframes shimmerSweep {
+      0%        { left: -40%; }
+      60%,100%  { left: 120%; }
+    }
+ 
+    .subline {
+      font-family: 'Berkshire Swash', cursive;
+      font-weight: 400;
+      letter-spacing: 0.35em;
+      font-size: clamp(1.3rem, 4vw, 1.75rem);
+      text-align: center;
+      padding-left: 0.35em;
+      margin-top: 0.5rem;
+      background: linear-gradient(135deg, #FF6B95, var(--pink-neon) 40%, #FF3D6F 70%, var(--pink-deep));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      position: relative;
+      filter: drop-shadow(0 0 10px rgba(255,61,111,.45));
+      animation: scarletGlow 2.8s ease-in-out infinite;
+    }
+    @keyframes scarletGlow {
+      0%,100% { filter: drop-shadow(0 0 8px rgba(255,61,111,.4)); }
+      50%      { filter: drop-shadow(0 0 22px rgba(255,61,111,.85)); }
+    }
+ 
+    .ribbon-input-wrap {
+      width: 100%; max-width: 290px;
+      display: flex; flex-direction: column; align-items: center;
+    }
+    #ribbon-svg { width: 100%; height: 72px; transition: transform 0.2s ease; }
+    .ribbon-stage { transition: transform 0.15s ease; }
+    .ribbon-stage.wave { animation: ribbonWave 1.0s ease-in-out; }
+    @keyframes ribbonWave {
+      0%,100% { transform: skewX(0deg) translateX(0); }
+      15%     { transform: skewX(-7deg) translateX(-6px); }
+      35%     { transform: skewX(6deg)  translateX(5px); }
+      55%     { transform: skewX(-5deg) translateX(-4px); }
+      75%     { transform: skewX(3deg)  translateX(2px); }
+    }
+    .bow-group .bow-part {
+      transition: opacity 0.4s ease, transform 0.4s ease;
+      transform-origin: center center;
+    }
+    .bow-group .heart-fill {
+      opacity: 0; transform: scale(0.2);
+      transform-origin: center center;
+      transition: opacity 0.45s ease 0.1s, transform 0.5s cubic-bezier(0.34,1.56,0.64,1) 0.1s;
+    }
+    .bow-group.untied .bow-part  { opacity: 0; transform: scale(0.3) rotate(20deg); }
+    .bow-group.untied .heart-fill {
+      opacity: 1; transform: scale(1);
+      filter: drop-shadow(0 0 5px var(--pink-deep));
+    }
+    #error-msg {
+      font-family: 'Berkshire Swash', cursive;
+      font-style: italic;
+      font-size: 0.95rem; color: var(--brown-muted);
+      opacity: 0; transition: opacity 0.3s; height: 1.2em;
+      text-align: center; margin-top: 0.3rem;
+    }
+    #error-msg.visible { opacity: 1; }
+ 
+    .keypad {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 0.75rem; width: 100%; max-width: 250px;
+    }
+    .heart-btn {
+      position: relative; width: 100%; aspect-ratio: 1;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; user-select: none; -webkit-tap-highlight-color: transparent;
+      background: none; border: none; outline: none;
+      transition: transform 0.13s cubic-bezier(0.34,1.56,0.64,1), filter 0.13s ease;
+      filter: drop-shadow(0 6px 5px rgba(54,34,20,0.22)) drop-shadow(0 2px 1px rgba(54,34,20,0.18));
+    }
+    .heart-btn:hover  { filter: drop-shadow(0 8px 7px rgba(54,34,20,0.28)) brightness(1.02); }
+    .heart-btn.pressed {
+      transform: scale(0.88) translateY(3px);
+      filter: drop-shadow(0 1px 1px rgba(54,34,20,0.25));
+    }
+    .heart-svg { width: 100%; height: 100%; }
+    .heart-label {
+      position: absolute;
+      font-family: 'DM Sans', sans-serif; font-weight: 700;
+      font-size: 1.1rem; color: var(--brown-primary);
+      pointer-events: none; line-height: 1; margin-top: -2px;
+      text-shadow: 0 1px 0 rgba(255,255,255,0.6);
+    }
+ 
+    #win-popup {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(253,251,247,0.88);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      z-index: 80;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+    }
+    #win-popup.visible {
+      display: flex;
+      animation: fadeInPopup 0.5s ease forwards;
+    }
+    @keyframes fadeInPopup {
+      0%   { opacity: 0; transform: scale(0.96); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+    .win-inner {
+      background: rgba(253,251,247,.97);
+      border: 1.5px solid var(--pink-deep);
+      padding: clamp(22px,4vh,36px) clamp(28px,6vw,52px);
+      border-radius: 26px;
+      text-align: center;
+      box-shadow:
+        0 1px 0 rgba(255,255,255,.8) inset,
+        0 20px 50px -16px rgba(244,167,185,.55),
+        0 0 60px -10px rgba(255,143,176,.3);
+      position: relative;
+      overflow: hidden;
+    }
+    .win-inner h2 {
+      font-family: 'Berkshire Swash', cursive;
+      font-size: clamp(20px, 4.5vw, 28px);
+      font-weight: 400;
+      margin: 0 0 6px;
+      background: linear-gradient(120deg, var(--pink-neon), var(--pink-deep) 50%, var(--pink-neon));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      animation: textGlow 2.4s ease-in-out infinite;
+    }
+    .win-inner p {
+      font-size: clamp(13px, 2.8vw, 16px);
+      color: var(--brown-muted);
+      margin: 0 0 20px;
+      font-weight: 500;
+    }
+ 
+    .popup-sparkle {
+      position: absolute;
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #FFFFFF 0%, var(--pink-neon) 55%, transparent 75%);
+      pointer-events: none;
+      opacity: 0;
+      animation: sparkleTwinkle 1.8s ease-in-out infinite, sparkleDrift 6s linear infinite;
+    }
+    @keyframes sparkleTwinkle {
+      0%,100% { opacity: 0; transform: scale(.3) rotate(0deg); }
+      50%      { opacity: 1; transform: scale(1.15) rotate(180deg); }
+    }
+    @keyframes sparkleDrift {
+      0%   { transform: translate(0,0); }
+      100% { transform: translate(60px,-40px); }
+    }
+ 
+    .continue-btn {
+      margin-top:    16px;
+      margin-left:   auto;
+      margin-right:  auto;
+      display:       flex;
+      align-items:   center;
+      justify-content: center;
+      width:  66px;
+      height: 66px;
+      border-radius: 50%;
+      position: relative;
+      background: linear-gradient(135deg, var(--pink-neon), var(--pink-deep));
+      box-shadow:
+        0 1px 0 rgba(255,255,255,.5) inset,
+        0 14px 28px -10px rgba(244,167,185,.7);
+      text-decoration: none;
+      cursor: pointer;
+      border: none;
+      animation: arrowFloat 2.4s ease-in-out infinite;
+      transition: transform .25s ease, box-shadow .25s ease, filter .25s ease;
+    }
+    .continue-btn::before {
+      content: '';
+      position: absolute;
+      inset: -8px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--pink-neon), var(--pink-deep));
+      opacity: .4;
+      filter: blur(12px);
+      z-index: -1;
+      animation: arrowGlowPulse 2.4s ease-in-out infinite;
+    }
+    .continue-btn svg {
+      width: 26px; height: 26px;
+      color: var(--cream-base);
+      transition: transform .25s ease;
+    }
+    .continue-btn:hover {
+      transform: translateY(-5px) scale(1.08) rotate(-4deg);
+      box-shadow:
+        0 1px 0 rgba(255,255,255,.6) inset,
+        0 20px 40px -10px rgba(255,143,176,.85);
+      filter: brightness(1.05);
+    }
+    .continue-btn:hover svg { transform: translateX(4px) rotate(8deg); }
+    .continue-btn:active    { transform: translateY(-2px) scale(.95); }
+    @keyframes arrowFloat {
+      0%,100% { transform: translateY(0); }
+      50%      { transform: translateY(-7px); }
+    }
+    @keyframes arrowGlowPulse {
+      0%,100% { opacity: .3; transform: scale(1); }
+      50%      { opacity: .6; transform: scale(1.18); }
+    }
+ 
+    #confetti-canvas {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      pointer-events: none; z-index: 50;
+    }
+ 
+    @keyframes float {
+      0%,100% { transform: translateY(0px) rotate(-1deg); }
+      50%      { transform: translateY(-12px) rotate(1deg); }
+    }
+    .float-anim { animation: float 6s ease-in-out infinite; transform-origin: center bottom; }
+ 
+    @keyframes exitPage {
+      100% { opacity: 0; transform: translateY(-40px) scale(0.98); filter: blur(5px); }
+    }
+    .exit-anim { animation: exitPage 0.6s cubic-bezier(0.4,0,0.2,1) forwards; }
+ 
+    @media (max-width: 420px) {
+      .keypad       { gap: 0.5rem; }
+     .heart-label  { font-size: 0.95rem; }
+    }
+    @media (min-width: 769px) {
+      .card {
+       flex-direction: row; max-width: 1000px; width: 90%;
+       gap: 6rem; padding: 2rem; justify-content: center;
+      }
+      .left-panel      { gap: 2rem; }
+     .responsive-puppy{ max-width: 320px; }
+     .right-panel     { max-width: 380px; }
+      .keypad          { max-width: 290px; gap: 0.9rem; }
+     .heart-label     { font-size: 1.25rem; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .glow-blob, .headline, .headline::after, .float-anim, .continue-btn, .continue-btn::before, .popup-sparkle, .subline { animation: none !important; }
+    }
+  </style>
+</head>
+<body>
+ 
+  <div class="glow-blob a"></div>
+  <div class="glow-blob b"></div>
+  <div class="glow-blob c"></div>
+ 
+  <div id="page-wrap">
+    <div class="card" id="main-card">
+ 
+      <div class="left-panel">
+        <div class="puppy-wrap">
+          <div class="float-anim">
+            <svg class="responsive-puppy" viewBox="0 0 260 280" fill="none" xmlns="http://www.w3.org/2000/svg">
+             <ellipse cx="130" cy="272" rx="58" ry="7" fill="#D4BCA8" opacity="0.35"/>
+              <path d="M168 200 Q210 185 205 155 Q200 132 182 140" stroke="#4A3525" stroke-width="6" stroke-linecap="round" fill="none"/>
+             <ellipse cx="130" cy="200" rx="62" ry="58" fill="#FDFBF7" stroke="#362214" stroke-width="3"/>
+             <ellipse cx="130" cy="210" rx="32" ry="28" fill="#FFD1DC" opacity="0.55"/>
+              <rect x="80" y="238" width="26" height="30" rx="13" fill="#FDFBF7" stroke="#362214" stroke-width="2.5"/>
+              <rect x="154" y="238" width="26" height="30" rx="13" fill="#FDFBF7" stroke="#362214" stroke-width="2.5"/>
+              <path d="M78 190 Q52 185 44 165" stroke="#362214" stroke-width="5.5" stroke-linecap="round" fill="none"/>
+             <ellipse cx="44" cy="162" rx="10" ry="9" fill="#FFD1DC" stroke="#362214" stroke-width="2.5"/>
+              <path d="M182 190 Q206 183 212 198" stroke="#362214" stroke-width="5.5" stroke-linecap="round" fill="none"/>
+             <ellipse cx="214" cy="202" rx="10" ry="9" fill="#FFD1DC" stroke="#362214" stroke-width="2.5"/>
+              <rect x="111" y="142" width="38" height="22" rx="10" fill="#FDFBF7" stroke="#362214" stroke-width="2.5"/>
+             <ellipse cx="130" cy="115" rx="58" ry="52" fill="#FDFBF7" stroke="#362214" stroke-width="3"/>
+             <path d="M80 90 Q60 55 72 35 Q84 18 98 48 Q106 68 95 88Z" fill="#FDFBF7" stroke="#362214" stroke-width="2.8"/>
+              <path d="M82 85 Q65 55 76 40 Q86 25 96 52 Q102 68 93 83Z" fill="#FFD1DC" opacity="0.7"/>
+              <path d="M180 90 Q200 55 188 35 Q176 18 162 48 Q154 68 165 88Z" fill="#FDFBF7" stroke="#362214" stroke-width="2.8"/>
+              <path d="M178 85 Q195 55 184 40 Q174 25 164 52 Q158 68 167 83Z" fill="#FFD1DC" opacity="0.7"/>
+             <ellipse cx="130" cy="128" rx="28" ry="20" fill="#FFD1DC" opacity="0.5" stroke="#362214" stroke-width="2"/>
+             <ellipse cx="130" cy="122" rx="9" ry="6" fill="#362214"/>
+             <ellipse cx="127" cy="120" rx="3" ry="2" fill="#FDFBF7" opacity="0.6"/>
+              <path d="M121 132 Q130 141 139 132" stroke="#362214" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+             <ellipse cx="111" cy="105" rx="11" ry="12" fill="#362214"/>
+             <ellipse cx="108" cy="102" rx="3.5" ry="3.5" fill="white" opacity="0.7"/>
+             <circle cx="114" cy="100" r="1.5" fill="white" opacity="0.9"/>
+             <ellipse cx="149" cy="105" rx="11" ry="12" fill="#362214"/>
+             <ellipse cx="146" cy="102" rx="3.5" ry="3.5" fill="white" opacity="0.7"/>
+             <circle cx="152" cy="100" r="1.5" fill="white" opacity="0.9"/>
+              <path d="M100 94 Q111 88 120 91" stroke="#362214" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+              <path d="M140 91 Q149 88 160 94" stroke="#362214" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+             <ellipse cx="97" cy="122" rx="11" ry="7" fill="#FFD1DC" opacity="0.45"/>
+             <ellipse cx="163" cy="122" rx="11" ry="7" fill="#FFD1DC" opacity="0.45"/>
+              <rect x="108" y="155" width="44" height="11" rx="5.5" fill="#FFD1DC" stroke="#362214" stroke-width="2"/>
+             <circle cx="130" cy="160.5" r="5" fill="#FDFBF7" stroke="#362214" stroke-width="1.5"/>
+              <path d="M128 159 Q128 157.5 130 159 Q132 157.5 132 159 Q132 161 130 162.5 Q128 161 128 159Z" fill="#FFD1DC"/>
+              <line x1="44" y1="153" x2="44" y2="110" stroke="#5C7A3E" stroke-width="3" stroke-linecap="round"/>
+              <path d="M44 130 Q32 118 38 108 Q48 116 44 130Z" fill="#7BAD5C"/>
+             <ellipse cx="44" cy="95" rx="8" ry="14" fill="#FFD1DC" stroke="#362214" stroke-width="1.5"/>
+             <ellipse cx="44" cy="95" rx="8" ry="14" fill="#FFD1DC" stroke="#362214" stroke-width="1.5" transform="rotate(45 44 95)"/>
+             <ellipse cx="44" cy="95" rx="8" ry="14" fill="#FFD1DC" stroke="#362214" stroke-width="1.5" transform="rotate(90 44 95)"/>
+             <ellipse cx="44" cy="95" rx="8" ry="14" fill="#FFD1DC" stroke="#362214" stroke-width="1.5" transform="rotate(135 44 95)"/>
+             <circle cx="44" cy="95" r="9" fill="#FDFBF7" stroke="#362214" stroke-width="2"/>
+             <circle cx="44" cy="95" r="5" fill="#FFD1DC"/>
+           </svg>
+          </div>
+        </div>
+      </div>
+ 
+      <div class="right-panel">
+        <div>
+          <div class="headline">Hear Me Once</div>
+          <div class="subline">SCARLET</div>
+        </div>
+ 
+        <div class="ribbon-input-wrap">
+          <svg id="ribbon-svg" viewBox="0 0 290 72" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <g class="ribbon-stage" id="ribbon-stage">
+              <path d="M5 36 Q40 16 73 36 T145 36 T217 36 T285 36" stroke="#F4A7B9" stroke-width="5" fill="none" stroke-linecap="round" opacity="0.85"/>
+              <path d="M5 36 Q40 16 73 36 T145 36 T217 36 T285 36" stroke="#FFD1DC" stroke-width="2" fill="none" stroke-linecap="round"/>
+            </g>
+            <g class="bow-group" id="bow-0" transform="translate(50,36)"></g>
+            <g class="bow-group" id="bow-1" transform="translate(112,36)"></g>
+            <g class="bow-group" id="bow-2" transform="translate(178,36)"></g>
+            <g class="bow-group" id="bow-3" transform="translate(240,36)"></g>
+          </svg>
+          <div id="error-msg">Incorrect Key. Try again.</div>
+        </div>
+ 
+        <div class="keypad" id="keypad"></div>
+      </div>
+ 
+    </div>
+  </div>
+ 
+  <div id="win-popup">
+    <div class="win-inner" id="win-inner">
+      <h2>You unlocked it ❤</h2>
+      <button class="continue-btn" id="continue-btn" onclick="goToNext()" aria-label="Continue">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M5 12h14"/><path d="M13 6l6 6-6 6"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+ 
+  <canvas id="confetti-canvas"></canvas>
+ 
+<script>
+(function () {
+  'use strict';
+ 
+  const CORRECT = '1234';
+  const KEYS    = ['1','2','3','4','5','6','7','8','9','*','0','#'];
+  let entered   = '';
+  let locked    = false;
+ 
+  const ribbonStage = document.getElementById('ribbon-stage');
+  const bowGroups   = [0,1,2,3].map(function(i){ return document.getElementById('bow-' + i); });
+ 
+  const BOW_SVG = `
+    <g class="bow-part">
+      <path d="M0 0 Q-18 -12 -22 -2 Q-26 8 -8 6 Q-2 5 0 0Z" fill="#FFD1DC" stroke="#362214" stroke-width="1.4"/>
+      <path d="M0 0 Q18 -12 22 -2 Q26 8 8 6 Q2 5 0 0Z"  fill="#FFD1DC" stroke="#362214" stroke-width="1.4"/>
+      <path d="M-4 4 L-10 16 L-4 14 Z" fill="#F4A7B9" stroke="#362214" stroke-width="1"/>
+      <path d="M4 4 L10 16 L4 14 Z"  fill="#F4A7B9" stroke="#362214" stroke-width="1"/>
+      <circle cx="0" cy="1" r="4" fill="#F4A7B9" stroke="#362214" stroke-width="1.4"/>
+    </g>
+    <path class="heart-fill" d="M0 5 C0 5 -10 -1 -10 -8 C-10 -12 -7 -14 -4 -14 C-2 -14 -0.6 -13 0 -11.5 C0.6 -13 2 -14 4 -14 C7 -14 10 -12 10 -8 C10 -1 0 5 0 5Z" fill="#FF8FB0" stroke="#F4A7B9" stroke-width="0.8"/>
+  `;
+ bowGroups.forEach(function(g){ g.innerHTML = BOW_SVG; });
+ 
+  function untieBow(index)  { if (bowGroups[index]) bowGroups[index].classList.add('untied'); }
+  function retieAllBows()   { bowGroups.forEach(function(g){ g.classList.remove('untied'); }); }
+  function waveRibbon() {
+    ribbonStage.classList.remove('wave');
+    void ribbonStage.offsetWidth;
+    ribbonStage.classList.add('wave');
+  }
+ 
+  const keypad = document.getElementById('keypad');
+ 
+  KEYS.forEach(function(label){
+    const btn = document.createElement('button');
+    btn.className = 'heart-btn';
+   btn.setAttribute('aria-label', 'Key ' + label);
+    btn.innerHTML = `
+      <svg class="heart-svg" viewBox="0 0 80 76" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+         <linearGradient id="origami-${label}" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%"  stop-color="#FFE0E8"/>
+            <stop offset="55%"  stop-color="#FFD1DC"/>
+            <stop offset="100%" stop-color="#F4A7B9"/>
+         </linearGradient>
+        </defs>
+        <path d="M40 70 C40 70 6 50 6 26 C6 14.95 14.95 6 26 6 C32.1 6 37.6 8.7 40 13 C42.4 8.7 47.9 6 54 6 C65.05 6 74 14.95 74 26 C74 50 40 70 40 70Z" fill="url(#origami-${label})" stroke="#362214" stroke-width="3.5" stroke-linejoin="round"/>
+        <path d="M40 13 L40 70"  stroke="#362214" stroke-width="0.8" opacity="0.18"/>
+        <path d="M40 13 L14 24"  stroke="#FFFFFF" stroke-width="1"  opacity="0.45"/>
+        <path d="M40 13 L66 24"  stroke="#362214" stroke-width="0.8" opacity="0.16"/>
+        <path d="M20 22 Q24 14 32 16" stroke="#FDFBF7" stroke-width="2.2" stroke-linecap="round" opacity="0.6"/>
+      </svg>
+      <span class="heart-label">${label}</span>
+    `;
+ 
+    const press   = function(){ btn.classList.add('pressed'); };
+    const release = function(){ btn.classList.remove('pressed'); };
+ 
+    const onDown = function(e){
+      e.preventDefault();
+      press();
+      let cx, cy;
+      if (e.touches && e.touches[0]) {
+        cx = e.touches[0].clientX; cy = e.touches[0].clientY;
+      } else {
+        cx = e.clientX; cy = e.clientY;
+      }
+      if (cx === undefined) {
+        const r = btn.getBoundingClientRect();
+        cx = r.left + r.width/2; cy = r.top + r.height/2;
+      }
+     burstConfetti(cx, cy);
+     handleKey(label);
+    };
+ 
+    if ('ontouchstart' in window) {
+     btn.addEventListener('touchstart', onDown,   { passive: false });
+     btn.addEventListener('touchend',   release);
+     btn.addEventListener('touchcancel', release);
+    } else {
+     btn.addEventListener('mousedown', onDown);
+     btn.addEventListener('mouseup',   release);
+      btn.addEventListener('mouseleave', release);
+    }
+   keypad.appendChild(btn);
+  });
+ 
+  const errorMsg = document.getElementById('error-msg');
+  const winPopup = document.getElementById('win-popup');
+  const winInner = document.getElementById('win-inner');
+ 
+  function handleKey(key) {
+    if (locked || key === '*' || key === '#') return;
+    if (entered.length >= 4) return;
+ 
+    entered += key;
+   untieBow(entered.length - 1);
+ 
+    if (entered.length === 4) {
+      locked = true;
+      if (entered === CORRECT) {
+       setTimeout(function(){
+         spawnPopupSparkles();
+         winPopup.classList.add('visible');
+        }, 350);
+      } else {
+       setTimeout(function(){
+         waveRibbon();
+         errorMsg.classList.add('visible');
+         setTimeout(function(){
+            entered = '';
+           locked  = false;
+           retieAllBows();
+            errorMsg.classList.remove('visible');
+          }, 1100);
+        }, 220);
+      }
+    }
+  }
+ 
+  function spawnPopupSparkles() {
+    for (var i = 0; i < 14; i++) {
+      var s = document.createElement('div');
+      s.className = 'popup-sparkle';
+     s.style.left   = (Math.random() * 86 + 4) + '%';
+      s.style.top    = (Math.random() * 80 + 4) + '%';
+     s.style.animationDelay    = (Math.random() * 1.8) + 's';
+     s.style.animationDuration = (1.4 + Math.random() * 0.8) + 's, ' + (4 + Math.random() * 3) + 's';
+     winInner.appendChild(s);
+    }
+  }
+ 
+  function goToNext() {
+   winPopup.classList.remove('visible');
+   document.getElementById('main-card').classList.add('exit-anim');
+   setTimeout(function(){ window.location.href = 'next.html'; }, 550);
+  }
+  window.goToNext = goToNext;
+ 
+  const confCanvas = document.getElementById('confetti-canvas');
+  const confCtx    = confCanvas.getContext('2d');
+  let confetti     = [];
+  const CONF_COLORS = ['#FFD1DC','#F4A7B9','#FF8FB0','#FDFBF7','#E8DDD2'];
+ 
+  function sizeConf(){ confCanvas.width = window.innerWidth; confCanvas.height = window.innerHeight; }
+  sizeConf();
+ 
+  function burstConfetti(x, y){
+    for (var i = 0; i < 12; i++){
+      confetti.push({
+        x: x, y: y,
+        vx: (Math.random() - 0.5) * 4,
+        vy: -2 - Math.random() * 3,
+        size: 3 + Math.random() * 4,
+        color: CONF_COLORS[(Math.random() * CONF_COLORS.length) | 0],
+        alpha: 1,
+        rot: Math.random() * Math.PI * 2,
+        vrot: (Math.random() - 0.5) * 0.3,
+        gravity: 0.12 + Math.random() * 0.06
+      });
+    }
+  }
+ 
+  function updateConfetti(){
+   confCtx.clearRect(0, 0, confCanvas.width, confCanvas.height);
+    for (var i = confetti.length - 1; i >= 0; i--){
+      var p = confetti[i];
+      p.vy += p.gravity;
+      p.x  += p.vx;
+      p.y  += p.vy;
+      p.rot += p.vrot;
+      p.alpha -= 0.012;
+      if (p.alpha <= 0){ confetti.splice(i, 1); continue; }
+      confCtx.save();
+     confCtx.globalAlpha = Math.max(0, p.alpha);
+     confCtx.translate(p.x, p.y);
+     confCtx.rotate(p.rot);
+     confCtx.fillStyle = p.color;
+     confCtx.fillRect(-p.size/2, -p.size/2, p.size, p.size * 0.6);
+     confCtx.restore();
+    }
+   requestAnimationFrame(updateConfetti);
+  }
+  updateConfetti();
+ 
+ window.addEventListener('resize', sizeConf);
+ 
+})();
+</script>
+</body>
+</html>
