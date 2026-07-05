@@ -193,6 +193,7 @@
       text-shadow: 0 1px 0 rgba(255,255,255,0.6);
     }
  
+    /* ── WIN POPUP ── */
     #win-popup {
       display: none;
       position: fixed;
@@ -214,6 +215,8 @@
       0%   { opacity: 0; transform: scale(0.96); }
       100% { opacity: 1; transform: scale(1); }
     }
+
+    /* Mobile base */
     .win-inner {
       background: rgba(253,251,247,.97);
       border: 1.5px solid var(--pink-deep);
@@ -226,7 +229,24 @@
         0 0 60px -10px rgba(255,143,176,.3);
       position: relative;
       overflow: hidden;
+      width: 90%;
+      max-width: 420px;
     }
+
+    /* ── LAPTOP / DESKTOP: bigger popup ── */
+    @media (min-width: 769px) {
+      .win-inner {
+        padding: 64px 90px 56px;
+        border-radius: 36px;
+        max-width: 680px;
+        border-width: 2px;
+        box-shadow:
+          0 1px 0 rgba(255,255,255,.8) inset,
+          0 32px 80px -20px rgba(244,167,185,.65),
+          0 0 90px -8px rgba(255,143,176,.4);
+      }
+    }
+
     .win-inner h2 {
       font-family: 'Berkshire Swash', cursive;
       font-size: clamp(20px, 4.5vw, 28px);
@@ -238,11 +258,27 @@
       color: transparent;
       animation: textGlow 2.4s ease-in-out infinite;
     }
+
+    /* Desktop h2 bigger */
+    @media (min-width: 769px) {
+      .win-inner h2 {
+        font-size: clamp(36px, 5vw, 52px);
+        margin-bottom: 12px;
+      }
+    }
+
     .win-inner p {
       font-size: clamp(13px, 2.8vw, 16px);
       color: var(--brown-muted);
       margin: 0 0 20px;
       font-weight: 500;
+    }
+
+    @media (min-width: 769px) {
+      .win-inner p {
+        font-size: clamp(16px, 2vw, 22px);
+        margin-bottom: 32px;
+      }
     }
  
     .popup-sparkle {
@@ -261,6 +297,14 @@
     @keyframes sparkleDrift {
       0%   { transform: translate(0,0); }
       100% { transform: translate(60px,-40px); }
+    }
+
+    /* Desktop sparkles bigger */
+    @media (min-width: 769px) {
+      .popup-sparkle {
+        width: 14px;
+        height: 14px;
+      }
     }
  
     .continue-btn {
@@ -316,6 +360,19 @@
     @keyframes arrowGlowPulse {
       0%,100% { opacity: .3; transform: scale(1); }
       50%      { opacity: .6; transform: scale(1.18); }
+    }
+
+    /* Desktop continue-btn bigger */
+    @media (min-width: 769px) {
+      .continue-btn {
+        width: 100px;
+        height: 100px;
+        margin-top: 28px;
+      }
+      .continue-btn svg {
+        width: 40px;
+        height: 40px;
+      }
     }
  
     #confetti-canvas {
