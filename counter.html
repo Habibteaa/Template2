@@ -137,11 +137,13 @@
     text-align:center;
   }
 
+  /* CHANGE 1 — eyebrow: bigger + darker */
   .eyebrow{
-    font-size:11px;
-    letter-spacing:.32em;
+    font-size:15px;
+    letter-spacing:.28em;
     text-transform:uppercase;
-    color:var(--brown-muted);
+    color:var(--brown-primary);        /* was --brown-muted */
+    font-weight:700;
     margin-bottom:14px;
   }
 
@@ -158,15 +160,16 @@
     text-shadow:0 0 24px rgba(255,143,176,.4);
   }
 
-  .hero-sub{
-    color:var(--brown-muted);
-    font-size:15px;
-    margin-bottom:42px;
-    max-width:440px;
+  /* CHANGE 3 — hero-intro: centred column so timer card sits centred */
+  #hero-intro{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    width:100%;
   }
 
   .timer-card{
-    display:flex;
+    display:inline-flex;           /* shrink-wrap to content */
     gap:10px;
     padding:22px 26px;
     border-radius:28px;
@@ -237,6 +240,7 @@
     opacity:.6;
   }
 
+  /* CHANGE 4 — celebration hidden until JS explicitly shows it */
   #celebration{
     position:relative;
     z-index:30;
@@ -245,25 +249,26 @@
     pointer-events:none;
     transition:opacity .9s ease, transform .9s ease;
     width:100%;
-    display:flex;
+    display:none;               /* completely hidden; JS sets display:flex then triggers transition */
     flex-direction:column;
     align-items:center;
   }
   #celebration.show{
+    display:flex;
     opacity:1;
     transform:translateY(0);
     pointer-events:auto;
   }
+  #hero-intro{
+    transition:opacity 1.2s ease, transform 1.2s ease;
+  }
   #hero-intro.hide{
     opacity:0;
     transform:translateY(-16px) scale(.98);
-    transition:opacity 15s ease, transform 15s ease;
     pointer-events:none;
-    transition-delay:0s;
   }
   #hero-intro.hide.collapsed{
-    height:0;
-    overflow:hidden;
+    display:none;
   }
 
   .cake-wrap{
@@ -500,9 +505,9 @@
   <main class="stage">
 
     <div id="hero-intro">
+      <!-- CHANGE 1: eyebrow is bigger + dark; CHANGE 2: hero-sub paragraph removed -->
       <div class="eyebrow">A little something is coming</div>
       <h1 class="hero-title">Counting the moments<br/>for <em>Scarlet</em></h1>
-      <p class="hero-sub">The candles are almost ready &mdash; here's exactly how long it's been since the wait began.</p>
 
       <div class="timer-card" id="timer-card">
         <div class="timer-unit"><div class="timer-num" data-unit="days"><span class="digit">0</span></div><div class="timer-label">Days</div></div>
@@ -515,6 +520,7 @@
       </div>
     </div>
 
+    <!-- CHANGE 4: #celebration starts with display:none; only revealed by JS when timer hits zero -->
     <div id="celebration" class="cake-layer">
 
       <div class="age-wrap">
@@ -753,8 +759,12 @@
     requestAnimationFrame(stepBalloons);
   }
 
+  /* ── CHANGE 4: target must be in the future; celebration is locked until diff <= 0 ── */
   var target = new Date("2024-06-15T00:00:00");
   var fired = false;
+  /* Minimum ms to show the countdown screen before revealing cake (even if timer is already 0) */
+  var MIN_COUNTDOWN_MS = 3000; /* always show countdown for at least 3s */
+  var pageLoadTime = Date.now();
 
   function renderUnit(unitEl, value){
     var str = String(value);
@@ -790,7 +800,9 @@
       renderUnit(el, val);
     });
 
-    if(diff <= 0 && !fired){
+    /* Only reveal celebration after timer hits 0 AND the page has been
+       visible for at least MIN_COUNTDOWN_MS so the countdown is always seen */
+    if(diff <= 0 && !fired && (Date.now() - pageLoadTime >= MIN_COUNTDOWN_MS)){
       fired = true;
       burstConfetti(true);
       setTimeout(revealCelebration, 650);
@@ -804,11 +816,24 @@
   var bannerWrap = document.getElementById('banner-wrap');
 
   function revealCelebration(){
+    /* Step 1: fade out the countdown (1.2s transition) */
     heroIntro.classList.add('hide');
-    celebration.classList.add('show');
-    bannerWrap.classList.add('show');
-    if(!reduceMotion) startBalloons();
-    setTimeout(function(){ heroIntro.classList.add('collapsed'); }, 8000);
+
+    /* Step 2: only AFTER countdown is fully gone, bring in the cake */
+    var FADE_OUT_MS = 1250; /* slightly > transition duration so it's fully invisible */
+    setTimeout(function(){
+      heroIntro.classList.add('collapsed'); /* remove from layout entirely */
+
+      /* Step 3: set display:flex then trigger opacity transition on next paint */
+      celebration.style.display = 'flex';
+      requestAnimationFrame(function(){
+        requestAnimationFrame(function(){
+          celebration.classList.add('show');
+          bannerWrap.classList.add('show');
+          if(!reduceMotion) startBalloons();
+        });
+      });
+    }, FADE_OUT_MS);
   }
 
   var bannerTrack = document.getElementById('banner-track');
