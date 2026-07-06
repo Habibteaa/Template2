@@ -274,19 +274,20 @@
 
   /* ── ARROW BUTTON — sits naturally at the bottom ── */
   .continue-btn{
-    display:flex; align-items:center; justify-content:center;
-    width: clamp(72px, 8vw, 96px);
-    height: clamp(72px, 8vw, 96px);
-    border-radius:50%;
-    background:linear-gradient(135deg, var(--pink-neon), var(--pink-deep));
-    box-shadow: 0 1px 0 rgba(255,255,255,.5) inset, 0 14px 28px -10px rgba(244,167,185,.7);
-    text-decoration:none; cursor:pointer;
-    position:relative;
-    animation:arrowFloat 2.4s ease-in-out infinite;
-    transition:transform .25s ease, box-shadow .25s ease, filter .25s ease;
-
-    margin-top: clamp(72px, 14vh, 200px);
-    margin-bottom:18px;
+  margin-top: clamp(72px, 14vh, 200px);
+  margin-bottom:18px;
+  display:flex; align-items:center; justify-content:center;
+  /* CHANGE 3: increased button size */
+  width: clamp(64px, 12vw, 96px);
+  height: clamp(64px, 12vw, 96px);
+  border-radius:50%;
+  background:linear-gradient(135deg,var(--pink-neon),var(--pink-deep));
+  box-shadow:0 1px 0 rgba(255,255,255,.5) inset,
+    0 14px 28px -10px rgba(244,167,185,.7);
+  text-decoration:none; cursor:pointer; border:none;
+  animation:arrowFloat 2.4s ease-in-out infinite;
+  transition:transform .25s, box-shadow .25s, filter .25s;
+  position:relative;
 }
 
   .continue-btn::before{
