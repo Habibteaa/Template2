@@ -54,7 +54,7 @@
     display:flex;
     flex-direction:column;
     align-items:center;
-    justify-content:space-between;
+    justify-content:center;
     padding: clamp(28px, 5vh, 60px) 16px clamp(28px, 5vh, 56px);
     overflow:hidden;
     text-align:center;
@@ -277,17 +277,15 @@
   margin-top: clamp(72px, 14vh, 200px);
   margin-bottom:18px;
   display:flex; align-items:center; justify-content:center;
-  /* CHANGE 3: increased button size */
-  width: clamp(64px, 12vw, 96px);
-  height: clamp(64px, 12vw, 96px);
+  width: clamp(72px, 8vw, 96px);
+  height: clamp(72px, 8vw, 96px);
   border-radius:50%;
-  background:linear-gradient(135deg,var(--pink-neon),var(--pink-deep));
-  box-shadow:0 1px 0 rgba(255,255,255,.5) inset,
-    0 14px 28px -10px rgba(244,167,185,.7);
-  text-decoration:none; cursor:pointer; border:none;
-  animation:arrowFloat 2.4s ease-in-out infinite;
-  transition:transform .25s, box-shadow .25s, filter .25s;
+  background:linear-gradient(135deg, var(--pink-neon), var(--pink-deep));
+  box-shadow: 0 1px 0 rgba(255,255,255,.5) inset, 0 14px 28px -10px rgba(244,167,185,.7);
+  text-decoration:none; cursor:pointer;
   position:relative;
+  animation:arrowFloat 2.4s ease-in-out infinite;
+  transition:transform .25s ease, box-shadow .25s ease, filter .25s ease;
 }
 
   .continue-btn::before{
