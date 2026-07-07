@@ -54,7 +54,6 @@
     100%{ transform:translate(30px,-20px) scale(1.08); }
   }
 
-  /* ── Title: pinned to top, shimmer matching maze page ── */
   #surprise-text{
     position: absolute;
     top: 4vh;
@@ -95,7 +94,6 @@
     gap:clamp(14px, 2.6vh, 26px);
     padding:clamp(14px, 4vh, 40px) 16px;
     text-align:center;
-    /* push content down slightly so it doesn't overlap the pinned title */
     padding-top: clamp(70px, 12vh, 110px);
   }
 
@@ -111,8 +109,8 @@
     display:grid;
     grid-template-columns:repeat(4,1fr);
     grid-template-rows:repeat(4,1fr);
-    gap:3px;
-    padding:3px;
+    gap:7px;
+    padding:7px;
     border-radius:20px;
     background:linear-gradient(180deg, var(--metal-1), var(--metal-2));
     box-shadow:
@@ -174,9 +172,9 @@
     animation:sparkleTwinkle 1.6s ease-in-out infinite;
   }
 
-  /* ── Arrow button: larger (106px) matching maze page, shifted down ── */
+  /* ── CHANGE 1: arrow button moved lower via larger margin-top ── */
   .continue-btn{
-    margin-top: 18px;
+    margin-top: 48px;
     display:flex;
     align-items:center;
     justify-content:center;
@@ -309,7 +307,6 @@
   <div class="glow-blob b"></div>
   <div class="glow-blob c"></div>
 
-  <!-- Title pinned to top -->
   <div id="surprise-text">CAN YOU SOLVE THIS SURPRISE?</div>
 
   <div class="garden-ambient">
