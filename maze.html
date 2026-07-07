@@ -50,7 +50,6 @@
       100%{ transform:translate(30px,-20px) scale(1.08); }
     }
 
-    /* ── CHANGED: title pinned to top, shimmer style matching all other pages ── */
     #instructions{
       position: absolute;
       top: 4vh;
@@ -74,7 +73,6 @@
       100% { background-position: 200% center; }
     }
 
-    /* ── CHANGED: maze made significantly larger ── */
     #maze{
       position: relative;
       z-index: 10;
@@ -146,7 +144,6 @@
       width: min(88vw, 420px);
     }
 
-    /* ── CHANGED: popup heading and body text larger, explicitly centred ── */
     .popup-content h2{
       font-family:'Berkshire Swash', cursive;
       font-size: clamp(24px, 5.5vw, 36px);
@@ -186,7 +183,6 @@
       100%{ transform:translate(50px,-40px); }
     }
 
-    /* ── CHANGED: button increased (66→106px), icon (26→42px), halo inset (-8→-12px) ── */
     .continue-btn{
       margin-top:4px;
       margin-left:auto;
@@ -274,9 +270,9 @@
     const maze   = document.getElementById("maze");
     const walls  = document.querySelectorAll(".wall");
 
-    const PLAYER_SIZE = 28;
-    const STEP        = 20;
-    const SWIPE_MIN   = 22;
+    const PLAYER_SIZE    = 28;
+    const STEP           = 20;
+    const DRAG_THRESHOLD = 18; // pixels of drag before one step fires
 
     let playerPos = { top: 10, left: 10 };
 
@@ -350,6 +346,7 @@
       window.location.href = "puzzle.html";
     }
 
+    // ── Keyboard ──────────────────────────────────────────────────────────────
     document.addEventListener("keydown", (e) => {
       if (["ArrowUp","ArrowDown","ArrowLeft","ArrowRight"].includes(e.key)) {
         e.preventDefault();
@@ -357,47 +354,92 @@
       }
     });
 
-    let touchStartX = 0, touchStartY = 0;
+    // ── Touch: hold & drag continuously ──────────────────────────────────────
+    let touchRefX = 0, touchRefY = 0;
+    let touchAccX = 0, touchAccY = 0; // accumulated sub-threshold movement
 
     document.addEventListener("touchstart", (e) => {
-      touchStartX = e.touches[0].clientX;
-      touchStartY = e.touches[0].clientY;
+      touchRefX = e.touches[0].clientX;
+      touchRefY = e.touches[0].clientY;
+      touchAccX = 0;
+      touchAccY = 0;
     }, { passive: true });
 
-    document.addEventListener("touchend", (e) => {
-      const dx = e.changedTouches[0].clientX - touchStartX;
-      const dy = e.changedTouches[0].clientY - touchStartY;
-      const ax = Math.abs(dx), ay = Math.abs(dy);
+    document.addEventListener("touchmove", (e) => {
+      e.preventDefault(); // prevent page scroll while playing
 
-      if (ax < SWIPE_MIN && ay < SWIPE_MIN) return;
+      touchAccX += e.touches[0].clientX - touchRefX;
+      touchAccY += e.touches[0].clientY - touchRefY;
 
-      if (ax > ay * 1.4) {
-        movePlayer(dx > 0 ? "ArrowRight" : "ArrowLeft");
-      } else if (ay > ax * 1.4) {
-        movePlayer(dy > 0 ? "ArrowDown"  : "ArrowUp");
+      // Update reference for next delta
+      touchRefX = e.touches[0].clientX;
+      touchRefY = e.touches[0].clientY;
+
+      // Fire a step for every DRAG_THRESHOLD pixels accumulated
+      while (Math.abs(touchAccX) >= DRAG_THRESHOLD || Math.abs(touchAccY) >= DRAG_THRESHOLD) {
+        if (Math.abs(touchAccX) >= Math.abs(touchAccY)) {
+          // Horizontal dominant
+          if (Math.abs(touchAccX) >= DRAG_THRESHOLD) {
+            movePlayer(touchAccX > 0 ? "ArrowRight" : "ArrowLeft");
+            touchAccX -= Math.sign(touchAccX) * DRAG_THRESHOLD;
+          } else {
+            break;
+          }
+        } else {
+          // Vertical dominant
+          if (Math.abs(touchAccY) >= DRAG_THRESHOLD) {
+            movePlayer(touchAccY > 0 ? "ArrowDown" : "ArrowUp");
+            touchAccY -= Math.sign(touchAccY) * DRAG_THRESHOLD;
+          } else {
+            break;
+          }
+        }
       }
-    }, { passive: true });
+    }, { passive: false });
 
-    let isDragging = false, startX = 0, startY = 0;
+    // ── Mouse: hold & drag continuously ──────────────────────────────────────
+    let mouseDown = false;
+    let mouseRefX = 0, mouseRefY = 0;
+    let mouseAccX = 0, mouseAccY = 0;
 
     document.addEventListener("mousedown", (e) => {
-      isDragging = true; startX = e.clientX; startY = e.clientY;
+      mouseDown = true;
+      mouseRefX = e.clientX;
+      mouseRefY = e.clientY;
+      mouseAccX = 0;
+      mouseAccY = 0;
     });
-    document.addEventListener("mouseup", (e) => {
-      if (!isDragging) return;
-      isDragging = false;
-      const dx = e.clientX - startX;
-      const dy = e.clientY - startY;
-      const ax = Math.abs(dx), ay = Math.abs(dy);
 
-      if (ax < SWIPE_MIN && ay < SWIPE_MIN) return;
+    document.addEventListener("mousemove", (e) => {
+      if (!mouseDown) return;
 
-      if (ax > ay * 1.4) {
-        movePlayer(dx > 0 ? "ArrowRight" : "ArrowLeft");
-      } else if (ay > ax * 1.4) {
-        movePlayer(dy > 0 ? "ArrowDown"  : "ArrowUp");
+      mouseAccX += e.clientX - mouseRefX;
+      mouseAccY += e.clientY - mouseRefY;
+
+      mouseRefX = e.clientX;
+      mouseRefY = e.clientY;
+
+      while (Math.abs(mouseAccX) >= DRAG_THRESHOLD || Math.abs(mouseAccY) >= DRAG_THRESHOLD) {
+        if (Math.abs(mouseAccX) >= Math.abs(mouseAccY)) {
+          if (Math.abs(mouseAccX) >= DRAG_THRESHOLD) {
+            movePlayer(mouseAccX > 0 ? "ArrowRight" : "ArrowLeft");
+            mouseAccX -= Math.sign(mouseAccX) * DRAG_THRESHOLD;
+          } else {
+            break;
+          }
+        } else {
+          if (Math.abs(mouseAccY) >= DRAG_THRESHOLD) {
+            movePlayer(mouseAccY > 0 ? "ArrowDown" : "ArrowUp");
+            mouseAccY -= Math.sign(mouseAccY) * DRAG_THRESHOLD;
+          } else {
+            break;
+          }
+        }
       }
     });
+
+    document.addEventListener("mouseup",   () => { mouseDown = false; });
+    document.addEventListener("mouseleave", () => { mouseDown = false; });
   </script>
 </body>
 </html>
