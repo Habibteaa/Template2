@@ -53,18 +53,36 @@
     0%{ transform:translate(0,0) scale(1); }
     100%{ transform:translate(30px,-20px) scale(1.08); }
   }
-  @keyframes shimmerSweep{
-    0%{ left:-40%; }
-    60%, 100%{ left:120%; }
+
+  /* ── Title: pinned to top, shimmer matching maze page ── */
+  #surprise-text{
+    position: absolute;
+    top: 4vh;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+    font-family: 'Berkshire Swash', cursive;
+    font-size: clamp(1.6rem, 4.4vw, 3rem);
+    font-weight: 400;
+    letter-spacing: .02em;
+    white-space: nowrap;
+    background: linear-gradient(135deg, #5c2e16, #bd6528, var(--pink-neon), #5c2e16);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: shimmer 6s linear infinite;
   }
-  @keyframes letterGlow{
-    0%,100%{ filter:drop-shadow(0 0 6px rgba(255,143,176,.4)); }
-    50%{ filter:drop-shadow(0 0 18px rgba(255,143,176,.95)); }
+  @keyframes shimmer{
+    0%   { background-position: 0%   center; }
+    100% { background-position: 200% center; }
   }
+
   @keyframes sparkleTwinkle{
     0%,100%{ opacity:0; transform:scale(.3) rotate(0deg); }
     50%{ opacity:1; transform:scale(1.1) rotate(180deg); }
   }
+
   .stage{
     position:relative;
     z-index:10;
@@ -77,35 +95,10 @@
     gap:clamp(14px, 2.6vh, 26px);
     padding:clamp(14px, 4vh, 40px) 16px;
     text-align:center;
+    /* push content down slightly so it doesn't overlap the pinned title */
+    padding-top: clamp(70px, 12vh, 110px);
   }
-  #surprise-text-wrap{
-    position:relative;
-    max-width:680px;
-  }
-  #surprise-text{
-    position:relative;
-    font-family:'Berkshire Swash', cursive;
-    font-weight:400;
-    font-size:clamp(22px, 4.6vw, 42px);
-    line-height:1.25;
-    letter-spacing:.01em;
-    background:linear-gradient(120deg, var(--pink-neon), var(--pink-deep) 45%, var(--pink-neon));
-    -webkit-background-clip:text;
-    background-clip:text;
-    color:transparent;
-    animation:letterGlow 2.4s ease-in-out infinite;
-    overflow:hidden;
-  }
-  #surprise-text::after{
-    content:'';
-    position:absolute;
-    top:0; left:-40%;
-    width:35%; height:100%;
-    background:linear-gradient(120deg, transparent, rgba(255,255,255,.85), transparent);
-    animation:shimmerSweep 3.2s ease-in-out infinite;
-    pointer-events:none;
-    mix-blend-mode:overlay;
-  }
+
   .puzzle-wrap{
     position:relative;
     width:min(78vw, 58vh, 440px);
@@ -137,9 +130,7 @@
     cursor:grab;
     transition:box-shadow .25s ease, transform .18s ease;
   }
-  .piece.lifted{
-    opacity:.25;
-  }
+  .piece.lifted{ opacity:.25; }
   .piece.correct{
     box-shadow:
       0 0 0 1.5px rgba(168,188,147,.9) inset,
@@ -167,7 +158,6 @@
     filter:blur(18px);
     transition:opacity .6s ease;
   }
-  .puzzle-grid.solved + .solved-glow,
   .puzzle-wrap .solved-glow.show{ opacity:.9; animation:solvedPulse 2.2s ease-in-out infinite; }
   @keyframes solvedPulse{
     0%,100%{ filter:blur(18px) brightness(1); }
@@ -183,13 +173,15 @@
     pointer-events:none;
     animation:sparkleTwinkle 1.6s ease-in-out infinite;
   }
+
+  /* ── Arrow button: larger (106px) matching maze page, shifted down ── */
   .continue-btn{
-    margin-top:6px;
+    margin-top: 18px;
     display:flex;
     align-items:center;
     justify-content:center;
-    width:clamp(52px, 9vh, 66px);
-    height:clamp(52px, 9vh, 66px);
+    width: 106px;
+    height: 106px;
     border-radius:50%;
     position:relative;
     background:linear-gradient(135deg, var(--pink-neon), var(--pink-deep));
@@ -204,17 +196,17 @@
   .continue-btn::before{
     content:'';
     position:absolute;
-    inset:-8px;
+    inset:-12px;
     border-radius:50%;
     background:linear-gradient(135deg, var(--pink-neon), var(--pink-deep));
     opacity:.4;
-    filter:blur(12px);
+    filter:blur(14px);
     z-index:-1;
     animation:arrowGlowPulse 2.4s ease-in-out infinite;
   }
   .continue-btn svg{
-    width:26px;
-    height:26px;
+    width: 42px;
+    height: 42px;
     color:var(--cream-base);
     transition:transform .25s ease;
   }
@@ -235,6 +227,7 @@
     0%,100%{ opacity:.3; transform:scale(1); }
     50%{ opacity:.6; transform:scale(1.18); }
   }
+
   .garden-ambient{
     position:fixed;
     left:0; right:0; bottom:0;
@@ -282,10 +275,7 @@
     82%{  opacity:1;   transform:scale(1.05) translateY(-3px) rotate(var(--tilt)); }
     100%{ opacity:1;   transform:scale(1)    translateY(0)    rotate(var(--tilt)); }
   }
-  .flower-sway{
-    transform-origin:bottom center;
-    animation:windSwayA 4.6s ease-in-out infinite;
-  }
+  .flower-sway{ transform-origin:bottom center; animation:windSwayA 4.6s ease-in-out infinite; }
   .flower:nth-child(2) .flower-sway{ animation:windSwayB 5.4s ease-in-out infinite; }
   .flower:nth-child(3) .flower-sway{ animation:windSwayC 3.9s ease-in-out infinite; }
   @keyframes windSwayA{
@@ -307,7 +297,7 @@
     .stage{ gap:12px; }
   }
   @media (prefers-reduced-motion: reduce){
-    .glow-blob, #surprise-text, #surprise-text::after,
+    .glow-blob, #surprise-text,
     .flower-sway, .continue-btn, .continue-btn::before,
     .flower, .solved-sparkle{ animation:none !important; }
     .flower{ opacity:1; transform:rotate(var(--tilt)); }
@@ -318,6 +308,9 @@
   <div class="glow-blob a"></div>
   <div class="glow-blob b"></div>
   <div class="glow-blob c"></div>
+
+  <!-- Title pinned to top -->
+  <div id="surprise-text">CAN YOU SOLVE THIS SURPRISE?</div>
 
   <div class="garden-ambient">
     <div class="ground"></div>
@@ -429,10 +422,6 @@
   </div>
 
   <main class="stage">
-    <div id="surprise-text-wrap">
-      <div id="surprise-text">CAN YOU SOLVE THIS SURPRISE?</div>
-    </div>
-
     <div class="puzzle-wrap">
       <div class="puzzle-grid" id="puzzleGrid"></div>
       <div class="solved-glow" id="solvedGlow"></div>
@@ -446,7 +435,7 @@
   </main>
 
   <script>
-    const IMAGE_SRC = "https://images.unsplash.com/photo-1490750967868-88aa4486c946?w=800&q=80";
+    const IMAGE_SRC = "puzzpic.jpeg";
     const SIZE = 4;
     const TOTAL = SIZE * SIZE;
 
