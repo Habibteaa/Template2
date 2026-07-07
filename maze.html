@@ -21,7 +21,7 @@
 
     *{ box-sizing:border-box; }
 
-    html,body{
+    html, body{
       margin:0; padding:0;
       width:100%; height:100%;
       min-height:100vh; min-height:100dvh;
@@ -33,7 +33,7 @@
       flex-direction:column;
       align-items:center;
       justify-content:center;
-      gap:clamp(10px,2vh,22px);
+      position:relative;
     }
 
     .glow-blob{
@@ -50,43 +50,45 @@
       100%{ transform:translate(30px,-20px) scale(1.08); }
     }
 
+    /* ── CHANGED: title pinned to top, shimmer style matching all other pages ── */
     #instructions{
-      position:relative; z-index:10;
-      font-family:'Berkshire Swash', cursive;
-      font-size:clamp(14px,3.4vw,28px);
-      font-weight:400; letter-spacing:.02em; margin:0;
-      background:linear-gradient(120deg,var(--pink-neon),var(--pink-deep) 45%,var(--pink-neon));
-      -webkit-background-clip:text; background-clip:text; color:transparent;
-      overflow:hidden; animation:textGlow 2.4s ease-in-out infinite;
+      position: absolute;
+      top: 4vh;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 10;
+      font-family: 'Berkshire Swash', cursive;
+      font-size: clamp(2rem, 5.2vw, 3.6rem);
+      font-weight: 400;
+      letter-spacing: .02em;
+      white-space: nowrap;
+      background: linear-gradient(135deg, #5c2e16, #bd6528, var(--pink-neon), #5c2e16);
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: shimmer 6s linear infinite;
     }
-    #instructions::after{
-      content:''; position:absolute; top:0; left:-40%;
-      width:35%; height:100%;
-      background:linear-gradient(120deg,transparent,rgba(255,255,255,.88),transparent);
-      animation:shimmerSweep 3.2s ease-in-out infinite;
-      pointer-events:none; mix-blend-mode:overlay;
-    }
-    @keyframes textGlow{
-      0%,100%{ filter:drop-shadow(0 0 6px rgba(255,143,176,.35)); }
-      50%{     filter:drop-shadow(0 0 18px rgba(255,143,176,.9)); }
-    }
-    @keyframes shimmerSweep{
-      0%{ left:-40%; } 60%,100%{ left:120%; }
+    @keyframes shimmer{
+      0%   { background-position: 0%   center; }
+      100% { background-position: 200% center; }
     }
 
+    /* ── CHANGED: maze made significantly larger ── */
     #maze{
-      position:relative;
-      z-index:10;
-      width:  min(400px, 90vw, 56vh);
-      height: min(400px, 90vw, 56vh);
-      background:linear-gradient(180deg, rgba(253,251,247,.98) 0%, rgba(245,239,235,.99) 100%);
-      border:2px solid var(--pink-deep);
-      border-radius:min(20px,5%);
-      overflow:hidden;
+      position: relative;
+      z-index: 10;
+      width:  min(500px, 94vw, 66vh);
+      height: min(500px, 94vw, 66vh);
+      background: linear-gradient(180deg, rgba(253,251,247,.98) 0%, rgba(245,239,235,.99) 100%);
+      border: 2px solid var(--pink-deep);
+      border-radius: min(20px, 5%);
+      overflow: hidden;
       box-shadow:
         0 1px 0 rgba(255,255,255,.7) inset,
         0 0 0 1px rgba(255,143,176,.12),
         0 18px 44px -16px rgba(54,34,20,.22);
+      margin-top: 2vh;
     }
 
     .wall{
@@ -98,7 +100,7 @@
 
     #player{
       position:absolute;
-      font-size:clamp(22px,6vw,28px);
+      font-size:clamp(24px,6.5vw,32px);
       z-index:5;
       transition:left .08s linear, top .08s linear;
       text-shadow:0 0 6px rgba(255,143,176,.7), 0 0 16px rgba(255,143,176,.35);
@@ -108,7 +110,7 @@
 
     #goal{
       position:absolute;
-      font-size:clamp(22px,6vw,28px);
+      font-size:clamp(24px,6.5vw,32px);
       text-shadow:0 0 6px rgba(255,143,176,.7), 0 0 16px rgba(255,143,176,.35);
       animation:entityPulse 1.4s ease-in-out infinite;
       animation-delay:.7s;
@@ -133,7 +135,7 @@
     .popup-content{
       background:rgba(253,251,247,.97);
       border:1.5px solid var(--pink-deep);
-      padding:clamp(22px,4vh,38px) clamp(28px,6vw,52px);
+      padding:clamp(28px,5vh,44px) clamp(32px,7vw,60px);
       border-radius:26px; text-align:center;
       box-shadow:
         0 1px 0 rgba(255,255,255,.8) inset,
@@ -141,17 +143,28 @@
         0 0 60px -10px rgba(255,143,176,.3);
       position:relative; overflow:hidden;
       transform:scale(.8); animation:popIn .5s forwards;
+      width: min(88vw, 420px);
     }
+
+    /* ── CHANGED: popup heading and body text larger, explicitly centred ── */
     .popup-content h2{
       font-family:'Berkshire Swash', cursive;
-      font-size:clamp(18px,4vw,26px); font-weight:400; margin:0 0 6px;
+      font-size: clamp(24px, 5.5vw, 36px);
+      font-weight:400; margin:0 0 10px;
+      text-align: center;
       background:linear-gradient(120deg,var(--pink-neon),var(--pink-deep) 50%,var(--pink-neon));
       -webkit-background-clip:text; background-clip:text; color:transparent;
       animation:textGlow 2.4s ease-in-out infinite;
     }
     .popup-content p{
-      font-size:clamp(13px,2.6vw,15px); color:var(--brown-muted);
-      margin:0 0 20px; font-weight:500;
+      font-size: clamp(15px, 3.2vw, 20px);
+      color:var(--brown-muted);
+      margin:0 0 24px; font-weight:500;
+      text-align: center;
+    }
+    @keyframes textGlow{
+      0%,100%{ filter:drop-shadow(0 0 6px rgba(255,143,176,.35)); }
+      50%{     filter:drop-shadow(0 0 18px rgba(255,143,176,.9)); }
     }
     @keyframes popIn{
       from{ transform:scale(.8); opacity:0; }
@@ -173,12 +186,13 @@
       100%{ transform:translate(50px,-40px); }
     }
 
+    /* ── CHANGED: button increased (66→106px), icon (26→42px), halo inset (-8→-12px) ── */
     .continue-btn{
-      margin-top:16px;
+      margin-top:4px;
       margin-left:auto;
       margin-right:auto;
       display:flex; align-items:center; justify-content:center;
-      width:66px; height:66px; border-radius:50%; position:relative;
+      width:106px; height:106px; border-radius:50%; position:relative;
       background:linear-gradient(135deg,var(--pink-neon),var(--pink-deep));
       box-shadow:
         0 1px 0 rgba(255,255,255,.5) inset,
@@ -188,13 +202,13 @@
       transition:transform .25s ease, box-shadow .25s ease, filter .25s ease;
     }
     .continue-btn::before{
-      content:''; position:absolute; inset:-8px; border-radius:50%;
+      content:''; position:absolute; inset:-12px; border-radius:50%;
       background:linear-gradient(135deg,var(--pink-neon),var(--pink-deep));
-      opacity:.4; filter:blur(12px); z-index:-1;
+      opacity:.4; filter:blur(14px); z-index:-1;
       animation:arrowGlowPulse 2.4s ease-in-out infinite;
     }
     .continue-btn svg{
-      width:26px; height:26px; color:var(--cream-base);
+      width:42px; height:42px; color:var(--cream-base);
       transition:transform .25s ease;
     }
     .continue-btn:hover{
@@ -217,8 +231,8 @@
     }
 
     @media (prefers-reduced-motion:reduce){
-      .glow-blob,#instructions,#instructions::after,
-      #player,#goal,.popup-sparkle,.continue-btn,.continue-btn::before
+      .glow-blob,#instructions,#player,#goal,
+      .popup-sparkle,.continue-btn,.continue-btn::before
       { animation:none !important; }
     }
   </style>
@@ -287,9 +301,9 @@
 
       let collides = false;
       walls.forEach(w => {
-        const wr = w.getBoundingClientRect();
-        const wl = wr.left   - mazeRect.left;
-        const wt = wr.top    - mazeRect.top;
+        const wr  = w.getBoundingClientRect();
+        const wl  = wr.left   - mazeRect.left;
+        const wt  = wr.top    - mazeRect.top;
         const wr2 = wr.right  - mazeRect.left;
         const wb  = wr.bottom - mazeRect.top;
 
@@ -306,9 +320,9 @@
         player.style.left = playerPos.left + "px";
       }
 
-      const gr = goal.getBoundingClientRect();
-      const gl = gr.left   - mazeRect.left;
-      const gt = gr.top    - mazeRect.top;
+      const gr  = goal.getBoundingClientRect();
+      const gl  = gr.left   - mazeRect.left;
+      const gt  = gr.top    - mazeRect.top;
       const gr2 = gr.right  - mazeRect.left;
       const gb  = gr.bottom - mazeRect.top;
 
