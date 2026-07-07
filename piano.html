@@ -89,45 +89,26 @@
     padding: 3.5vh 4vw 3.5vh;
   }
 
+  /* ── CHANGED: title now matches "The Strings Of Love" shimmer style ── */
   .page-title {
     font-family: 'Berkshire Swash', cursive;
     font-weight: 400;
-    font-size: clamp(1.9rem, 4.8vw, 3.2rem);
+    font-size: clamp(2rem, 5vw, 3.5rem);
     letter-spacing: 0.01em;
     line-height: 1.15;
     text-align: center;
-    position: relative;
-    overflow: hidden;
-    background: linear-gradient(120deg, var(--pink-neon), var(--pink-deep) 45%, var(--pink-neon));
+    white-space: nowrap;
+    background: linear-gradient(135deg, #5c2e16, #bd6528, var(--pink-neon), #5c2e16);
+    background-size: 200% auto;
     -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
     background-clip: text;
-    color: transparent;
-    opacity: 0;
-    transform: translateY(14px);
-    animation:
-      titleRise 1.15s cubic-bezier(.22,.82,.38,1) 0.15s forwards,
-      textGlow  2.4s ease-in-out 1.3s infinite;
+    animation: shimmer 6s linear infinite;
+    z-index: 10;
   }
-  .page-title::after {
-    content: '';
-    position: absolute;
-    top: 0; left: -40%;
-    width: 35%; height: 100%;
-    background: linear-gradient(120deg, transparent, rgba(255,255,255,.88), transparent);
-    animation: shimmerSweep 3.2s ease-in-out infinite;
-    pointer-events: none;
-    mix-blend-mode: overlay;
-  }
-  @keyframes titleRise {
-    to { opacity: 1; transform: translateY(0); }
-  }
-  @keyframes textGlow {
-    0%,100% { filter: drop-shadow(0 0 6px rgba(255,143,176,.35)); }
-    50%      { filter: drop-shadow(0 0 20px rgba(255,143,176,.95)); }
-  }
-  @keyframes shimmerSweep {
-    0%       { left: -40%; }
-    60%,100% { left: 120%; }
+  @keyframes shimmer {
+    0%   { background-position: 0%   center; }
+    100% { background-position: 200% center; }
   }
 
   .piano-wrap {
@@ -163,16 +144,18 @@
     width: 100%; max-width: 720px;
     display: flex; flex-direction: column;
     align-items: center; gap: 1.2vh;
+    margin-bottom: 4vh; /* ── CHANGED: lifts bottom section higher ── */
   }
 
+  /* ── CHANGED: button increased (66→106px) ── */
   .continue-btn {
     margin-left:  auto;
     margin-right: auto;
     display:      flex;
     align-items:  center;
     justify-content: center;
-    width:  66px;
-    height: 66px;
+    width:  106px;
+    height: 106px;
     border-radius: 50%;
     position: relative;
     background: linear-gradient(135deg, var(--pink-neon), var(--pink-deep));
@@ -198,19 +181,20 @@
   .continue-btn::before {
     content: '';
     position: absolute;
-    inset: -8px;
+    inset: -12px;
     border-radius: 50%;
     background: linear-gradient(135deg, var(--pink-neon), var(--pink-deep));
     opacity: 0;
-    filter: blur(12px);
+    filter: blur(14px);
     z-index: -1;
     transition: opacity 0.65s ease;
   }
   .continue-btn.unlocked::before {
     animation: arrowGlowPulse 2.4s ease-in-out infinite;
   }
+  /* ── CHANGED: icon increased (26→42px) ── */
   .continue-btn svg {
-    width: 26px; height: 26px;
+    width: 42px; height: 42px;
     color: var(--cream-base);
     transition: transform .25s ease;
   }
@@ -235,7 +219,7 @@
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .light-rays, .studio-glow, .page-title, .page-title::after,
+    .light-rays, .studio-glow, .page-title,
     .continue-btn, .continue-btn::before { animation: none !important; }
     .page-title { opacity: 1; transform: none; }
   }
