@@ -70,20 +70,22 @@
       position: relative;
       z-index: 10;
       width: 100%;
-      max-width: 580px;
+      max-width: 620px;
       margin: 0 auto;
-      padding: clamp(28px, 5vh, 52px) clamp(16px, 5vw, 28px) clamp(36px, 6vh, 64px);
+      min-height: 100vh;
+      padding: clamp(36px, 6vh, 64px) clamp(16px, 5vw, 32px) clamp(48px, 8vh, 80px);
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: clamp(10px, 2vh, 20px);
+      justify-content: center;
+      gap: clamp(14px, 2.5vh, 26px);
     }
 
     .page-title {
       font-family: 'Great Vibes', cursive;
       font-size: clamp(38px, 9vw, 64px);
       font-weight: 400;
-      margin: 0;
+      margin: 0 0 clamp(6px, 1.5vh, 16px);
       background: linear-gradient(120deg, var(--pink-neon), var(--pink-deep) 45%, var(--pink-neon));
       -webkit-background-clip: text;
       background-clip: text;
@@ -111,34 +113,21 @@
       60%, 100% { left: 120%; }
     }
 
-    .page-subtitle {
-      font-size: clamp(13px, 2.8vw, 15px);
-      color: var(--brown-muted);
-      font-weight: 500;
-      letter-spacing: .05em;
-      margin: -4px 0 4px;
-      animation: subtitleGlow 3s ease-in-out infinite;
-    }
-    @keyframes subtitleGlow {
-      0%, 100% { text-shadow: 0 0 6px rgba(156,123,103,.15); }
-      50%       { text-shadow: 0 0 14px rgba(156,123,103,.45); }
-    }
-
     .track-list {
       width: 100%;
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 14px;
     }
 
     .track-card {
       background: var(--card-bg);
       border: 1.5px solid rgba(255,143,176,.3);
-      border-radius: 20px;
-      padding: 14px 16px;
+      border-radius: 22px;
+      padding: 18px 20px;
       display: flex;
       align-items: center;
-      gap: 14px;
+      gap: 16px;
       box-shadow: 0 4px 20px rgba(255,143,176,.15);
       cursor: pointer;
       position: relative;
@@ -190,7 +179,7 @@
 
     .play-btn {
       flex-shrink: 0;
-      width: 50px; height: 50px;
+      width: 56px; height: 56px;
       border-radius: 50%;
       background: linear-gradient(135deg, var(--pink-neon), var(--pink-deep));
       border: none;
@@ -214,7 +203,7 @@
       animation: btnGlow 2.2s ease-in-out infinite;
     }
     .play-btn svg {
-      width: 22px; height: 22px;
+      width: 24px; height: 24px;
       color: var(--cream-base);
       transition: transform .2s ease;
     }
@@ -236,10 +225,10 @@
       min-width: 0;
       display: flex;
       flex-direction: column;
-      gap: 5px;
+      gap: 7px;
     }
     .track-name {
-      font-size: clamp(13px, 3vw, 15px);
+      font-size: clamp(15px, 3.2vw, 17px);
       font-weight: 600;
       color: var(--brown-primary);
       white-space: nowrap;
@@ -249,7 +238,7 @@
     }
 
     .progress-wrap {
-      height: 5px;
+      height: 6px;
       background: var(--taupe);
       border-radius: 100px;
       overflow: hidden;
@@ -269,11 +258,11 @@
       display: flex;
       align-items: center;
       gap: 3px;
-      height: 34px;
+      height: 38px;
       flex-shrink: 0;
     }
     .wave-bar {
-      width: 3px;
+      width: 3.5px;
       border-radius: 100px;
       transition: height .25s ease;
     }
@@ -297,7 +286,8 @@
     .continue-wrap {
       display: flex;
       justify-content: center;
-      margin-top: 10px;
+      margin-top: clamp(20px, 4vh, 40px);
+      margin-bottom: clamp(10px, 2vh, 20px);
     }
 
     .continue-btn {
@@ -356,12 +346,12 @@
     }
 
     @media (max-width: 480px) {
-      .track-card   { padding: 12px 12px; gap: 10px; border-radius: 16px; }
-      .play-btn     { width: 44px; height: 44px; }
-      .play-btn svg { width: 19px; height: 19px; }
-      .waveform     { height: 28px; gap: 2.5px; }
-      .wave-bar     { width: 2.5px; }
-      .track-name   { font-size: 13px; }
+      .track-card   { padding: 14px 14px; gap: 12px; border-radius: 18px; }
+      .play-btn     { width: 50px; height: 50px; }
+      .play-btn svg { width: 21px; height: 21px; }
+      .waveform     { height: 32px; gap: 2.5px; }
+      .wave-bar     { width: 3px; }
+      .track-name   { font-size: 14px; }
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -389,7 +379,6 @@
 
   <div class="page-wrap">
     <h1 class="page-title">Songs For You</h1>
-    <p class="page-subtitle">just for you ♡</p>
 
     <div class="track-list" id="trackList"></div>
 
