@@ -90,13 +90,14 @@
     cursor: crosshair;
   }
 
+  /* ── CHANGED: larger button (66→86px) and lifted higher (5vh→11vh) ── */
   .continue-btn {
     position: absolute;
-    bottom: 5vh;
+    bottom: 11vh;
     left: 50%;
     transform: translateX(-50%);
     display: flex; align-items: center; justify-content: center;
-    width: 66px; height: 66px;
+    width: 86px; height: 86px;
     border-radius: 50%;
     background: linear-gradient(135deg, var(--pink-neon), var(--pink-deep));
     box-shadow:
@@ -111,17 +112,18 @@
 
   .continue-btn::before {
     content: '';
-    position: absolute; inset: -8px;
+    position: absolute; inset: -10px;
     border-radius: 50%;
     background: linear-gradient(135deg, var(--pink-neon), var(--pink-deep));
     opacity: .4;
-    filter: blur(12px);
+    filter: blur(14px);
     z-index: -1;
     animation: arrowGlowPulse 2.4s ease-in-out infinite;
   }
 
+  /* ── CHANGED: larger icon (26→34px) ── */
   .continue-btn svg {
-    width: 26px; height: 26px;
+    width: 34px; height: 34px;
     color: var(--cream-base);
     transition: transform .25s ease;
   }
