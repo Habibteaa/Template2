@@ -405,11 +405,11 @@
 
   <script>
     const TRACKS = [
-      { title: "🤎",    src: "audio/track1.mp3" },
-      { title: "🤎",   src: "audio/track2.mp3" },
+      { title: "🤎", src: "audio/track1.mp3" },
+      { title: "🤎", src: "audio/track2.mp3" },
       { title: "🤎", src: "audio/track3.mp3" },
-      { title: "🤎    src: "audio/track4.mp3" },
-      { title: "🤎",  src: "audio/track5.mp3" },
+      { title: "🤎", src: "audio/track4.mp3" },
+      { title: "🤎", src: "audio/track5.mp3" },
     ];
 
     const BAR_COUNT   = 14;
@@ -559,9 +559,8 @@
 
     function startSimProgress(idx) {
       stopProgress();
-      const secs = parseDuration(TRACKS[idx].duration);
       simStart    = performance.now();
-      simDuration = secs * 1000;
+      simDuration = 180 * 1000;
       simIdx      = idx;
       (function tick(ts) {
         if (!isPlaying || simIdx !== idx) return;
@@ -582,11 +581,6 @@
     function resetProgressBar(idx) {
       const el = document.getElementById(`pf-${idx}`);
       if (el) el.style.width = '0%';
-    }
-
-    function parseDuration(str) {
-      const [m, s] = str.split(':').map(Number);
-      return m * 60 + s;
     }
 
     function onTrackEnd() {
