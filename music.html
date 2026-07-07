@@ -66,26 +66,29 @@
       100% { opacity: 0;   transform: translateY(-110vh)   rotate(340deg) scale(1.1); }
     }
 
+    /* ── LAYOUT ── */
     .page-wrap {
       position: relative;
       z-index: 10;
       width: 100%;
-      max-width: 620px;
+      max-width: 680px;
       margin: 0 auto;
       min-height: 100vh;
-      padding: clamp(36px, 6vh, 64px) clamp(16px, 5vw, 32px) clamp(48px, 8vh, 80px);
+      padding: clamp(36px, 6vh, 56px) clamp(20px, 5vw, 40px) clamp(56px, 9vh, 90px);
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
+      /* Title stays at top, arrow pushed to bottom */
+      justify-content: flex-start;
       gap: clamp(14px, 2.5vh, 26px);
     }
 
+    /* ── TITLE ── pinned to the top */
     .page-title {
       font-family: 'Great Vibes', cursive;
-      font-size: clamp(38px, 9vw, 64px);
+      font-size: clamp(42px, 10vw, 68px);
       font-weight: 400;
-      margin: 0 0 clamp(6px, 1.5vh, 16px);
+      margin: 0 0 clamp(8px, 1.8vh, 20px);
       background: linear-gradient(120deg, var(--pink-neon), var(--pink-deep) 45%, var(--pink-neon));
       -webkit-background-clip: text;
       background-clip: text;
@@ -93,6 +96,7 @@
       position: relative;
       overflow: hidden;
       animation: titleGlow 2.4s ease-in-out infinite;
+      align-self: center;
     }
     .page-title::after {
       content: '';
@@ -113,21 +117,25 @@
       60%, 100% { left: 120%; }
     }
 
+    /* ── TRACK LIST ── centred, bigger cards */
     .track-list {
       width: 100%;
       display: flex;
       flex-direction: column;
-      gap: 14px;
+      gap: 18px;
+      align-items: center;
     }
 
     .track-card {
       background: var(--card-bg);
       border: 1.5px solid rgba(255,143,176,.3);
-      border-radius: 22px;
-      padding: 18px 20px;
+      border-radius: 24px;
+      /* Bigger padding for roomier cards */
+      padding: 22px 26px;
+      width: 100%;
       display: flex;
       align-items: center;
-      gap: 16px;
+      gap: 20px;
       box-shadow: 0 4px 20px rgba(255,143,176,.15);
       cursor: pointer;
       position: relative;
@@ -177,9 +185,10 @@
       100% { transform: scale(1.6); opacity: 0; }
     }
 
+    /* ── PLAY BUTTON ── slightly larger */
     .play-btn {
       flex-shrink: 0;
-      width: 56px; height: 56px;
+      width: 62px; height: 62px;
       border-radius: 50%;
       background: linear-gradient(135deg, var(--pink-neon), var(--pink-deep));
       border: none;
@@ -203,7 +212,7 @@
       animation: btnGlow 2.2s ease-in-out infinite;
     }
     .play-btn svg {
-      width: 24px; height: 24px;
+      width: 26px; height: 26px;
       color: var(--cream-base);
       transition: transform .2s ease;
     }
@@ -225,10 +234,10 @@
       min-width: 0;
       display: flex;
       flex-direction: column;
-      gap: 7px;
+      gap: 10px;
     }
     .track-name {
-      font-size: clamp(15px, 3.2vw, 17px);
+      font-size: clamp(17px, 3.5vw, 20px);
       font-weight: 600;
       color: var(--brown-primary);
       white-space: nowrap;
@@ -238,7 +247,7 @@
     }
 
     .progress-wrap {
-      height: 6px;
+      height: 7px;
       background: var(--taupe);
       border-radius: 100px;
       overflow: hidden;
@@ -257,12 +266,12 @@
     .waveform {
       display: flex;
       align-items: center;
-      gap: 3px;
-      height: 38px;
+      gap: 3.5px;
+      height: 44px;
       flex-shrink: 0;
     }
     .wave-bar {
-      width: 3.5px;
+      width: 4px;
       border-radius: 100px;
       transition: height .25s ease;
     }
@@ -283,26 +292,28 @@
       to   { height: var(--max-h, 26px); }
     }
 
+    /* ── CONTINUE BUTTON ── pushed down with auto top margin, not hugging the bottom */
     .continue-wrap {
       display: flex;
       justify-content: center;
-      margin-top: clamp(20px, 4vh, 40px);
-      margin-bottom: clamp(10px, 2vh, 20px);
+      margin-top: clamp(36px, 7vh, 72px);
+      margin-bottom: clamp(16px, 3vh, 32px);
     }
 
+    /* Bigger arrow button: 86px → was 66px */
     .continue-btn {
       margin-left: auto;
       margin-right: auto;
       display: flex;
       align-items: center;
       justify-content: center;
-      width: 66px; height: 66px;
+      width: 86px; height: 86px;
       border-radius: 50%;
       position: relative;
       background: linear-gradient(135deg, var(--pink-neon), var(--pink-deep));
       box-shadow:
         0 1px 0 rgba(255,255,255,.5) inset,
-        0 14px 28px -10px rgba(244,167,185,.7);
+        0 18px 36px -10px rgba(244,167,185,.75);
       cursor: pointer;
       border: none;
       animation: arrowFloat 2.4s ease-in-out infinite;
@@ -311,16 +322,16 @@
     .continue-btn::before {
       content: '';
       position: absolute;
-      inset: -8px;
+      inset: -10px;
       border-radius: 50%;
       background: linear-gradient(135deg, var(--pink-neon), var(--pink-deep));
       opacity: .4;
-      filter: blur(12px);
+      filter: blur(14px);
       z-index: -1;
       animation: arrowGlowPulse 2.4s ease-in-out infinite;
     }
     .continue-btn svg {
-      width: 26px; height: 26px;
+      width: 34px; height: 34px;
       color: var(--cream-base);
       transition: transform .25s ease;
     }
@@ -328,7 +339,7 @@
       transform: translateY(-5px) scale(1.08) rotate(-4deg);
       box-shadow:
         0 1px 0 rgba(255,255,255,.6) inset,
-        0 20px 40px -10px rgba(255,143,176,.85);
+        0 24px 48px -10px rgba(255,143,176,.85);
       filter: brightness(1.05);
     }
     .continue-btn:hover svg { transform: translateX(4px) rotate(8deg); }
@@ -346,12 +357,14 @@
     }
 
     @media (max-width: 480px) {
-      .track-card   { padding: 14px 14px; gap: 12px; border-radius: 18px; }
-      .play-btn     { width: 50px; height: 50px; }
-      .play-btn svg { width: 21px; height: 21px; }
-      .waveform     { height: 32px; gap: 2.5px; }
-      .wave-bar     { width: 3px; }
-      .track-name   { font-size: 14px; }
+      .track-card   { padding: 16px 16px; gap: 14px; border-radius: 20px; }
+      .play-btn     { width: 54px; height: 54px; }
+      .play-btn svg { width: 23px; height: 23px; }
+      .waveform     { height: 36px; gap: 2.5px; }
+      .wave-bar     { width: 3.5px; }
+      .track-name   { font-size: 15px; }
+      .continue-btn { width: 74px; height: 74px; }
+      .continue-btn svg { width: 28px; height: 28px; }
     }
 
     @media (prefers-reduced-motion: reduce) {
