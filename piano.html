@@ -68,7 +68,7 @@
   }
   @keyframes breathe {
     0%,100% { opacity:.52; transform:scale(1);    }
-    50%     { opacity:.92; transform:scale(1.07); }
+    50%      { opacity:.92; transform:scale(1.07); }
   }
 
   .vignette {
@@ -89,7 +89,6 @@
     padding: 3.5vh 4vw 3.5vh;
   }
 
-  /* ── CHANGED: title now matches "The Strings Of Love" shimmer style ── */
   .page-title {
     font-family: 'Berkshire Swash', cursive;
     font-weight: 400;
@@ -144,10 +143,9 @@
     width: 100%; max-width: 720px;
     display: flex; flex-direction: column;
     align-items: center; gap: 1.2vh;
-    margin-bottom: 4vh; /* ── CHANGED: lifts bottom section higher ── */
+    margin-bottom: 4vh;
   }
 
-  /* ── CHANGED: button increased (66→106px) ── */
   .continue-btn {
     margin-left:  auto;
     margin-right: auto;
@@ -192,7 +190,6 @@
   .continue-btn.unlocked::before {
     animation: arrowGlowPulse 2.4s ease-in-out infinite;
   }
-  /* ── CHANGED: icon increased (26→42px) ── */
   .continue-btn svg {
     width: 42px; height: 42px;
     color: var(--cream-base);
@@ -211,11 +208,11 @@
 
   @keyframes arrowFloat {
     0%,100% { transform: translateY(0); }
-    50%     { transform: translateY(-7px); }
+    50%      { transform: translateY(-7px); }
   }
   @keyframes arrowGlowPulse {
     0%,100% { opacity: .3; transform: scale(1); }
-    50%     { opacity: .6; transform: scale(1.18); }
+    50%      { opacity: .6; transform: scale(1.18); }
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -418,8 +415,8 @@
   'use strict';
 
   const NOTE_FILES  = [
-    'note1.ogg','note2.ogg','note3.ogg','note4.ogg','note5.ogg',
-    'note6.ogg','note7.mp3','note8.mp3','note9.mp3','note10.mp3'
+    'pnote/note1.ogg','pnote/note2.ogg','pnote/note3.ogg','pnote/note4.ogg','pnote/note5.ogg',
+    'pnote/note6.ogg','pnote/note7.mp3','pnote/note8.mp3','pnote/note9.mp3','pnote/note10.mp3'
   ];
   const KEY_LETTERS = ['Q','W','E','R','T','Y','U','I','O','P'];
 
