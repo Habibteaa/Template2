@@ -90,7 +90,6 @@
     cursor: crosshair;
   }
 
-  /* ── CHANGED: larger button (86→106px) and lowered (11vh→5vh) ── */
   .continue-btn {
     position: absolute;
     bottom: 5vh;
@@ -121,7 +120,6 @@
     animation: arrowGlowPulse 2.4s ease-in-out infinite;
   }
 
-  /* ── CHANGED: larger icon (34→42px) ── */
   .continue-btn svg {
     width: 42px; height: 42px;
     color: var(--cream-base);
@@ -203,7 +201,7 @@
         <rect x="102" y="200" width="170" height="126" fill="#1a1614"/>
         <path d="M 130 200 L 130 326 M 160 200 L 160 326 M 190 200 L 190 326
                  M 220 200 L 220 326 M 248 200 L 248 326 M 272 200 L 272 326"
-              stroke="#c5b396" stroke-width="2"/>
+               stroke="#c5b396" stroke-width="2"/>
         <circle cx="145" cy="263" r="3" fill="#fff" opacity="0.8"/>
         <circle cx="205" cy="263" r="3" fill="#fff" opacity="0.8"/>
       </g>
@@ -294,7 +292,8 @@
     sounds.push(a);
   }
   function playString(idx) {
-    const a = sounds[idx]; if (!a) return;
+    const standardGuitarIdx = 5 - idx; 
+    const a = sounds[standardGuitarIdx]; if (!a) return;
     try { a.currentTime = 0; a.play().catch(() => {}); } catch(e) {}
   }
 
@@ -311,7 +310,7 @@
     const baseY     = 209 + (idx * 22);
 
     function animate(now) {
-      const elapsed  = now - startTime;
+      const elapsed   = now - startTime;
       if (elapsed >= duration) {
         el.setAttribute('d', `M 26 ${baseY} Q 293 ${baseY}.01 560 ${baseY}`);
         s.animId = null;
