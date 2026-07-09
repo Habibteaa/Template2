@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no" />
+<title>Every Reason I Love You</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Berkshire+Swash&family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream-base:#FDFBF7;
+    --cream-deep:#F5EFEB;
+    --taupe:#E8DDD2;
+    --pink-soft:#FFD1DC;
+    --pink-deep:#F4A7B9;
+    --pink-neon:#FF8FB0;
+    --brown-primary:#362214;
+    --brown-muted:#9C7B67;
+    --card-back-bg:#fff0f3;
+  }
+
+  *{ box-sizing:border-box; margin:0; padding:0; }
+
+  html,body{
+    width:100%;
+    background:radial-gradient(120% 90% at 50% -10%, var(--cream-base) 0%, var(--cream-deep) 55%, var(--taupe) 100%);
+    font-family:'DM Sans',sans-serif;
+    color:var(--brown-primary);
+    overflow-x:hidden;
+  }
+
+  /* ── GLOW BLOBS ── */
+  .glow-blob{
+    position:fixed; border-radius:50%;
+    filter:blur(80px); opacity:.55;
+    pointer-events:none; z-index:0;
+    animation:drift 18s ease-in-out infinite alternate;
+  }
+  .glow-blob.a{ width:420px;height:420px;background:var(--pink-soft);top:-120px;left:-100px; }
+  .glow-blob.b{ width:380px;height:380px;background:var(--pink-deep);bottom:-140px;right:-100px;animation-delay:3s; }
+  .glow-blob.c{ width:260px;height:260px;background:var(--taupe);top:40%;left:60%;animation-delay:6s; }
+  @keyframes drift{
+    0%{ transform:translate(0,0) scale(1); }
+    100%{ transform:translate(30px,-20px) scale(1.08); }
+  }
+
+  /* ── FLOATING HEARTS (background) ── */
+  .float-heart{
+    position:fixed;pointer-events:none;z-index:1;
+    animation:floatUp linear infinite;
+    opacity:0;
+  }
+  @keyframes floatUp{
+    0%{ transform:translateY(105vh) rotate(var(--rot-start,0deg)) scale(var(--sc,.9)); opacity:0; }
+    8%{ opacity:.22; }
+    88%{ opacity:.08; }
+    100%{ transform:translateY(-8vh) rotate(var(--rot-end,15deg)) scale(var(--sc,.9)); opacity:0; }
+  }
+
+  /* ── PARTICLES ── */
+  .particle{
+    position:fixed;border-radius:50%;pointer-events:none;z-index:1;opacity:0;
+    animation:particleRise linear infinite;
+  }
+  @keyframes particleRise{
+    0%{ transform:translateY(105vh) translateX(0); opacity:0; }
+    8%{ opacity:.45; }
+    90%{ opacity:.1; }
+    100%{ transform:translateY(-8vh) translateX(var(--dx,0px)); opacity:0; }
+  }
+
+  /* ── CELEBRATION OVERLAY ── */
+  #celebration{
+    position:fixed;inset:0;pointer-events:none;z-index:20;
+    display:none;overflow:hidden;
+  }
+  .cel-spark{
+    position:absolute;border-radius:50%;opacity:0;
+    animation:celBurst var(--dur,1.6s) ease-out var(--del,0s) forwards;
+  }
+  @keyframes celBurst{
+    0%{ opacity:1; transform:scale(.2) translate(0,0); }
+    60%{ opacity:.85; }
+    100%{ opacity:0; transform:scale(1) translate(var(--tx,0px),var(--ty,0px)); }
+  }
+
+  /* ── PAGE SHELL ── */
+  .page{
+    position:relative;z-index:10;
+    min-height:100dvh;
+    display:flex;flex-direction:column;align-items:center;
+    padding:clamp(44px,7vh,80px) clamp(16px,5vw,40px) clamp(40px,7vh,72px);
+  }
+
+  /* ── TITLE ── */
+  .page-title{
+    font-family:'Berkshire Swash',cursive;
+    font-size:clamp(22px,5vw,52px);
+    background:linear-gradient(120deg,var(--pink-neon),var(--pink-deep) 45%,var(--pink-neon));
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+    animation:letterGlow 2.4s ease-in-out infinite;
+    text-align:center;margin-bottom:6px;
+    position:relative;overflow:hidden;
+  }
+  .page-title::after{
+    content:'';position:absolute;top:0;left:-40%;width:35%;height:100%;
+    background:linear-gradient(120deg,transparent,rgba(255,255,255,.85),transparent);
+    animation:shimmerSweep 3.2s ease-in-out infinite;
+    pointer-events:none;mix-blend-mode:overlay;
+  }
+  @keyframes shimmerSweep{ 0%{ left:-40%; } 60%,100%{ left:120%; } }
+  @keyframes letterGlow{
+    0%,100%{ filter:drop-shadow(0 0 6px rgba(255,143,176,.4)); }
+    50%{ filter:drop-shadow(0 0 18px rgba(255,143,176,.95)); }
+  }
+
+  /* ── SUBTITLE ── */
+  .page-sub{
+    font-size:clamp(12px,2vw,16px);
+    color:var(--brown-muted);font-style:italic;
+    letter-spacing:.04em;
+    margin-bottom:clamp(24px,4vh,48px);
+  }
+
+  /* ── PROGRESS DOT ROW ── */
+  .progress-row{
+    display:flex;gap:7px;margin-bottom:clamp(18px,3vh,36px);
+  }
+  .prog-dot{
+    width:8px;height:8px;border-radius:50%;
+    background:var(--taupe);
+    transition:background .4s ease,transform .3s ease,box-shadow .4s ease;
+  }
+  .prog-dot.done{
+    background:var(--pink-neon);
+    transform:scale(1.25);
+    box-shadow:0 0 6px 2px rgba(255,143,176,.55);
+  }
+
+  /* ── CARD GRID ── */
+  .cards-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:clamp(10px,2.5vw,22px);
+    width:100%;max-width:720px;
+    margin-bottom:clamp(28px,4vh,56px);
+  }
+
+  /* ── SINGLE CARD ── */
+  .card-wrap{
+    aspect-ratio:3/4;
+    perspective:900px;
+    cursor:pointer;
+    -webkit-tap-highlight-color:transparent;
+  }
+
+  .card-inner{
+    position:relative;width:100%;height:100%;
+    transform-style:preserve-3d;
+    transition:transform .65s ease-in-out;
+    border-radius:clamp(12px,2vw,20px);
+  }
+
+  .card-wrap.flipped .card-inner{ transform:rotateY(180deg); }
+
+  .card-face{
+    position:absolute;inset:0;
+    border-radius:inherit;
+    backface-visibility:hidden;
+    -webkit-backface-visibility:hidden;
+    display:flex;flex-direction:column;
+    align-items:center;justify-content:center;
+    padding:clamp(8px,2vw,16px) clamp(6px,1.5vw,12px);
+  }
+
+  /* FRONT */
+  .card-front{
+    background:linear-gradient(148deg,#FFDDE7 0%,var(--pink-neon) 55%,var(--pink-deep) 100%);
+    box-shadow:
+      0 1px 0 rgba(255,255,255,.65) inset,
+      0 8px 24px -8px rgba(255,143,176,.6),
+      0 2px 6px rgba(255,143,176,.2);
+    border:1.5px solid rgba(255,255,255,.45);
+  }
+
+  .front-heart{
+    width:clamp(32px,6.5vw,60px);
+    height:clamp(32px,6.5vw,60px);
+    margin-bottom:clamp(4px,1vw,10px);
+    filter:drop-shadow(0 3px 7px rgba(180,60,90,.3));
+    animation:heartbeat 2.2s ease-in-out infinite;
+    flex-shrink:0;
+  }
+  /* pause heartbeat once flipped */
+  .card-wrap.flipped .front-heart{ animation-play-state:paused; }
+
+  @keyframes heartbeat{
+    0%,100%{ transform:scale(1); }
+    14%{ transform:scale(1.14); }
+    28%{ transform:scale(1); }
+    42%{ transform:scale(1.09); }
+    56%{ transform:scale(1); }
+  }
+
+  .card-number{
+    font-family:'Berkshire Swash',cursive;
+    font-size:clamp(16px,4vw,30px);
+    color:#fff;
+    text-shadow:0 2px 8px rgba(180,60,90,.35);
+  }
+
+  /* BACK */
+  .card-back{
+    background:var(--card-back-bg);
+    transform:rotateY(180deg);
+    border:1.5px solid rgba(255,143,176,.25);
+    box-shadow:
+      0 1px 0 rgba(255,255,255,.85) inset,
+      0 6px 20px -6px rgba(255,143,176,.4);
+    text-align:center;
+    transition:box-shadow .45s ease;
+    gap:clamp(4px,1vw,8px);
+  }
+
+  .card-wrap.flipped .card-back{
+    box-shadow:
+      0 1px 0 rgba(255,255,255,.9) inset,
+      0 8px 28px -4px rgba(255,143,176,.65),
+      0 0 0 2px rgba(255,143,176,.18);
+  }
+
+  .back-mini-heart{
+    width:clamp(12px,2vw,18px);
+    height:clamp(12px,2vw,18px);
+    flex-shrink:0;
+    opacity:.5;
+  }
+
+  .reason-label{
+    font-family:'Berkshire Swash',cursive;
+    font-size:clamp(9px,1.8vw,14px);
+    color:var(--pink-neon);
+    line-height:1;
+  }
+
+  .reason-text{
+    font-size:clamp(9px,1.9vw,13.5px);
+    color:#B84064;
+    line-height:1.45;
+    font-weight:500;
+  }
+
+  /* ── ARROW BUTTON (same as index page) ── */
+  .continue-btn{
+    display:flex;align-items:center;justify-content:center;
+    width:clamp(72px,8vw,96px);
+    height:clamp(72px,8vw,96px);
+    border-radius:50%;
+    background:linear-gradient(135deg,var(--pink-neon),var(--pink-deep));
+    box-shadow:0 1px 0 rgba(255,255,255,.5) inset, 0 14px 28px -10px rgba(244,167,185,.7);
+    text-decoration:none;cursor:pointer;
+    position:relative;
+    transition:opacity .9s ease, transform .25s ease, box-shadow .25s ease, filter .25s ease;
+    opacity:0;pointer-events:none;
+  }
+  .continue-btn.visible{
+    opacity:1;pointer-events:auto;
+    animation:arrowFloat 2.4s ease-in-out infinite;
+  }
+  .continue-btn::before{
+    content:'';position:absolute;inset:-8px;border-radius:50%;
+    background:linear-gradient(135deg,var(--pink-neon),var(--pink-deep));
+    opacity:.4;filter:blur(12px);z-index:-1;
+    animation:arrowGlowPulse 2.4s ease-in-out infinite;
+  }
+  .continue-btn svg{
+    width:clamp(28px,3.2vw,40px);
+    height:clamp(28px,3.2vw,40px);
+    color:var(--cream-base);
+    transition:transform .25s ease;
+  }
+  .continue-btn:hover{
+    transform:translateY(-5px) scale(1.08) rotate(-4deg);
+    box-shadow:0 1px 0 rgba(255,255,255,.6) inset, 0 20px 40px -10px rgba(255,143,176,.85);
+    filter:brightness(1.05);
+  }
+  .continue-btn:hover svg{ transform:translateX(4px) rotate(8deg); }
+  .continue-btn:active{ transform:translateY(-2px) scale(.95); }
+  @keyframes arrowFloat{ 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-7px); } }
+  @keyframes arrowGlowPulse{
+    0%,100%{ opacity:.3;transform:scale(1); } 50%{ opacity:.6;transform:scale(1.18); }
+  }
+
+  /* ── MOBILE ── */
+  @media(max-width:440px){
+    .cards-grid{
+      grid-template-columns:repeat(3,1fr);
+      gap:8px;
+    }
+  }
+  @media(max-width:320px){
+    .cards-grid{
+      grid-template-columns:repeat(2,1fr);
+    }
+  }
+
+  /* ── REDUCED MOTION ── */
+  @media(prefers-reduced-motion:reduce){
+    .glow-blob,.page-title,.page-title::after,.front-heart,
+    .continue-btn,.continue-btn::before,.float-heart,.particle,
+    .cel-spark{ animation:none!important; }
+    .card-inner{ transition:none; }
+    .card-wrap.flipped .card-inner{ transform:rotateY(180deg); }
+    .continue-btn.visible{ opacity:1;pointer-events:auto; }
+  }
+</style>
+</head>
+<body>
+
+  <!-- Background blobs -->
+  <div class="glow-blob a"></div>
+  <div class="glow-blob b"></div>
+  <div class="glow-blob c"></div>
+
+  <!-- Celebration layer -->
+  <div id="celebration"></div>
+
+  <main class="page">
+
+    <h1 class="page-title">Every reason I love you&hellip;</h1>
+    <p class="page-sub">click each heart to reveal</p>
+
+    <!-- Progress dots -->
+    <div class="progress-row" id="progressRow"></div>
+
+    <!-- Cards -->
+    <div class="cards-grid" id="cardsGrid"></div>
+
+    <!-- Arrow button -->
+    <a href="next.html" class="continue-btn" id="continueBtn" aria-label="Continue">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8"
+           stroke-linecap="round" stroke-linejoin="round">
+        <path d="M5 12h14"/><path d="M13 6l6 6-6 6"/>
+      </svg>
+    </a>
+
+  </main>
+
+<script>
+/* ── REASONS ── */
+const reasons = [
+  "The way your smile makes the whole world feel warm and right",
+  "Your laugh — I could listen to it on repeat forever",
+  "How you always know what I need before I say a single word",
+  "The look in your eyes that makes me feel completely at home",
+  "Your endless kindness that touches every soul around you",
+  "The way you hold my hand like you never want to let go",
+  "How you turn the most ordinary moments into precious memories",
+  "Your quiet strength that inspires me every single day",
+  "Simply because you are you — perfectly, beautifully, wonderfully you ♡"
+];
+
+const TOTAL = reasons.length;
+let flippedCount = 0;
+
+/* ── BUILD CARDS ── */
+const grid   = document.getElementById('cardsGrid');
+const progRow = document.getElementById('progressRow');
+const btn    = document.getElementById('continueBtn');
+
+reasons.forEach((txt, i) => {
+  /* Progress dot */
+  const dot = document.createElement('div');
+  dot.className = 'prog-dot';
+  dot.id = `dot-${i}`;
+  progRow.appendChild(dot);
+
+  /* Card */
+  const wrap = document.createElement('div');
+  wrap.className = 'card-wrap';
+  wrap.setAttribute('role','button');
+  wrap.setAttribute('aria-label',`Reason ${i+1}`);
+  wrap.setAttribute('tabindex','0');
+
+  wrap.innerHTML = `
+    <div class="card-inner">
+
+      <div class="card-face card-front">
+        <svg class="front-heart" viewBox="0 0 60 56" fill="none">
+          <defs>
+            <radialGradient id="hg${i}" cx="38%" cy="32%" r="72%">
+              <stop offset="0%"   stop-color="#FFF4F7"/>
+              <stop offset="48%"  stop-color="#FF8FB0"/>
+              <stop offset="100%" stop-color="#C94A6A"/>
+            </radialGradient>
+          </defs>
+          <path d="M30 52 C30 52 3 36 3 17.5
+                   C3 8.9 10.1 2 19 2
+                   C24.2 2 28.8 4.7 30 7.6
+                   C31.2 4.7 35.8 2 41 2
+                   C49.9 2 57 8.9 57 17.5
+                   C57 36 30 52 30 52Z"
+                fill="url(#hg${i})"
+                stroke="rgba(255,255,255,0.38)" stroke-width="1.2"/>
+          <!-- shine -->
+          <ellipse cx="22" cy="14" rx="5" ry="3.5"
+                   fill="white" opacity=".28" transform="rotate(-28 22 14)"/>
+        </svg>
+        <span class="card-number">${i + 1}</span>
+      </div>
+
+      <div class="card-face card-back">
+        <svg class="back-mini-heart" viewBox="0 0 60 56" fill="none">
+          <path d="M30 52 C30 52 3 36 3 17.5
+                   C3 8.9 10.1 2 19 2
+                   C24.2 2 28.8 4.7 30 7.6
+                   C31.2 4.7 35.8 2 41 2
+                   C49.9 2 57 8.9 57 17.5
+                   C57 36 30 52 30 52Z"
+                fill="var(--pink-deep)"/>
+        </svg>
+        <div class="reason-label"># ${i + 1}</div>
+        <div class="reason-text">${txt}</div>
+      </div>
+
+    </div>
+  `;
+
+  const doFlip = () => {
+    if (wrap.classList.contains('flipped')) return;
+    wrap.classList.add('flipped');
+    document.getElementById(`dot-${i}`).classList.add('done');
+    flippedCount++;
+    if (flippedCount === TOTAL) {
+      setTimeout(() => {
+        launchCelebration();
+        btn.classList.add('visible');
+      }, 680);
+    }
+  };
+
+  wrap.addEventListener('click', doFlip);
+  wrap.addEventListener('keydown', e => { if(e.key==='Enter'||e.key===' ') doFlip(); });
+
+  grid.appendChild(wrap);
+});
+
+/* ── FLOATING HEARTS ── */
+const heartPath = `<path d="M15 26 C15 26 1 18 1 8.8
+                   C1 4.4 5 1 9.5 1
+                   C12.1 1 14.4 2.3 15 3.8
+                   C15.6 2.3 17.9 1 20.5 1
+                   C25 1 29 4.4 29 8.8
+                   C29 18 15 26 15 26Z"
+                  fill="var(--pink-soft)"/>`;
+
+for (let h = 0; h < 10; h++) {
+  const size   = 12 + Math.random() * 20;
+  const left   = Math.random() * 100;
+  const dur    = 14 + Math.random() * 16;
+  const delay  = Math.random() * 10;
+  const rotS   = (Math.random()-0.5)*20 + 'deg';
+  const rotE   = (Math.random()-0.5)*20 + 'deg';
+
+  const el = document.createElement('div');
+  el.className = 'float-heart';
+  el.style.cssText = `
+    left:${left}%;
+    width:${size}px; height:${size}px;
+    animation-duration:${dur}s;
+    animation-delay:${delay}s;
+    --rot-start:${rotS};
+    --rot-end:${rotE};
+  `;
+  el.innerHTML = `<svg viewBox="0 0 30 28" width="${size}" height="${size}"
+                       fill="none" xmlns="http://www.w3.org/2000/svg"
+                       style="opacity:.38;">${heartPath}</svg>`;
+  document.body.appendChild(el);
+}
+
+/* ── PINK PARTICLES ── */
+for (let p = 0; p < 14; p++) {
+  const size  = 3 + Math.random() * 5;
+  const left  = Math.random() * 100;
+  const dur   = 9 + Math.random() * 11;
+  const delay = Math.random() * 8;
+  const dx    = (Math.random()-0.5)*70;
+  const col   = Math.random() > 0.5 ? 'var(--pink-neon)' : 'var(--pink-soft)';
+
+  const el = document.createElement('div');
+  el.className = 'particle';
+  el.style.cssText = `
+    width:${size}px; height:${size}px;
+    left:${left}%;
+    background:${col};
+    animation-duration:${dur}s;
+    animation-delay:${delay}s;
+    --dx:${dx}px;
+  `;
+  document.body.appendChild(el);
+}
+
+/* ── CELEBRATION SPARKLES ── */
+function launchCelebration () {
+  const cel = document.getElementById('celebration');
+  cel.style.display = 'block';
+  const colors = ['#FF8FB0','#FFD1DC','#FFFFFF','#F4A7B9','#FFE3EA'];
+
+  for (let w = 0; w < 3; w++) {        /* 3 waves */
+    setTimeout(() => {
+      for (let s = 0; s < 18; s++) {
+        const sp = document.createElement('div');
+        sp.className = 'cel-spark';
+        const sz = 6 + Math.random() * 12;
+        const tx = (Math.random()-0.5)*260;
+        const ty = (Math.random()-0.5)*200;
+        const dur = 1.2 + Math.random()*.8;
+        const del = Math.random()*.25;
+        sp.style.cssText = `
+          width:${sz}px; height:${sz}px;
+          left:${20+Math.random()*60}%;
+          top:${15+Math.random()*60}%;
+          background:${colors[Math.floor(Math.random()*colors.length)]};
+          border-radius:${Math.random()>0.5?'50%':'3px'};
+          --tx:${tx}px; --ty:${ty}px;
+          --dur:${dur}s; --del:${del}s;
+        `;
+        cel.appendChild(sp);
+        setTimeout(() => sp.remove(), (dur + del) * 1000 + 200);
+      }
+    }, w * 350);
+  }
+}
+</script>
+
+</body>
+</html>
