@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Happy Birthday! 🎉</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Berkshire+Swash&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;1,9..40,400&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { width: 100%; height: 100%; overflow: hidden; }
+
+body {
+  background: radial-gradient(ellipse at 50% 38%, #FDFBF7 0%, #EDE0D4 55%, #E8DDD2 100%);
+  font-family: 'DM Sans', sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  min-height: 100vh;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ── Canvas Engine ── */
+canvas {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 5;
+}
+
+/* ── Auto Play Sequence Overlays ── */
+.dim-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: #160D10;
+  z-index: 100;
+  opacity: 1;
+  transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
+}
+.dim-overlay.fade-out {
+  opacity: 0;
+}
+
+.burst-light {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  width: 10px;
+  height: 10px;
+  background: radial-gradient(circle, #FFFFFF 0%, rgba(255,182,193,0.8) 40%, rgba(255,105,180,0) 70%);
+  border-radius: 50%;
+  z-index: 101;
+  opacity: 0;
+  pointer-events: none;
+}
+.burst-light.flash {
+  animation: lightFlash 0.8s cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
+}
+@keyframes lightFlash {
+  0% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
+  20% { opacity: 1; }
+  100% { transform: translate(-50%, -50%) scale(180); opacity: 0; }
+}
+
+/* ── Main Layout Container ── */
+.finale-container {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8vh 20px 6vh;
+  text-align: center;
+}
+
+/* ── Animated Typography ── */
+.birthday-title {
+  font-family: 'Berkshire Swash', cursive;
+  font-size: clamp(2.2rem, 7vw, 4rem);
+  color: #FF69B4;
+  text-shadow: 0 0 12px rgba(255, 105, 180, 0.4), 0 0 30px rgba(255, 182, 193, 0.3);
+  line-height: 1.3;
+  display: inline-block;
+  max-width: 90%;
+}
+
+/* Letter drop layout */
+.birthday-title span {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(-120px);
+  will-change: transform, opacity;
+}
+.birthday-title.animate span {
+  animation: bounceInDrop 0.65s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+.birthday-title span.space {
+  width: 0.25em;
+}
+
+@keyframes bounceInDrop {
+  0% { opacity: 0; transform: translateY(-120px); }
+  60% { opacity: 1; transform: translateY(16px); }
+  80% { transform: translateY(-6px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Mascot & Signature Group ── */
+.mascot-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: auto;
+  margin-bottom: 4vh;
+  opacity: 1;
+  transform: translateY(200px);
+  transition: transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+  will-change: transform;
+}
+.mascot-group.slide-up {
+  transform: translateY(0);
+}
+
+.bunny-mascot {
+  width: 130px;
+  height: 130px;
+}
+.mascot-group.slide-up .bunny-mascot {
+  animation: happyDance 0.6s ease-in-out infinite alternate;
+}
+
+@keyframes happyDance {
+  0% { transform: translateY(0) rotate(-3deg) scaleY(1); }
+  100% { transform: translateY(-8px) rotate(3deg) scaleY(0.95); }
+}
+
+.signature-text {
+  font-family: 'Berkshire Swash', cursive;
+  font-style: italic;
+  font-size: clamp(1.1rem, 4vw, 1.6rem);
+  color: #8B6969;
+  margin-top: 12px;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 1s ease, transform 1s ease;
+}
+.signature-text.fade-in {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ── Replay Action ── */
+#replayBtn {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: none;
+  background: white;
+  color: #FF69B4;
+  box-shadow: 0 4px 15px rgba(139, 105, 105, 0.15), inset 0 0 0 1px rgba(255, 105, 180, 0.1);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  opacity: 0;
+  visibility: hidden;
+  transform: scale(0.8);
+  transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), visibility 0.6s;
+  z-index: 50;
+}
+#replayBtn.show {
+  opacity: 1;
+  visibility: visible;
+  transform: scale(1);
+}
+#replayBtn:hover {
+  transform: scale(1.08) rotate(-45deg);
+  background-color: #FFF4F7;
+}
+#replayBtn:active {
+  transform: scale(0.95);
+}
+</style>
+</head>
+<body>
+
+<div class="dim-overlay" id="dimOverlay"></div>
+<div class="burst-light" id="burstLight"></div>
+
+<canvas id="finaleCanvas"></canvas>
+
+<div class="finale-container">
+  <!-- Change [Name] to your recipient's name -->
+  <h1 class="birthday-title" id="title">Happy Birthday Scarlet</h1>
+
+  <div class="mascot-group" id="mascotGroup">
+    <!-- Re-used vector layout from Page 1 Cute Bunny -->
+    <svg class="bunny-mascot" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <radialGradient id="bunnyGlow" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#FFF0F5" stop-opacity="1"/>
+          <stop offset="100%" stop-color="#E6C5D3" stop-opacity="0.3"/>
+        </radialGradient>
+      </defs>
+      <!-- Ears -->
+      <ellipse cx="38" cy="25" rx="7" ry="22" fill="#FFF0F5" transform="rotate(-10 38 25)"/>
+      <ellipse cx="38" cy="25" rx="4" ry="16" fill="#FFB6C1" transform="rotate(-10 38 25)"/>
+      <ellipse cx="62" cy="25" rx="7" ry="22" fill="#FFF0F5" transform="rotate(10 62 25)"/>
+      <ellipse cx="62" cy="25" rx="4" ry="16" fill="#FFB6C1" transform="rotate(10 62 25)"/>
+      <!-- Body/Feet -->
+      <ellipse cx="50" cy="72" rx="24" ry="18" fill="#FFF0F5"/>
+      <circle cx="36" cy="85" r="7" fill="#E6C5D3"/>
+      <circle cx="64" cy="85" r="7" fill="#E6C5D3"/>
+      <!-- Head -->
+      <circle cx="50" cy="50" r="20" fill="#FFF0F5"/>
+      <!-- Cheeks -->
+      <circle cx="36" cy="54" r="4" fill="#FFB6C1" opacity="0.6"/>
+      <circle cx="64" cy="54" r="4" fill="#FFB6C1" opacity="0.6"/>
+      <!-- Eyes -->
+      <circle cx="42" cy="46" r="2.5" fill="#4A373A"/>
+      <circle cx="58" cy="46" r="2.5" fill="#4A373A"/>
+      <circle cx="43" cy="45" r="0.8" fill="#fff"/>
+      <circle cx="59" cy="45" r="0.8" fill="#fff"/>
+      <!-- Mouth & Nose -->
+      <path d="M48 50 Q50 52 52 50" stroke="#4A373A" stroke-width="1.5" fill="none"/>
+      <polygon points="49,48 51,48 50,50" fill="#FF69B4"/>
+    </svg>
+
+    <!-- Change [Sender Name] to your name -->
+    <p class="signature-text" id="signature">With all my love, Peter</p>
+  </div>
+
+  <button id="replayBtn" title="Replay ↺">↺</button>
+</div>
+
+<script>
+(function() {
+  'use strict';
+
+  // ── Element Selectors ──
+  const dimOverlay = document.getElementById('dimOverlay');
+  const burstLight = document.getElementById('burstLight');
+  const title = document.getElementById('title');
+  const mascotGroup = document.getElementById('mascotGroup');
+  const signature = document.getElementById('signature');
+  const replayBtn = document.getElementById('replayBtn');
+  const canvas = document.getElementById('finaleCanvas');
+  const ctx = canvas.getContext('2d');
+
+  // ── Canvas Setup ──
+  function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  resizeCanvas();
+  window.addEventListener('resize', resizeCanvas);
+
+  // ── Parse Title text into separate drop-in letters ──
+  const rawText = title.textContent;
+  title.textContent = '';
+  title.style.opacity = '1';
+  
+  [...rawText].forEach((letter, index) => {
+    const span = document.createElement('span');
+    if (letter === ' ') {
+      span.classList.add('space');
+    } else {
+      span.textContent = letter;
+      span.style.animationDelay = `${index * 0.05}s`;
+    }
+    title.appendChild(span);
+  });
+
+  // ── Physics/Rendering Arrays ──
+  let confettiArray = [];
+  let balloonArray = [];
+  let sparkleArray = [];
+
+  // Configuration Constants
+  const CONFETTI_COLORS = ['#FFB6C1', '#FFFFFF', '#8B6969', '#FF69B4'];
+  const BALLOON_COLORS = ['#FFB6C1', '#FFFFFF', '#8B6969'];
+  
+  // Animation System Control Flags
+  let systemsActive = {
+    confetti: false,
+    balloons: false,
+    sparkles: false
+  };
+
+  // ── System Generators ──
+  function initConfetti() {
+    systemsActive.confetti = true;
+    const count = Math.floor(Math.random() * 51) + 150; // 150 to 200 items
+    for (let i = 0; i < count; i++) {
+      confettiArray.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * -canvas.height - 20,
+        size: Math.random() * 8 + 6,
+        color: CONFETTI_COLORS[Math.floor(Math.random() * CONFETTI_COLORS.length)],
+        shape: ['circle', 'rect', 'heart'][Math.floor(Math.random() * 3)],
+        speedY: Math.random() * 2.5 + 2,
+        speedX: (Math.random() - 0.5) * 1.5,
+        rotation: Math.random() * Math.PI * 2,
+        rotationSpeed: (Math.random() - 0.5) * 0.05
+      });
+    }
+  }
+
+  function spawnBalloons() {
+    systemsActive.balloons = true;
+    const count = Math.floor(Math.random() * 3) + 8; // 8 to 10 balloons
+    for (let i = 0; i < count; i++) {
+      setTimeout(() => {
+        balloonArray.push({
+          x: Math.random() * (canvas.width * 0.8) + (canvas.width * 0.1),
+          y: canvas.height + 120,
+          radius: Math.random() * 10 + 24,
+          color: BALLOON_COLORS[Math.floor(Math.random() * BALLOON_COLORS.length)],
+          speedY: Math.random() * 0.8 + 1.2,
+          swaySpeed: Math.random() * 0.02 + 0.01,
+          swayAmp: Math.random() * 15 + 10,
+          swayOffset: Math.random() * 100
+        });
+      }, i * 450); // Staggered entry times
+    }
+  }
+
+  function addSparkle() {
+    if (!systemsActive.sparkles) return;
+    if (sparkleArray.length < 40 && Math.random() < 0.4) {
+      sparkleArray.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        size: Math.random() * 2 + 1,
+        maxSize: Math.random() * 4 + 4,
+        grow: true,
+        alpha: 0,
+        speedAlpha: Math.random() * 0.03 + 0.01
+      });
+    }
+  }
+
+  // ── Custom Canvas Shape Drawing Helpers ──
+  function drawHeartShape(x, y, sz) {
+    ctx.beginPath();
+    const k = sz * 0.6;
+    ctx.moveTo(x, y + k * 0.35);
+    ctx.bezierCurveTo(x - k * 0.5, y - k * 0.15, x - k * 1.05, y + k * 0.25, x, y + k * 0.95);
+    ctx.bezierCurveTo(x + k * 1.05, y + k * 0.25, x + k * 0.5, y - k * 0.15, x, y + k * 0.35);
+    ctx.fill();
+  }
+
+  function drawBalloonShape(b, currentX) {
+    ctx.save();
+    // String
+    ctx.beginPath();
+    ctx.moveTo(currentX, b.y + b.radius);
+    ctx.quadraticCurveTo(currentX - 5, b.y + b.radius + 30, currentX + 2, b.y + b.radius + 65);
+    ctx.strokeStyle = 'rgba(139, 105, 105, 0.4)';
+    ctx.lineWidth = 1.2;
+    ctx.stroke();
+
+    // Balloon reflection highlight gloss
+    ctx.beginPath();
+    ctx.ellipse(currentX, b.y, b.radius, b.radius * 1.25, 0, 0, Math.PI * 2);
+    ctx.fillStyle = b.color;
+    ctx.fill();
+
+    // Basket tie triangle base
+    ctx.beginPath();
+    ctx.moveTo(currentX, b.y + b.radius * 1.2);
+    ctx.lineTo(currentX - 5, b.y + b.radius * 1.28);
+    ctx.lineTo(currentX + 5, b.y + b.radius * 1.28);
+    ctx.closePath();
+    ctx.fillStyle = b.color;
+    ctx.fill();
+
+    // Gloss accent highlight line
+    ctx.beginPath();
+    ctx.ellipse(currentX - b.radius * 0.35, b.y - b.radius * 0.4, b.radius * 0.2, b.radius * 0.3, Math.PI / 4, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.35)';
+    ctx.fill();
+    ctx.restore();
+  }
+
+  function drawSparkleShape(s) {
+    ctx.save();
+    ctx.globalAlpha = s.alpha;
+    ctx.fillStyle = '#FFF8DC';
+    ctx.shadowBlur = 10;
+    ctx.shadowColor = '#FF69B4';
+
+    ctx.beginPath();
+    ctx.moveTo(s.x, s.y - s.size);
+    ctx.quadraticCurveTo(s.x, s.y, s.x + s.size, s.y);
+    ctx.quadraticCurveTo(s.x, s.y, s.x, s.y + s.size);
+    ctx.quadraticCurveTo(s.x, s.y, s.x - s.size, s.y);
+    ctx.quadraticCurveTo(s.x, s.y, s.x, s.y - s.size);
+    ctx.closePath();
+    ctx.fill();
+    ctx.restore();
+  }
+
+  // ── Engine Main Animation Render Loop ──
+  function engineLoop() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // 1. Process Confetti
+    if (systemsActive.confetti) {
+      confettiArray.forEach((p) => {
+        p.y += p.speedY;
+        p.x += p.speedX + Math.sin(p.y * 0.01) * 0.2; // drifting effect
+        p.rotation += p.rotationSpeed;
+
+        if (p.y > canvas.height + 20) {
+          p.y = -20;
+          p.x = Math.random() * canvas.width;
+        }
+
+        ctx.save();
+        ctx.translate(p.x, p.y);
+        ctx.rotate(p.rotation);
+        ctx.fillStyle = p.color;
+
+        if (p.shape === 'circle') {
+          ctx.beginPath();
+          ctx.arc(0, 0, p.size * 0.6, 0, Math.PI * 2);
+          ctx.fill();
+        } else if (p.shape === 'rect') {
+          ctx.fillRect(-p.size, -p.size * 0.5, p.size * 2, p.size);
+        } else if (p.shape === 'heart') {
+          drawHeartShape(0, -p.size * 0.5, p.size * 1.5);
+        }
+        ctx.restore();
+      });
+    }
+
+    // 2. Process Balloons
+    if (systemsActive.balloons) {
+      balloonArray.forEach((b) => {
+        b.y -= b.speedY;
+        b.swayOffset += b.swaySpeed;
+        let currentX = b.x + Math.sin(b.swayOffset) * b.swayAmp;
+
+        drawBalloonShape(b, currentX);
+      });
+      // Filter out balloons that leave top edge
+      balloonArray = balloonArray.filter(b => b.y > -150);
+    }
+
+    // 3. Process Sparkles
+    if (systemsActive.sparkles) {
+      addSparkle();
+      sparkleArray.forEach((s) => {
+        if (s.grow) {
+          s.size += 0.2;
+          s.alpha += s.speedAlpha;
+          if (s.size >= s.maxSize) s.grow = false;
+        } else {
+          s.size -= 0.15;
+          s.alpha -= s.speedAlpha;
+        }
+        drawSparkleShape(s);
+      });
+      sparkleArray = sparkleArray.filter(s => s.size > 0.5 && s.alpha > 0);
+    }
+
+    requestAnimationFrame(engineLoop);
+  }
+
+  // ── Auto Play Sequence Timing Controller ──
+  
+  // 0.0s → Page loads with dim environment overlay
+  engineLoop();
+
+  // 0.5s → Center point flash explosion setup
+  setTimeout(() => {
+    burstLight.classList.add('flash');
+    dimOverlay.classList.add('fade-out');
+  }, 500);
+
+  // 1.0s → Main title dropped into view
+  setTimeout(() => {
+    title.classList.add('animate');
+  }, 1000);
+
+  // 1.2s → Fire Confetti burst processing
+  setTimeout(() => {
+    initConfetti();
+  }, 1200);
+
+  // 1.5s → Run rising balloons sequence
+  setTimeout(() => {
+    spawnBalloons();
+  }, 1500);
+
+  // 2.0s → Mascot dance entries triggered
+  setTimeout(() => {
+    mascotGroup.classList.add('slide-up');
+  }, 2000);
+
+  // 2.5s → Personalized signature text fade-in
+  setTimeout(() => {
+    signature.classList.add('fade-in');
+  }, 2500);
+
+  // 3.0s → Start structural shimmer sparkles loop
+  setTimeout(() => {
+    systemsActive.sparkles = true;
+  }, 3000);
+
+  // 5.0s → Bring up Replay execution control toggle
+  setTimeout(() => {
+    replayBtn.classList.add('show');
+  }, 5000);
+
+  // ── Interactive Events ──
+  replayBtn.addEventListener('click', () => {
+    window.location.href = 'index.html';
+  });
+
+})();
+</script>
+</body>
+</html>
