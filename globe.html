@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>You are my whole world... ❄️</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Berkshire+Swash&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream-base:   #FDFBF7;
+    --cream-deep:   #F5EFEB;
+    --taupe:        #E8DDD2;
+    --pink-soft:    #FFD1DC;
+    --pink-deep:    #F4A7B9;
+    --pink-neon:    #FF8FB0;
+  }
+
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 100%; height: 100%; overflow: hidden; }
+
+  body {
+    background: radial-gradient(ellipse at 50% 38%, var(--cream-base) 0%, #EDE0D4 55%, var(--taupe) 100%);
+    font-family: 'DM Sans', sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* ── Outer Sparkle Canvas ── */
+  #outerCanvas {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  /* ── Typography Styling ── */
+  .header-group {
+    text-align: center;
+    margin-bottom: 3vh;
+    z-index: 10;
+  }
+
+  .globe-title {
+    font-family: 'Berkshire Swash', cursive;
+    font-size: clamp(1.8rem, 5vw, 3rem);
+    line-height: 1.3;
+    background: linear-gradient(90deg, #E87E91 0%, #D86D80 25%, #C25C6F 50%, var(--pink-neon) 75%, #8B6969 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    filter: drop-shadow(0 0 1px #FFF);
+    margin-bottom: 5px;
+  }
+
+  .globe-subtitle {
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 500;
+    font-size: clamp(0.9rem, 2.5vw, 1.2rem);
+    color: #A24A5D;
+    opacity: 0.8;
+  }
+
+  /* ── Snow Globe Setup ── */
+  .globe-stage {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    z-index: 5;
+  }
+
+  .globe-assembly {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    animation: breathePulse 4s ease-in-out infinite alternate;
+    will-change: transform;
+  }
+
+  .globe-assembly.shaking {
+    animation: globeShake 0.1s infinite;
+  }
+
+  /* The Glass Globe Sphere */
+  .sphere {
+    position: relative;
+    width: min(70vw, 320px);
+    height: min(70vw, 320px);
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,240,245,0.4) 0%, rgba(200,180,190,0.2) 100%);
+    border: 2px solid rgba(255,255,255,0.6);
+    box-shadow: 
+      inset -20px -20px 40px rgba(255,200,200,0.3),
+      inset 10px 10px 20px rgba(255,255,255,0.5),
+      0 20px 60px rgba(200,150,150,0.4);
+    overflow: hidden;
+    cursor: pointer;
+    z-index: 6;
+  }
+
+  /* Soft Pink Inner Glow Engine */
+  .inner-glow {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 50% 50%, rgba(255, 182, 193, 0.35) 0%, rgba(255,255,255,0) 70%);
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  /* Photo Container Inside Globe */
+  .content-inside {
+    position: absolute;
+    top: 45%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 55%;
+    height: 55%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+    pointer-events: none;
+  }
+
+  .globe-photo {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(139, 105, 105, 0.2);
+    border: 3px solid #FFF;
+  }
+
+  /* Hidden Message Setup */
+  .hidden-message {
+    position: absolute;
+    bottom: 12%;
+    left: 5%;
+    right: 5%;
+    font-family: 'Berkshire Swash', cursive;
+    font-size: clamp(0.9rem, 2.8vw, 1.3rem);
+    color: #8B6969;
+    text-shadow: 0 1px 2px white;
+    text-align: center;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 1s ease, transform 1s ease;
+    z-index: 4;
+    pointer-events: none;
+  }
+  .hidden-message.reveal {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Inside Globe Canvas Particle Overlay */
+  #innerCanvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 3;
+  }
+
+  /* Glass Shine Overlay Accent */
+  .shine-overlay {
+    position: absolute;
+    top: 8%;
+    left: 12%;
+    width: 25%;
+    height: 15%;
+    background: rgba(255, 255, 255, 0.35);
+    border-radius: 50%;
+    transform: rotate(-30deg);
+    pointer-events: none;
+    z-index: 5;
+  }
+
+  /* Wooden Base Element */
+  .wooden-base {
+    position: relative;
+    width: min(60vw, 260px);
+    height: 55px;
+    background: linear-gradient(180deg, #A0785C 0%, #7A5335 100%);
+    border-radius: 0 0 16px 16px;
+    margin-top: -15px;
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 10px 25px rgba(122, 83, 53, 0.3);
+    border-top: 2px solid rgba(255,255,255,0.15);
+    transition: box-shadow 1s ease;
+  }
+
+  /* Base Glow Warm Pink Accent */
+  .wooden-base.glowing {
+    box-shadow: 0 10px 30px rgba(232, 126, 145, 0.6), inset 0 0 15px rgba(255, 182, 193, 0.5);
+  }
+
+  .base-text {
+    font-family: 'Berkshire Swash', cursive;
+    color: var(--cream-base);
+    font-size: clamp(1.1rem, 3.5vw, 1.6rem);
+    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+  }
+
+  /* ── Navigation Button (Matched directly with your Guitar code styling) ── */
+  .nav-container {
+    margin-top: 5vh;
+    height: 110px;
+    position: relative;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  #nextBtn {
+    display: flex; 
+    align-items: center; 
+    justify-content: center;
+    width: 106px; 
+    height: 106px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--pink-neon), var(--pink-deep));
+    box-shadow:
+      0 1px 0 rgba(255,255,255,.5) inset,
+      0 14px 28px -10px rgba(244,167,185,.7);
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    
+    /* Animation Control Handled via JS Reveal */
+    opacity: 0;
+    visibility: hidden;
+    transform: scale(0.8);
+    transition: opacity .6s ease, transform .6s cubic-bezier(0.34, 1.56, 0.64, 1), visibility .6s, box-shadow .25s ease, filter .25s ease;
+  }
+
+  /* Background Glow Layer Mimicking Continue Button */
+  #nextBtn::before {
+    content: '';
+    position: absolute; 
+    inset: -12px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--pink-neon), var(--pink-deep));
+    opacity: 0;
+    filter: blur(14px);
+    z-index: -1;
+    transition: opacity 0.6s ease;
+  }
+
+  /* Active Reveal Animations applied via class toggles */
+  #nextBtn.show {
+    opacity: 1;
+    visibility: visible;
+    transform: scale(1);
+    animation: arrowFloat 2.4s ease-in-out infinite;
+  }
+  #nextBtn.show::before {
+    opacity: .4;
+    animation: arrowGlowPulse 2.4s ease-in-out infinite;
+  }
+
+  #nextBtn svg {
+    width: 42px; 
+    height: 42px;
+    color: var(--cream-base);
+    transition: transform .25s ease;
+  }
+
+  #nextBtn:hover {
+    box-shadow:
+      0 1px 0 rgba(255,255,255,.6) inset,
+      0 20px 40px -10px rgba(255,143,176,.85);
+    filter: brightness(1.07);
+  }
+  #nextBtn:hover svg { transform: translateX(4px) rotate(8deg); }
+  #nextBtn:active    { filter: brightness(.95); }
+
+  /* ── Animation Vectors ── */
+  @keyframes breathePulse {
+    0% { transform: scale(1); }
+    100% { transform: scale(1.025); }
+  }
+
+  @keyframes globeShake {
+    0% { transform: translateX(0); }
+    25% { transform: translateX(-14px); }
+    75% { transform: translateX(14px); }
+    100% { transform: translateX(0); }
+  }
+
+  @keyframes arrowFloat {
+    0%,100% { transform: scale(1) translateY(0);    }
+    50%      { transform: scale(1) translateY(-7px); }
+  }
+
+  @keyframes arrowGlowPulse {
+    0%,100% { opacity: .3; transform: scale(1);    }
+    50%      { opacity: .6; transform: scale(1.18); }
+  }
+</style>
+</head>
+<body>
+
+<div class="header-group">
+  <h1 class="globe-title">You are my whole world...</h1>
+  <p class="globe-subtitle" id="statusText">shake it and see</p>
+</div>
+
+<div class="globe-stage">
+  <div class="globe-assembly" id="globeAssembly">
+    <div class="sphere" id="globeSphere">
+      <div class="inner-glow"></div>
+      <div class="shine-overlay"></div>
+      
+      <div class="content-inside">
+        <img src="globepic1.jpeg" alt="Our Photo" class="globe-photo" onerror="this.style.display='none'; document.getElementById('bunnyFallback').style.display='block';">
+        <svg id="bunnyFallback" style="display:none; width:90px; height:90px;" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+          <ellipse cx="38" cy="25" rx="6" ry="20" fill="#FFF0F5"/><ellipse cx="38" cy="25" rx="3" ry="14" fill="#FFB6C1"/>
+          <ellipse cx="62" cy="25" rx="6" ry="20" fill="#FFF0F5"/><ellipse cx="62" cy="25" rx="3" ry="14" fill="#FFB6C1"/>
+          <ellipse cx="50" cy="72" rx="22" ry="16" fill="#FFF0F5"/><circle cx="50" cy="50" r="18" fill="#FFF0F5"/>
+          <circle cx="42" cy="46" r="2" fill="#4A373A"/><circle cx="58" cy="46" r="2" fill="#4A373A"/>
+          <polygon points="49,48 51,48 50,50" fill="#FF69B4"/>
+        </svg>
+      </div>
+
+      <div class="hidden-message" id="secretMsg">My whole world fits right here</div>
+      <canvas id="innerCanvas"></canvas>
+    </div>
+
+    <div class="wooden-base" id="basePlate">
+      <span class="base-text">Happy Birthday</span>
+    </div>
+  </div>
+</div>
+
+<div class="nav-container">
+  <a href="next.html" id="nextBtn" aria-label="Continue">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M5 12h14"/><path d="M13 6l6 6-6 6"/>
+    </svg>
+  </a>
+</div>
+
+<canvas id="outerCanvas"></canvas>
+
+<script>
+function playSwirlSound() {
+  try {
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    if (!AudioContext) return;
+    const ctx = new AudioContext();
+    const bufferSize = ctx.sampleRate * 2.5; 
+    const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+    const data = buffer.getChannelData(0);
+    for (let i = 0; i < bufferSize; i++) {
+      data[i] = Math.random() * 2 - 1;
+    }
+
+    const noiseNode = ctx.createBufferSource();
+    noiseNode.buffer = buffer;
+
+    const filter = ctx.createBiquadFilter();
+    filter.type = 'lowpass';
+    filter.frequency.setValueAtTime(300, ctx.currentTime);
+    filter.frequency.exponentialRampToValueAtTime(1200, ctx.currentTime + 0.4);
+    filter.frequency.exponentialRampToValueAtTime(150, ctx.currentTime + 2.3);
+
+    const gainNode = ctx.createGain();
+    gainNode.gain.setValueAtTime(0, ctx.currentTime);
+    gainNode.gain.linearRampToValueAtTime(0.4, ctx.currentTime + 0.3);
+    gainNode.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 2.5);
+
+    noiseNode.connect(filter);
+    filter.connect(gainNode);
+    gainNode.connect(ctx.destination);
+
+    noiseNode.start();
+  } catch(e) { console.log("Audio feedback restriction bypassed."); }
+}
+</script>
+
+<script>
+(function() {
+  'use strict';
+
+  const globeSphere = document.getElementById('globeSphere');
+  const globeAssembly = document.getElementById('globeAssembly');
+  const basePlate = document.getElementById('basePlate');
+  const secretMsg = document.getElementById('secretMsg');
+  const nextBtn = document.getElementById('nextBtn');
+  const statusText = document.getElementById('statusText');
+  
+  const innerCanvas = document.getElementById('innerCanvas');
+  const ictx = innerCanvas.getContext('2d');
+  const outerCanvas = document.getElementById('outerCanvas');
+  const octx = outerCanvas.getContext('2d');
+
+  const TOTAL_FLAKES = 75;
+  let flakesArray = [];
+  let starsArray = [];
+  
+  let globeState = 'normal'; 
+  let outerStarsActive = false;
+
+  function resizeCanvases() {
+    innerCanvas.width = globeSphere.clientWidth;
+    innerCanvas.height = globeSphere.clientHeight;
+    outerCanvas.width = window.innerWidth;
+    outerCanvas.height = window.innerHeight;
+  }
+  window.addEventListener('resize', resizeCanvases);
+  setTimeout(resizeCanvases, 100);
+
+  function createSnowflakes() {
+    const cx = innerCanvas.width / 2 || 160;
+    const cy = innerCanvas.height / 2 || 160;
+    const maxRadius = (innerCanvas.width / 2) - 12;
+
+    for (let i = 0; i < TOTAL_FLAKES; i++) {
+      const angle = Math.random() * Math.PI * 2;
+      const r = Math.sqrt(Math.random()) * maxRadius;
+
+      flakesArray.push({
+        x: cx + Math.cos(angle) * r,
+        y: cy + Math.sin(angle) * r,
+        size: Math.random() * 2.5 + 1.5,
+        color: Math.random() > 0.3 ? '#FFFFFF' : '#FFEBF0',
+        speedY: Math.random() * 0.8 + 0.6,
+        speedX: (Math.random() - 0.5) * 0.5,
+        angle: Math.random() * Math.PI * 2,
+        angleVel: (Math.random() - 0.5) * 0.03,
+        swirlSpeed: Math.random() * 6 + 7,
+        swirlRadiusVel: Math.random() * 0.5 + 0.2,
+        settledXOffset: (Math.random() - 0.5) * 20
+      });
+    }
+  }
+
+  function renderLoop() {
+    ictx.clearRect(0, 0, innerCanvas.width, innerCanvas.height);
+    octx.clearRect(0, 0, outerCanvas.width, outerCanvas.height);
+
+    const cx = innerCanvas.width / 2;
+    const cy = innerCanvas.height / 2;
+    const globeRadius = innerCanvas.width / 2;
+    const validLimit = globeRadius - 8;
+
+    flakesArray.forEach((f) => {
+      if (globeState === 'normal') {
+        f.y += f.speedY;
+        f.x += f.speedX + Math.sin(f.angle) * 0.2;
+        f.angle += f.angleVel;
+
+        if (!isInsideCircle(f.x, f.y, cx, cy, validLimit)) {
+          f.y = 10;
+          f.x = cx + (Math.random() - 0.5) * (globeRadius * 1.2);
+        }
+      } 
+      else if (globeState === 'swirling') {
+        f.angle += (f.swirlSpeed / 100);
+        const radiusDist = getDistance(f.x, f.y, cx, cy);
+        
+        let targetRadius = radiusDist + (Math.random() - 0.5) * 10;
+        if (targetRadius > validLimit) targetRadius = validLimit - 10;
+
+        f.x = cx + Math.cos(f.angle) * targetRadius;
+        f.y = cy + Math.sin(f.angle) * targetRadius;
+      } 
+      else if (globeState === 'settling') {
+        const targetY = cy + Math.sqrt(Math.abs(globeRadius * globeRadius - (f.x - cx) * (f.x - cx))) - 10;
+        
+        f.y += (targetY - f.y) * 0.04 + 0.5;
+        f.x += (cx + f.settledXOffset - f.x) * 0.01;
+
+        if (f.y > targetY) f.y = targetY;
+      }
+
+      if (isInsideCircle(f.x, f.y, cx, cy, globeRadius - 4)) {
+        ictx.beginPath();
+        ictx.arc(f.x, f.y, f.size, 0, Math.PI * 2);
+        ictx.fillStyle = f.color;
+        ictx.fill();
+      }
+    });
+
+    if (outerStarsActive) {
+      if (starsArray.length < 35 && Math.random() < 0.15) {
+        starsArray.push({
+          x: Math.random() * outerCanvas.width,
+          y: Math.random() * (outerCanvas.height * 0.8),
+          size: Math.random() * 2 + 1,
+          maxSize: Math.random() * 4 + 4,
+          grow: true,
+          alpha: 0,
+          speedAlpha: Math.random() * 0.02 + 0.01
+        });
+      }
+
+      starsArray.forEach((s) => {
+        if (s.grow) {
+          s.size += 0.15;
+          s.alpha += s.speedAlpha;
+          if (s.size >= s.maxSize) s.grow = false;
+        } else {
+          s.size -= 0.1;
+          s.alpha -= s.speedAlpha;
+        }
+
+        octx.save();
+        octx.globalAlpha = Math.max(0, s.alpha);
+        octx.fillStyle = '#FFF8DC';
+        octx.shadowBlur = 10;
+        octx.shadowColor = 'var(--pink-neon)';
+        
+        octx.beginPath();
+        octx.moveTo(s.x, s.y - s.size);
+        octx.quadraticCurveTo(s.x, s.y, s.x + s.size, s.y);
+        octx.quadraticCurveTo(s.x, s.y, s.x, s.y + s.size);
+        octx.quadraticCurveTo(s.x, s.y, s.x - s.size, s.y);
+        octx.quadraticCurveTo(s.x, s.y, s.x, s.y - s.size);
+        octx.closePath();
+        octx.fill();
+        octx.restore();
+      });
+      starsArray = starsArray.filter(s => s.size > 0.5 && s.alpha > 0);
+    }
+
+    requestAnimationFrame(renderLoop);
+  }
+
+  function isInsideCircle(x, y, cx, cy, r) {
+    return (x - cx) * (x - cx) + (y - cy) * (y - cy) < r * r;
+  }
+  function getDistance(x1, y1, x2, y2) {
+    return Math.sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
+  }
+
+  function executeGlobeShake() {
+    if (globeState === 'swirling' || globeState === 'settling' || globeState === 'settled') return;
+    
+    globeState = 'swirling';
+    statusText.style.opacity = '0';
+    globeAssembly.classList.add('shaking');
+    playSwirlSound();
+
+    setTimeout(() => {
+      globeAssembly.classList.remove('shaking');
+    }, 500);
+
+    setTimeout(() => {
+      globeState = 'settling';
+    }, 3000);
+
+    setTimeout(() => {
+      globeState = 'settled';
+      triggerFinalEffects();
+    }, 4500);
+  }
+
+  function triggerFinalEffects() {
+    secretMsg.classList.add('reveal');
+    basePlate.classList.add('glowing');
+    outerStarsActive = true;
+
+    setTimeout(() => {
+      nextBtn.classList.add('show');
+    }, 2000);
+  }
+
+  createSnowflakes();
+  renderLoop();
+
+  globeSphere.addEventListener('click', executeGlobeShake);
+
+})();
+</script>
+</body>
+</html>
