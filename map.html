@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Distance Means Nothing</title>
+    <link href="https://fonts.googleapis.com/css2?family=Berkshire+Swash&family=DM+Sans:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --pink-deep:  #F4A7B9;
+            --pink-neon:  #FF8FB0;
+            --cream-base: #FDFBF7;
+            --he-color:   #8B5A2B;
+            --she-color:  #FF69B4;
+        }
+
+        body {
+            margin: 0; min-height: 100vh;
+            display: flex; align-items: center; justify-content: center;
+            background: linear-gradient(135deg, #fdfbf7, #f5ebeb);
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        .map-container {
+            width: 90%; max-width: 650px;
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(20px);
+            padding: 40px; border-radius: 40px; text-align: center;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.08);
+            border: 1px solid rgba(255,255,255,0.8);
+        }
+
+        h1 { font-family: 'Berkshire Swash', cursive; color: #8B6969; margin-bottom: 40px; }
+
+        #mapSVG { width: 100%; height: auto; display: block; overflow: visible; }
+
+        #flight-path {
+            fill: none; stroke: var(--pink-deep); stroke-width: 3;
+            stroke-dasharray: 8; stroke-dashoffset: 1000;
+        }
+        .draw-line { animation: dash 3s ease-in-out forwards; }
+        @keyframes dash { to { stroke-dashoffset: 0; } }
+
+        #plane { font-size: 24px; offset-path: path("M 50 150 Q 325 20 600 150"); offset-distance: 0%; opacity: 0; }
+        .fly { animation: flight 3s ease-in-out forwards; }
+        @keyframes flight {
+            0%   { offset-distance: 0%;   opacity: 1; transform: scale(1); }
+            95%  { offset-distance: 100%; opacity: 1; transform: scale(1); }
+            100% { offset-distance: 100%; opacity: 0; }
+        }
+
+        .heart-particle { fill: var(--she-color); opacity: 0; transform-origin: center; }
+        .burst { animation: pop 0.8s ease-out forwards; }
+        @keyframes pop {
+            0%   { transform: scale(0); opacity: 1; }
+            100% { transform: scale(1.5) translate(var(--tx), var(--ty)); opacity: 0; }
+        }
+
+        #message { font-family: 'Berkshire Swash', cursive; color: var(--she-color); font-size: 1.6rem; margin-top: 30px; opacity: 0; }
+        .fade-in { opacity: 1 !important; transition: opacity 1s; }
+
+        .continue-btn {
+            position: relative;
+            display: flex; align-items: center; justify-content: center;
+            width: 106px; height: 106px; border-radius: 50%;
+            background: linear-gradient(135deg, var(--pink-neon), var(--pink-deep));
+            box-shadow:
+                0 1px 0 rgba(255,255,255,.5) inset,
+                0 14px 28px -10px rgba(244,167,185,.7);
+            border: none; cursor: pointer;
+            margin: 24px auto 0;
+            opacity: 0;
+            animation: arrowFloat 2.4s ease-in-out infinite;
+        }
+        .continue-btn.fade-in {
+            transition: opacity 1s, box-shadow .25s ease, filter .25s ease;
+        }
+        .continue-btn::before {
+            content: '';
+            position: absolute; inset: -12px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--pink-neon), var(--pink-deep));
+            opacity: .4; filter: blur(14px);
+            z-index: -1;
+            animation: arrowGlowPulse 2.4s ease-in-out infinite;
+        }
+        .continue-btn svg {
+            width: 42px; height: 42px;
+            color: var(--cream-base);
+            transition: transform .25s ease;
+        }
+        .continue-btn:hover {
+            box-shadow:
+                0 1px 0 rgba(255,255,255,.6) inset,
+                0 20px 40px -10px rgba(255,143,176,.85);
+            filter: brightness(1.07);
+        }
+        .continue-btn:hover svg { transform: translateX(4px) rotate(8deg); }
+        .continue-btn:active    { filter: brightness(.95); }
+
+        @keyframes arrowFloat {
+            0%,100% { transform: translateY(0);    }
+            50%     { transform: translateY(-7px); }
+        }
+        @keyframes arrowGlowPulse {
+            0%,100% { opacity: .3; transform: scale(1);    }
+            50%     { opacity: .6; transform: scale(1.18); }
+        }
+    </style>
+</head>
+<body>
+
+<div class="map-container">
+    <h1>I would cross any distance for you...</h1>
+
+    <svg id="mapSVG" viewBox="0 0 650 250">
+        <defs>
+            <!-- Vertical gradients for atmospheric depth (lighter top = snow/peak, deeper base) -->
+            <linearGradient id="mtnFar" x1="0" y1="118" x2="0" y2="250" gradientUnits="userSpaceOnUse">
+                <stop offset="0%"   stop-color="#a89cc0"/>
+                <stop offset="100%" stop-color="#c0b4d4"/>
+            </linearGradient>
+            <linearGradient id="mtnMid" x1="0" y1="140" x2="0" y2="250" gradientUnits="userSpaceOnUse">
+                <stop offset="0%"   stop-color="#be98bc"/>
+                <stop offset="100%" stop-color="#d4acd0"/>
+            </linearGradient>
+            <linearGradient id="mtnNear" x1="0" y1="160" x2="0" y2="250" gradientUnits="userSpaceOnUse">
+                <stop offset="0%"   stop-color="#d09cbc"/>
+                <stop offset="100%" stop-color="#e8b8d4"/>
+            </linearGradient>
+            <!-- Soft sky radial glow -->
+            <radialGradient id="skyGlow" cx="50%" cy="25%" r="65%">
+                <stop offset="0%"   stop-color="#f5e8f8" stop-opacity="0.55"/>
+                <stop offset="100%" stop-color="#fdf8fc" stop-opacity="0"/>
+            </radialGradient>
+        </defs>
+
+        <!-- Ambient sky wash -->
+        <rect x="0" y="0" width="650" height="250" fill="url(#skyGlow)"/>
+
+        <!-- Tiny stars in the upper sky -->
+        <text x="148" y="58" font-size="8"  fill="#c8a4c8" opacity="0.55">✦</text>
+        <text x="320" y="32" font-size="6"  fill="#c0a0c0" opacity="0.45">✦</text>
+        <text x="462" y="48" font-size="8"  fill="#c8a4c8" opacity="0.55">✦</text>
+        <text x="248" y="75" font-size="5"  fill="#d0a8cc" opacity="0.4">·</text>
+        <text x="395" y="70" font-size="5"  fill="#d0a8cc" opacity="0.4">·</text>
+
+        <!-- ── Layer 1: Distant mountains (most transparent, cool lavender) ── -->
+        <path fill="url(#mtnFar)" opacity="0.38"
+              d="M 0 208
+                 L 48  156 L 92  178 L 145 132 L 196 164
+                 L 252 118 L 305 153 L 360 126 L 416 160
+                 L 470 133 L 526 163 L 580 141 L 628 158
+                 L 650 152 L 650 250 L 0 250 Z"/>
+
+        <!-- ── Layer 2: Mid mountains (medium opacity, warm mauve) ── -->
+        <path fill="url(#mtnMid)" opacity="0.58"
+              d="M 0 228
+                 L 40  182 L 86  204 L 132 162 L 178 186
+                 L 235 143 L 280 172 L 336 148 L 390 176
+                 L 445 150 L 498 178 L 550 158 L 600 180
+                 L 638 165 L 650 168 L 650 250 L 0 250 Z"/>
+        <!-- Snow caps on the two tallest mid peaks -->
+        <path fill="white" opacity="0.52" d="M 228 147 L 237 137 L 247 146 Z"/>
+        <path fill="white" opacity="0.52" d="M 438 153 L 447 143 L 457 152 Z"/>
+
+        <!-- ── Layer 3a: Near mountains — left cluster ── -->
+        <path fill="url(#mtnNear)" opacity="0.82"
+              d="M 0 250
+                 L 0   220 L 36  194 L 76  214
+                 L 120 174 L 164 198 L 208 224
+                 L 255 250 Z"/>
+        <!-- Snow cap on left near peak -->
+        <path fill="white" opacity="0.62" d="M 113 177 L 122 166 L 133 176 Z"/>
+
+        <!-- ── Layer 3b: Near mountains — right cluster ── -->
+        <path fill="url(#mtnNear)" opacity="0.82"
+              d="M 398 250
+                 L 425 220 L 460 190 L 504 212
+                 L 546 170 L 590 196 L 628 216
+                 L 650 210 L 650 250 Z"/>
+        <!-- Snow cap on right near peak -->
+        <path fill="white" opacity="0.62" d="M 539 174 L 548 163 L 559 173 Z"/>
+
+        <!-- Flight path (drawn on top of mountains) -->
+        <path id="flight-path" d="M 50 150 Q 325 20 600 150" />
+
+        <!-- Berlin pin -->
+        <g transform="translate(50, 150)">
+            <text x="0" y="0" text-anchor="middle" font-size="26" dominant-baseline="auto"
+                  transform="translate(0, -14)">📍</text>
+            <text y="42" text-anchor="middle" fill="#7B4A2A"
+                  font-family="Berkshire Swash, cursive" font-size="15">Berlin</text>
+        </g>
+
+        <!-- Sydney pin -->
+        <g id="sydney-pin" transform="translate(600, 150)">
+            <text x="0" y="0" text-anchor="middle" font-size="26" dominant-baseline="auto"
+                  transform="translate(0, -14)">📍</text>
+            <text y="42" text-anchor="middle" fill="#7B4A2A"
+                  font-family="Berkshire Swash, cursive" font-size="15">Sydney</text>
+            <text class="heart-particle" style="--tx: 20px; --ty: -30px;">💗</text>
+            <text class="heart-particle" style="--tx: -20px; --ty: -30px;">💗</text>
+        </g>
+
+        <text id="plane">✈️</text>
+    </svg>
+
+    <div id="message">No distance was ever too far 💗</div>
+    <button id="nextBtn" class="continue-btn" aria-label="Continue">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8"
+             stroke-linecap="round" stroke-linejoin="round">
+            <path d="M5 12h14"/><path d="M13 6l6 6-6 6"/>
+        </svg>
+    </button>
+</div>
+
+<script>
+    window.onload = () => {
+        setTimeout(() => {
+            document.getElementById('flight-path').classList.add('draw-line');
+            document.getElementById('plane').classList.add('fly');
+        }, 500);
+
+        setTimeout(() => {
+            document.querySelectorAll('.heart-particle').forEach(h => h.classList.add('burst'));
+            document.getElementById('message').classList.add('fade-in');
+            document.getElementById('nextBtn').classList.add('fade-in');
+        }, 3200);
+    };
+</script>
+
+</body>
+</html>
