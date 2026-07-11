@@ -1,238 +1,347 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Distance Means Nothing</title>
-    <link href="https://fonts.googleapis.com/css2?family=Berkshire+Swash&family=DM+Sans:wght@400;700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --pink-deep:  #F4A7B9;
-            --pink-neon:  #FF8FB0;
-            --cream-base: #FDFBF7;
-            --he-color:   #8B5A2B;
-            --she-color:  #FF69B4;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Distance Means Nothing</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Berkshire+Swash&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --cream-base: #FDFBF7;
+      --cream-deep: #F5EFEB;
+      --taupe:      #E8DDD2;
+      --pink-soft:  #FFD1DC;
+      --pink-deep:  #F4A7B9;
+      --pink-neon:  #FF8FB0;
+    }
 
-        body {
-            margin: 0; min-height: 100vh;
-            display: flex; align-items: center; justify-content: center;
-            background: linear-gradient(135deg, #fdfbf7, #f5ebeb);
-            font-family: 'DM Sans', sans-serif;
-        }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
-        .map-container {
-            width: 90%; max-width: 650px;
-            background: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(20px);
-            padding: 40px; border-radius: 40px; text-align: center;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.08);
-            border: 1px solid rgba(255,255,255,0.8);
-        }
+    html, body {
+      width: 100%; height: 100%;
+      overflow: hidden;
+      font-family: 'DM Sans', sans-serif;
+      background: radial-gradient(120% 90% at 50% -10%, var(--cream-base) 0%, var(--cream-deep) 55%, var(--taupe) 100%);
+      user-select: none;
+      -webkit-user-select: none;
+    }
 
-        h1 { font-family: 'Berkshire Swash', cursive; color: #8B6969; margin-bottom: 40px; }
+    /* ── Glow blobs ── */
+    .glow-blob {
+      position: fixed; border-radius: 50%; filter: blur(80px); opacity: .5;
+      pointer-events: none; z-index: 0;
+      animation: drift 15s ease-in-out infinite alternate;
+    }
+    .glow-blob.a { width:400px; height:400px; background:var(--pink-soft); top:-100px; left:-100px; }
+    .glow-blob.b { width:350px; height:350px; background:var(--pink-deep); bottom:-100px; right:-100px; animation-delay:2s; }
+    @keyframes drift { 0% { transform:translate(0,0); } 100% { transform:translate(40px,-20px); } }
 
-        #mapSVG { width: 100%; height: auto; display: block; overflow: visible; }
+    /* ── Curtain canvas ── */
+    #curtainCanvas { position:fixed; inset:0; pointer-events:none; z-index:1; opacity:.4; }
 
-        #flight-path {
-            fill: none; stroke: var(--pink-deep); stroke-width: 3;
-            stroke-dasharray: 8; stroke-dashoffset: 1000;
-        }
-        .draw-line { animation: dash 3s ease-in-out forwards; }
-        @keyframes dash { to { stroke-dashoffset: 0; } }
+    /* ── Stage ── */
+    .stage {
+      position: relative; z-index: 4;
+      width: 100%; height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 14vh 4vw;
+    }
 
-        #plane { font-size: 24px; offset-path: path("M 50 150 Q 325 20 600 150"); offset-distance: 0%; opacity: 0; }
-        .fly { animation: flight 3s ease-in-out forwards; }
-        @keyframes flight {
-            0%   { offset-distance: 0%;   opacity: 1; transform: scale(1); }
-            95%  { offset-distance: 100%; opacity: 1; transform: scale(1); }
-            100% { offset-distance: 100%; opacity: 0; }
-        }
+    /* ── Title — identical shimmer to guitar page ── */
+    .title-main {
+      position: absolute;
+      top: 4.5vh; left: 50%;
+      transform: translateX(-50%);
+      font-family: 'Berkshire Swash', cursive;
+      font-size: clamp(1.5rem, 3.8vw, 3rem);
+      background: linear-gradient(135deg, #5c2e16, #bd6528, var(--pink-neon), #5c2e16);
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: shimmer 6s linear infinite;
+      white-space: nowrap;
+      z-index: 10;
+    }
+    @keyframes shimmer { 0% { background-position:0% center; } 100% { background-position:200% center; } }
 
-        .heart-particle { fill: var(--she-color); opacity: 0; transform-origin: center; }
-        .burst { animation: pop 0.8s ease-out forwards; }
-        @keyframes pop {
-            0%   { transform: scale(0); opacity: 1; }
-            100% { transform: scale(1.5) translate(var(--tx), var(--ty)); opacity: 0; }
-        }
+    /* ── Map SVG ── */
+    .map-wrap { width:100%; max-width:700px; }
 
-        #message { font-family: 'Berkshire Swash', cursive; color: var(--she-color); font-size: 1.6rem; margin-top: 30px; opacity: 0; }
-        .fade-in { opacity: 1 !important; transition: opacity 1s; }
+    #mapSVG {
+      width:100%; height:auto; display:block; overflow:visible;
+      filter: drop-shadow(0 16px 40px rgba(36,15,5,0.18));
+    }
 
-        .continue-btn {
-            position: relative;
-            display: flex; align-items: center; justify-content: center;
-            width: 106px; height: 106px; border-radius: 50%;
-            background: linear-gradient(135deg, var(--pink-neon), var(--pink-deep));
-            box-shadow:
-                0 1px 0 rgba(255,255,255,.5) inset,
-                0 14px 28px -10px rgba(244,167,185,.7);
-            border: none; cursor: pointer;
-            margin: 24px auto 0;
-            opacity: 0;
-            animation: arrowFloat 2.4s ease-in-out infinite;
-        }
-        .continue-btn.fade-in {
-            transition: opacity 1s, box-shadow .25s ease, filter .25s ease;
-        }
-        .continue-btn::before {
-            content: '';
-            position: absolute; inset: -12px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--pink-neon), var(--pink-deep));
-            opacity: .4; filter: blur(14px);
-            z-index: -1;
-            animation: arrowGlowPulse 2.4s ease-in-out infinite;
-        }
-        .continue-btn svg {
-            width: 42px; height: 42px;
-            color: var(--cream-base);
-            transition: transform .25s ease;
-        }
-        .continue-btn:hover {
-            box-shadow:
-                0 1px 0 rgba(255,255,255,.6) inset,
-                0 20px 40px -10px rgba(255,143,176,.85);
-            filter: brightness(1.07);
-        }
-        .continue-btn:hover svg { transform: translateX(4px) rotate(8deg); }
-        .continue-btn:active    { filter: brightness(.95); }
+    #flight-path {
+      fill:none; stroke:var(--pink-deep); stroke-width:3;
+      stroke-dasharray:8; stroke-dashoffset:1000;
+    }
+    .draw-line { animation: dash 3s ease-in-out forwards; }
+    @keyframes dash { to { stroke-dashoffset:0; } }
 
-        @keyframes arrowFloat {
-            0%,100% { transform: translateY(0);    }
-            50%     { transform: translateY(-7px); }
-        }
-        @keyframes arrowGlowPulse {
-            0%,100% { opacity: .3; transform: scale(1);    }
-            50%     { opacity: .6; transform: scale(1.18); }
-        }
-    </style>
+    #plane { font-size:24px; offset-path:path("M 50 150 Q 325 20 600 150"); offset-distance:0%; opacity:0; }
+    .fly { animation: flight 3s ease-in-out forwards; }
+    @keyframes flight {
+      0%   { offset-distance:0%;   opacity:1; }
+      95%  { offset-distance:100%; opacity:1; }
+      100% { offset-distance:100%; opacity:0; }
+    }
+
+    .heart-particle { opacity:0; transform-origin:center; }
+    .burst { animation: pop 0.8s ease-out forwards; }
+    @keyframes pop {
+      0%   { transform:scale(0); opacity:1; }
+      100% { transform:scale(1.5) translate(var(--tx), var(--ty)); opacity:0; }
+    }
+
+    /* ── Message — same shimmer as title ── */
+    #message {
+      font-family: 'Berkshire Swash', cursive;
+      font-size: clamp(1.1rem, 2.8vw, 1.7rem);
+      background: linear-gradient(135deg, #5c2e16, #bd6528, var(--pink-neon), #5c2e16);
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: shimmer 6s linear infinite;
+      margin-top: 28px;
+      opacity: 0;
+    }
+    .fade-in { opacity:1 !important; transition:opacity 1s; }
+
+    /* ── Continue button — identical to guitar page ── */
+    .continue-btn {
+      position: relative;
+      display: flex; align-items:center; justify-content:center;
+      width:106px; height:106px; border-radius:50%;
+      background: linear-gradient(135deg, var(--pink-neon), var(--pink-deep));
+      box-shadow:
+        0 1px 0 rgba(255,255,255,.5) inset,
+        0 14px 28px -10px rgba(244,167,185,.7);
+      border:none; cursor:pointer;
+      margin-top: 32px;
+      opacity:0;
+      animation: arrowFloat 2.4s ease-in-out infinite;
+    }
+    .continue-btn.fade-in { transition: opacity 1s, box-shadow .25s ease, filter .25s ease; }
+    .continue-btn::before {
+      content:'';
+      position:absolute; inset:-12px; border-radius:50%;
+      background: linear-gradient(135deg, var(--pink-neon), var(--pink-deep));
+      opacity:.4; filter:blur(14px); z-index:-1;
+      animation: arrowGlowPulse 2.4s ease-in-out infinite;
+    }
+    .continue-btn svg { width:42px; height:42px; color:var(--cream-base); transition:transform .25s ease; }
+    .continue-btn:hover {
+      box-shadow:
+        0 1px 0 rgba(255,255,255,.6) inset,
+        0 20px 40px -10px rgba(255,143,176,.85);
+      filter:brightness(1.07);
+    }
+    .continue-btn:hover svg { transform:translateX(4px) rotate(8deg); }
+    .continue-btn:active    { filter:brightness(.95); }
+
+    @keyframes arrowFloat {
+      0%,100% { transform:translateY(0);   }
+      50%     { transform:translateY(-7px); }
+    }
+    @keyframes arrowGlowPulse {
+      0%,100% { opacity:.3; transform:scale(1);    }
+      50%     { opacity:.6; transform:scale(1.18); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .glow-blob, .title-main, #message, .continue-btn, .continue-btn::before
+      { animation:none !important; }
+    }
+  </style>
 </head>
 <body>
 
-<div class="map-container">
-    <h1>I would cross any distance for you...</h1>
+<div class="glow-blob a"></div>
+<div class="glow-blob b"></div>
+<canvas id="curtainCanvas"></canvas>
 
+<div class="stage">
+  <h1 class="title-main">I would cross any distance for you...</h1>
+
+  <div class="map-wrap">
     <svg id="mapSVG" viewBox="0 0 650 250">
-        <defs>
-            <!-- Vertical gradients for atmospheric depth (lighter top = snow/peak, deeper base) -->
-            <linearGradient id="mtnFar" x1="0" y1="118" x2="0" y2="250" gradientUnits="userSpaceOnUse">
-                <stop offset="0%"   stop-color="#a89cc0"/>
-                <stop offset="100%" stop-color="#c0b4d4"/>
-            </linearGradient>
-            <linearGradient id="mtnMid" x1="0" y1="140" x2="0" y2="250" gradientUnits="userSpaceOnUse">
-                <stop offset="0%"   stop-color="#be98bc"/>
-                <stop offset="100%" stop-color="#d4acd0"/>
-            </linearGradient>
-            <linearGradient id="mtnNear" x1="0" y1="160" x2="0" y2="250" gradientUnits="userSpaceOnUse">
-                <stop offset="0%"   stop-color="#d09cbc"/>
-                <stop offset="100%" stop-color="#e8b8d4"/>
-            </linearGradient>
-            <!-- Soft sky radial glow -->
-            <radialGradient id="skyGlow" cx="50%" cy="25%" r="65%">
-                <stop offset="0%"   stop-color="#f5e8f8" stop-opacity="0.55"/>
-                <stop offset="100%" stop-color="#fdf8fc" stop-opacity="0"/>
-            </radialGradient>
-        </defs>
+      <defs>
+        <!-- Warm gradient: peaks lighter, base deeper — all in cream-blush-brown family -->
+        <linearGradient id="mtnFar" x1="0" y1="120" x2="0" y2="250" gradientUnits="userSpaceOnUse">
+          <stop offset="0%"   stop-color="#d8c4b4"/>
+          <stop offset="100%" stop-color="#c8b0a0"/>
+        </linearGradient>
+        <linearGradient id="mtnMid" x1="0" y1="138" x2="0" y2="250" gradientUnits="userSpaceOnUse">
+          <stop offset="0%"   stop-color="#c8a090"/>
+          <stop offset="100%" stop-color="#b88878"/>
+        </linearGradient>
+        <linearGradient id="mtnNear" x1="0" y1="158" x2="0" y2="250" gradientUnits="userSpaceOnUse">
+          <stop offset="0%"   stop-color="#b87868"/>
+          <stop offset="100%" stop-color="#a06858"/>
+        </linearGradient>
+        <!-- Warm sky wash — cream/blush, no purple -->
+        <radialGradient id="skyGlow" cx="50%" cy="20%" r="70%">
+          <stop offset="0%"   stop-color="#fdf0e8" stop-opacity="0.6"/>
+          <stop offset="100%" stop-color="#fdfaf8" stop-opacity="0"/>
+        </radialGradient>
+      </defs>
 
-        <!-- Ambient sky wash -->
-        <rect x="0" y="0" width="650" height="250" fill="url(#skyGlow)"/>
+      <rect x="0" y="0" width="650" height="250" fill="url(#skyGlow)"/>
 
-        <!-- Tiny stars in the upper sky -->
-        <text x="148" y="58" font-size="8"  fill="#c8a4c8" opacity="0.55">✦</text>
-        <text x="320" y="32" font-size="6"  fill="#c0a0c0" opacity="0.45">✦</text>
-        <text x="462" y="48" font-size="8"  fill="#c8a4c8" opacity="0.55">✦</text>
-        <text x="248" y="75" font-size="5"  fill="#d0a8cc" opacity="0.4">·</text>
-        <text x="395" y="70" font-size="5"  fill="#d0a8cc" opacity="0.4">·</text>
+      <!-- Stars — warm amber tint -->
+      <text x="148" y="55" font-size="7"  fill="#c8a080" opacity="0.5">✦</text>
+      <text x="325" y="30" font-size="5"  fill="#c09070" opacity="0.45">✦</text>
+      <text x="468" y="46" font-size="7"  fill="#c8a080" opacity="0.5">✦</text>
+      <text x="245" y="72" font-size="5"  fill="#c8a878" opacity="0.38">·</text>
+      <text x="400" y="68" font-size="5"  fill="#c8a878" opacity="0.38">·</text>
 
-        <!-- ── Layer 1: Distant mountains (most transparent, cool lavender) ── -->
-        <path fill="url(#mtnFar)" opacity="0.38"
-              d="M 0 208
-                 L 48  156 L 92  178 L 145 132 L 196 164
-                 L 252 118 L 305 153 L 360 126 L 416 160
-                 L 470 133 L 526 163 L 580 141 L 628 158
-                 L 650 152 L 650 250 L 0 250 Z"/>
+      <!-- ── Far mountains: smooth rolling, very soft ── -->
+      <path fill="url(#mtnFar)" opacity="0.35"
+            d="M 0 218
+               C 55 190, 85 205, 120 178
+               C 155 151, 185 175, 225 148
+               C 265 121, 295 158, 340 138
+               C 385 118, 415 150, 460 132
+               C 505 114, 540 148, 585 135
+               C 615 126, 638 148, 650 152
+               L 650 250 L 0 250 Z"/>
 
-        <!-- ── Layer 2: Mid mountains (medium opacity, warm mauve) ── -->
-        <path fill="url(#mtnMid)" opacity="0.58"
-              d="M 0 228
-                 L 40  182 L 86  204 L 132 162 L 178 186
-                 L 235 143 L 280 172 L 336 148 L 390 176
-                 L 445 150 L 498 178 L 550 158 L 600 180
-                 L 638 165 L 650 168 L 650 250 L 0 250 Z"/>
-        <!-- Snow caps on the two tallest mid peaks -->
-        <path fill="white" opacity="0.52" d="M 228 147 L 237 137 L 247 146 Z"/>
-        <path fill="white" opacity="0.52" d="M 438 153 L 447 143 L 457 152 Z"/>
+      <!-- ── Mid mountains: warmer blush, more defined ── -->
+      <path fill="url(#mtnMid)" opacity="0.6"
+            d="M 0 232
+               C 40 205, 65 220, 95 198
+               C 125 176, 148 198, 178 172
+               C 208 146, 235 170, 272 152
+               C 309 134, 330 162, 368 148
+               C 406 134, 432 160, 470 145
+               C 508 130, 535 158, 572 148
+               C 605 140, 632 162, 650 160
+               L 650 250 L 0 250 Z"/>
+      <!-- Snow hints on two tallest mid peaks -->
+      <path fill="#fdf5f0" opacity="0.55"
+            d="M 268 154 C 272 144, 276 140, 280 138 C 284 140, 288 144, 292 154 Z"/>
+      <path fill="#fdf5f0" opacity="0.55"
+            d="M 462 147 C 466 137, 470 133, 474 131 C 478 133, 482 137, 486 147 Z"/>
 
-        <!-- ── Layer 3a: Near mountains — left cluster ── -->
-        <path fill="url(#mtnNear)" opacity="0.82"
-              d="M 0 250
-                 L 0   220 L 36  194 L 76  214
-                 L 120 174 L 164 198 L 208 224
-                 L 255 250 Z"/>
-        <!-- Snow cap on left near peak -->
-        <path fill="white" opacity="0.62" d="M 113 177 L 122 166 L 133 176 Z"/>
+      <!-- ── Near left: deepest warm rose-brown ── -->
+      <path fill="url(#mtnNear)" opacity="0.85"
+            d="M 0 250
+               C 18 238, 30 220, 48 204
+               C 66 188, 82 206, 104 186
+               C 126 166, 148 192, 172 208
+               C 192 220, 218 240, 255 250 Z"/>
+      <!-- Snow hint left peak -->
+      <path fill="#fdf5f0" opacity="0.6"
+            d="M 100 188 C 104 178, 108 174, 112 172 C 116 174, 120 178, 124 188 Z"/>
 
-        <!-- ── Layer 3b: Near mountains — right cluster ── -->
-        <path fill="url(#mtnNear)" opacity="0.82"
-              d="M 398 250
-                 L 425 220 L 460 190 L 504 212
-                 L 546 170 L 590 196 L 628 216
-                 L 650 210 L 650 250 Z"/>
-        <!-- Snow cap on right near peak -->
-        <path fill="white" opacity="0.62" d="M 539 174 L 548 163 L 559 173 Z"/>
+      <!-- ── Near right: matching warm rose-brown ── -->
+      <path fill="url(#mtnNear)" opacity="0.85"
+            d="M 395 250
+               C 418 235, 435 215, 455 196
+               C 475 177, 495 200, 520 184
+               C 545 168, 568 192, 592 205
+               C 614 216, 636 228, 650 232
+               L 650 250 Z"/>
+      <!-- Snow hint right peak -->
+      <path fill="#fdf5f0" opacity="0.6"
+            d="M 516 186 C 520 176, 524 172, 528 170 C 532 172, 536 176, 540 186 Z"/>
 
-        <!-- Flight path (drawn on top of mountains) -->
-        <path id="flight-path" d="M 50 150 Q 325 20 600 150" />
+      <!-- Flight path -->
+      <path id="flight-path" d="M 50 150 Q 325 20 600 150"/>
 
-        <!-- Berlin pin -->
-        <g transform="translate(50, 150)">
-            <text x="0" y="0" text-anchor="middle" font-size="26" dominant-baseline="auto"
-                  transform="translate(0, -14)">📍</text>
-            <text y="42" text-anchor="middle" fill="#7B4A2A"
-                  font-family="Berkshire Swash, cursive" font-size="15">Berlin</text>
-        </g>
+      <!-- Berlin -->
+      <g transform="translate(50,150)">
+        <text x="0" y="0" text-anchor="middle" font-size="26"
+              dominant-baseline="auto" transform="translate(0,-14)">📍</text>
+        <text y="42" text-anchor="middle" fill="#7B4A2A"
+              font-family="Berkshire Swash, cursive" font-size="15">Berlin</text>
+      </g>
 
-        <!-- Sydney pin -->
-        <g id="sydney-pin" transform="translate(600, 150)">
-            <text x="0" y="0" text-anchor="middle" font-size="26" dominant-baseline="auto"
-                  transform="translate(0, -14)">📍</text>
-            <text y="42" text-anchor="middle" fill="#7B4A2A"
-                  font-family="Berkshire Swash, cursive" font-size="15">Sydney</text>
-            <text class="heart-particle" style="--tx: 20px; --ty: -30px;">💗</text>
-            <text class="heart-particle" style="--tx: -20px; --ty: -30px;">💗</text>
-        </g>
+      <!-- Sydney -->
+      <g id="sydney-pin" transform="translate(600,150)">
+        <text x="0" y="0" text-anchor="middle" font-size="26"
+              dominant-baseline="auto" transform="translate(0,-14)">📍</text>
+        <text y="42" text-anchor="middle" fill="#7B4A2A"
+              font-family="Berkshire Swash, cursive" font-size="15">Sydney</text>
+        <text class="heart-particle" style="--tx:20px;--ty:-30px;">💗</text>
+        <text class="heart-particle" style="--tx:-20px;--ty:-30px;">💗</text>
+      </g>
 
-        <text id="plane">✈️</text>
+      <text id="plane">✈️</text>
     </svg>
+  </div>
 
-    <div id="message">No distance was ever too far 💗</div>
-    <button id="nextBtn" class="continue-btn" aria-label="Continue">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8"
-             stroke-linecap="round" stroke-linejoin="round">
-            <path d="M5 12h14"/><path d="M13 6l6 6-6 6"/>
-        </svg>
-    </button>
+  <div id="message">No distance was ever too far 💗</div>
+
+  <button id="nextBtn" class="continue-btn" aria-label="Continue">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8"
+         stroke-linecap="round" stroke-linejoin="round">
+      <path d="M5 12h14"/><path d="M13 6l6 6-6 6"/>
+    </svg>
+  </button>
 </div>
 
 <script>
-    window.onload = () => {
-        setTimeout(() => {
-            document.getElementById('flight-path').classList.add('draw-line');
-            document.getElementById('plane').classList.add('fly');
-        }, 500);
+(() => {
+  /* ── Curtain canvas — identical to guitar page ── */
+  const cCanvas = document.getElementById('curtainCanvas');
+  const cCtx    = cCanvas.getContext('2d');
+  function resizeCurtain() { cCanvas.width = window.innerWidth; cCanvas.height = window.innerHeight; }
+  window.addEventListener('resize', resizeCurtain);
+  resizeCurtain();
 
-        setTimeout(() => {
-            document.querySelectorAll('.heart-particle').forEach(h => h.classList.add('burst'));
-            document.getElementById('message').classList.add('fade-in');
-            document.getElementById('nextBtn').classList.add('fade-in');
-        }, 3200);
+  let phase = 0;
+  function drawCurtain() {
+    phase += 0.009;
+    cCtx.clearRect(0, 0, cCanvas.width, cCanvas.height);
+    const folds = 13, foldW = cCanvas.width / folds;
+    for (let i = 0; i <= folds; i++) {
+      const x = i * foldW;
+      cCtx.beginPath(); cCtx.moveTo(x, 0);
+      for (let y = 0; y < cCanvas.height; y += 20) {
+        const sway = Math.sin(phase + i * 0.45 + y * 0.004) * 14
+                   + Math.cos(phase * 0.7 + y * 0.006) * 8;
+        cCtx.lineTo(x + sway, y);
+      }
+      const grad = cCtx.createLinearGradient(x - foldW/2, 0, x + foldW/2, 0);
+      grad.addColorStop(0,   'rgba(255,209,220,0.0)');
+      grad.addColorStop(0.5, 'rgba(253,251,247,0.08)');
+      grad.addColorStop(1,   'rgba(232,221,210,0.0)');
+      cCtx.strokeStyle = grad;
+      cCtx.lineWidth   = foldW * 0.9;
+      cCtx.lineCap     = 'round';
+      cCtx.stroke();
+    }
+    requestAnimationFrame(drawCurtain);
+  }
+  drawCurtain();
 
-        document.getElementById('nextBtn').addEventListener('click', () => {
-            window.location.href = 'wall.html';
-        });
-    };
+  /* ── Map animations ── */
+  window.addEventListener('load', () => {
+    setTimeout(() => {
+      document.getElementById('flight-path').classList.add('draw-line');
+      document.getElementById('plane').classList.add('fly');
+    }, 500);
+
+    setTimeout(() => {
+      document.querySelectorAll('.heart-particle').forEach(h => h.classList.add('burst'));
+      document.getElementById('message').classList.add('fade-in');
+      document.getElementById('nextBtn').classList.add('fade-in');
+    }, 3200);
+
+    document.getElementById('nextBtn').addEventListener('click', () => {
+      window.location.href = 'wall.html';
+    });
+  });
+})();
 </script>
-
 </body>
 </html>
