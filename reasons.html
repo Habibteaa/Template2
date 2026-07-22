@@ -100,7 +100,7 @@
     background:linear-gradient(120deg,var(--pink-neon),var(--pink-deep) 45%,var(--pink-neon));
     -webkit-background-clip:text;background-clip:text;color:transparent;
     animation:letterGlow 2.4s ease-in-out infinite;
-    text-align:center;margin-bottom:6px;
+    text-align:center;margin-bottom:clamp(20px, 3vh, 36px);
     position:relative;overflow:hidden;
   }
   .page-title::after{
@@ -113,14 +113,6 @@
   @keyframes letterGlow{
     0%,100%{ filter:drop-shadow(0 0 6px rgba(255,143,176,.4)); }
     50%{ filter:drop-shadow(0 0 18px rgba(255,143,176,.95)); }
-  }
-
-  /* ── SUBTITLE ── */
-  .page-sub{
-    font-size:clamp(12px,2vw,16px);
-    color:var(--brown-muted);font-style:italic;
-    letter-spacing:.04em;
-    margin-bottom:clamp(24px,4vh,48px);
   }
 
   /* ── PROGRESS DOT ROW ── */
@@ -153,6 +145,7 @@
     perspective:900px;
     cursor:pointer;
     -webkit-tap-highlight-color:transparent;
+    transition:transform .3s ease, opacity .4s ease;
   }
 
   .card-inner{
@@ -162,7 +155,8 @@
     border-radius:clamp(12px,2vw,20px);
   }
 
-  .card-wrap.flipped .card-inner{ transform:rotateY(180deg); }
+  .card-wrap.flipped .card-inner,
+  .modal-card.flipped .card-inner { transform:rotateY(180deg); }
 
   .card-face{
     position:absolute;inset:0;
@@ -192,7 +186,6 @@
     animation:heartbeat 2.2s ease-in-out infinite;
     flex-shrink:0;
   }
-  /* pause heartbeat once flipped */
   .card-wrap.flipped .front-heart{ animation-play-state:paused; }
 
   @keyframes heartbeat{
@@ -223,7 +216,8 @@
     gap:clamp(4px,1vw,8px);
   }
 
-  .card-wrap.flipped .card-back{
+  .card-wrap.flipped .card-back,
+  .modal-card.flipped .card-back {
     box-shadow:
       0 1px 0 rgba(255,255,255,.9) inset,
       0 8px 28px -4px rgba(255,143,176,.65),
@@ -231,10 +225,10 @@
   }
 
   .back-mini-heart{
-    width:clamp(12px,2vw,18px);
-    height:clamp(12px,2vw,18px);
+    width:clamp(12px,2.5vw,22px);
+    height:clamp(12px,2.5vw,22px);
     flex-shrink:0;
-    opacity:.5;
+    opacity:.7;
   }
 
   .reason-label{
@@ -251,7 +245,48 @@
     font-weight:500;
   }
 
-  /* ── ARROW BUTTON (same as index page) ── */
+  /* ── CENTER MODAL POPUP ── */
+  .modal-overlay{
+    position:fixed;inset:0;
+    background:rgba(54, 34, 20, 0.45);
+    backdrop-filter:blur(8px);
+    -webkit-backdrop-filter:blur(8px);
+    z-index:100;
+    display:flex;align-items:center;justify-content:center;
+    opacity:0;pointer-events:none;
+    transition:opacity .4s ease;
+    padding:20px;
+  }
+
+  .modal-overlay.active{
+    opacity:1;pointer-events:auto;
+  }
+
+  .modal-card{
+    width:min(320px, 82vw);
+    aspect-ratio:3/4;
+    perspective:1000px;
+    transform:scale(.7) translateY(20px);
+    transition:transform .45s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .modal-overlay.active .modal-card{
+    transform:scale(1) translateY(0);
+  }
+
+  /* ENLARGED TEXT IN POPUP */
+  .modal-card .reason-label{
+    font-size:clamp(16px, 4vw, 22px);
+    margin-bottom:4px;
+  }
+
+  .modal-card .reason-text{
+    font-size:clamp(14px, 3.8vw, 17px);
+    padding:0 12px;
+    line-height:1.5;
+  }
+
+  /* ── ARROW BUTTON ── */
   .continue-btn{
     display:flex;align-items:center;justify-content:center;
     width:clamp(72px,8vw,96px);
@@ -326,10 +361,53 @@
   <!-- Celebration layer -->
   <div id="celebration"></div>
 
+  <!-- Center Modal Container -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal-card" id="modalCard">
+      <div class="card-inner">
+        <div class="card-face card-front">
+          <svg class="front-heart" viewBox="0 0 60 56" fill="none">
+            <defs>
+              <radialGradient id="modalHg" cx="38%" cy="32%" r="72%">
+                <stop offset="0%"   stop-color="#FFF4F7"/>
+                <stop offset="48%"  stop-color="#FF8FB0"/>
+                <stop offset="100%" stop-color="#C94A6A"/>
+              </radialGradient>
+            </defs>
+            <path d="M30 52 C30 52 3 36 3 17.5
+                     C3 8.9 10.1 2 19 2
+                     C24.2 2 28.8 4.7 30 7.6
+                     C31.2 4.7 35.8 2 41 2
+                     C49.9 2 57 8.9 57 17.5
+                     C57 36 30 52 30 52Z"
+                  fill="url(#modalHg)"
+                  stroke="rgba(255,255,255,0.38)" stroke-width="1.2"/>
+            <ellipse cx="22" cy="14" rx="5" ry="3.5"
+                     fill="white" opacity=".28" transform="rotate(-28 22 14)"/>
+          </svg>
+          <span class="card-number" id="modalCardNumber">1</span>
+        </div>
+
+        <div class="card-face card-back">
+          <svg class="back-mini-heart" viewBox="0 0 60 56" fill="none">
+            <path d="M30 52 C30 52 3 36 3 17.5
+                     C3 8.9 10.1 2 19 2
+                     C24.2 2 28.8 4.7 30 7.6
+                     C31.2 4.7 35.8 2 41 2
+                     C49.9 2 57 8.9 57 17.5
+                     C57 36 30 52 30 52Z"
+                  fill="var(--pink-deep)"/>
+          </svg>
+          <div class="reason-label" id="modalReasonLabel"># 1</div>
+          <div class="reason-text" id="modalReasonText"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <main class="page">
 
     <h1 class="page-title">Every reason I love you&hellip;</h1>
-    <p class="page-sub">click each heart to reveal</p>
 
     <!-- Progress dots -->
     <div class="progress-row" id="progressRow"></div>
@@ -363,12 +441,19 @@ const reasons = [
 
 const TOTAL = reasons.length;
 let flippedCount = 0;
+let isAnimating = false;
+
+/* ── DOM ELEMENTS ── */
+const grid           = document.getElementById('cardsGrid');
+const progRow        = document.getElementById('progressRow');
+const btn            = document.getElementById('continueBtn');
+const modalOverlay   = document.getElementById('modalOverlay');
+const modalCard      = document.getElementById('modalCard');
+const modalCardNum   = document.getElementById('modalCardNumber');
+const modalReasonLbl = document.getElementById('modalReasonLabel');
+const modalReasonTxt = document.getElementById('modalReasonText');
 
 /* ── BUILD CARDS ── */
-const grid   = document.getElementById('cardsGrid');
-const progRow = document.getElementById('progressRow');
-const btn    = document.getElementById('continueBtn');
-
 reasons.forEach((txt, i) => {
   /* Progress dot */
   const dot = document.createElement('div');
@@ -376,16 +461,16 @@ reasons.forEach((txt, i) => {
   dot.id = `dot-${i}`;
   progRow.appendChild(dot);
 
-  /* Card */
+  /* Grid Card representation */
   const wrap = document.createElement('div');
   wrap.className = 'card-wrap';
+  wrap.id = `card-${i}`;
   wrap.setAttribute('role','button');
   wrap.setAttribute('aria-label',`Reason ${i+1}`);
   wrap.setAttribute('tabindex','0');
 
   wrap.innerHTML = `
     <div class="card-inner">
-
       <div class="card-face card-front">
         <svg class="front-heart" viewBox="0 0 60 56" fill="none">
           <defs>
@@ -403,7 +488,6 @@ reasons.forEach((txt, i) => {
                    C57 36 30 52 30 52Z"
                 fill="url(#hg${i})"
                 stroke="rgba(255,255,255,0.38)" stroke-width="1.2"/>
-          <!-- shine -->
           <ellipse cx="22" cy="14" rx="5" ry="3.5"
                    fill="white" opacity=".28" transform="rotate(-28 22 14)"/>
         </svg>
@@ -423,25 +507,50 @@ reasons.forEach((txt, i) => {
         <div class="reason-label"># ${i + 1}</div>
         <div class="reason-text">${txt}</div>
       </div>
-
     </div>
   `;
 
-  const doFlip = () => {
-    if (wrap.classList.contains('flipped')) return;
-    wrap.classList.add('flipped');
-    document.getElementById(`dot-${i}`).classList.add('done');
-    flippedCount++;
-    if (flippedCount === TOTAL) {
-      setTimeout(() => {
-        launchCelebration();
-        btn.classList.add('visible');
-      }, 680);
-    }
+  const doPopup = () => {
+    if (wrap.classList.contains('flipped') || isAnimating) return;
+    
+    isAnimating = true;
+
+    // Set modal content
+    modalCardNum.textContent = i + 1;
+    modalReasonLbl.textContent = `# ${i + 1}`;
+    modalReasonTxt.textContent = txt;
+
+    // Reset flip state before opening
+    modalCard.classList.remove('flipped');
+    modalOverlay.classList.add('active');
+
+    // Flip open in center after modal appears
+    setTimeout(() => {
+      modalCard.classList.add('flipped');
+    }, 150);
+
+    // After 3 seconds, close the modal ("it just goes")
+    setTimeout(() => {
+      modalOverlay.classList.remove('active');
+      
+      // Mark grid card as flipped/done
+      wrap.classList.add('flipped');
+      document.getElementById(`dot-${i}`).classList.add('done');
+      
+      flippedCount++;
+      isAnimating = false;
+
+      if (flippedCount === TOTAL) {
+        setTimeout(() => {
+          launchCelebration();
+          btn.classList.add('visible');
+        }, 400);
+      }
+    }, 3000);
   };
 
-  wrap.addEventListener('click', doFlip);
-  wrap.addEventListener('keydown', e => { if(e.key==='Enter'||e.key===' ') doFlip(); });
+  wrap.addEventListener('click', doPopup);
+  wrap.addEventListener('keydown', e => { if(e.key==='Enter'||e.key===' ') doPopup(); });
 
   grid.appendChild(wrap);
 });
