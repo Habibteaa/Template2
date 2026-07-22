@@ -49,7 +49,6 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      /* CHANGE 4: slightly more padding headroom on mobile */
       padding: 13vh 4vw 4vh;
     }
 
@@ -59,7 +58,6 @@
       top: 4.5vh; left: 50%;
       transform: translateX(-50%);
       font-family: 'Berkshire Swash', cursive;
-      /* CHANGE 4: min bumped so it stays readable on small phones */
       font-size: clamp(1.3rem, 3.8vw, 3rem);
       background: linear-gradient(135deg, #5c2e16, #bd6528, var(--pink-neon), #5c2e16);
       background-size: 200% auto;
@@ -102,10 +100,9 @@
       100% { transform:scale(1.5) translate(var(--tx), var(--ty)); opacity:0; }
     }
 
-    /* ── CHANGE 3: Message — bigger size ── */
+    /* ── Message ── */
     #message {
       font-family: 'Berkshire Swash', cursive;
-      /* was clamp(1.1rem, 2.8vw, 1.7rem) */
       font-size: clamp(1.35rem, 3.6vw, 2.15rem);
       background: linear-gradient(135deg, #5c2e16, #bd6528, var(--pink-neon), #5c2e16);
       background-size: 200% auto;
@@ -119,11 +116,10 @@
     }
     .fade-in { opacity:1 !important; transition:opacity 1s; }
 
-    /* ── CHANGE 2 & 4: Continue button — shifted down ── */
+    /* ── Continue button — moved lower ── */
     .continue-btn {
       position: relative;
       display: flex; align-items:center; justify-content:center;
-      /* CHANGE 4: slightly smaller on mobile so it fits */
       width: clamp(84px, 12vw, 106px);
       height: clamp(84px, 12vw, 106px);
       border-radius:50%;
@@ -132,8 +128,7 @@
         0 1px 0 rgba(255,255,255,.5) inset,
         0 14px 28px -10px rgba(244,167,185,.7);
       border:none; cursor:pointer;
-      /* CHANGE 2: pushed further down */
-      margin-top: 78px;
+      margin-top: 120px; /* increased from 78px */
       opacity:0;
       animation: arrowFloat 2.4s ease-in-out infinite;
     }
@@ -146,7 +141,6 @@
       animation: arrowGlowPulse 2.4s ease-in-out infinite;
     }
     .continue-btn svg {
-      /* CHANGE 4: icon scales with button */
       width: clamp(32px, 5vw, 42px);
       height: clamp(32px, 5vw, 42px);
       color:var(--cream-base);
@@ -252,7 +246,6 @@
       <g transform="translate(50,150)">
         <text x="0" y="0" text-anchor="middle" font-size="38"
               dominant-baseline="auto" transform="translate(0,-18)">📍</text>
-        <!-- badge behind label -->
         <rect x="-38" y="38" width="76" height="22" rx="11"
               fill="#FDFBF7" fill-opacity="0.82"/>
         <text y="54" text-anchor="middle" fill="#5c2e16"
@@ -263,7 +256,6 @@
       <g id="sydney-pin" transform="translate(600,150)">
         <text x="0" y="0" text-anchor="middle" font-size="38"
               dominant-baseline="auto" transform="translate(0,-18)">📍</text>
-        <!-- badge behind label -->
         <rect x="-42" y="38" width="84" height="22" rx="11"
               fill="#FDFBF7" fill-opacity="0.82"/>
         <text y="54" text-anchor="middle" fill="#5c2e16"
