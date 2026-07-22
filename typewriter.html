@@ -26,41 +26,46 @@
 
         .paper {
             background: #FFFBF0;
-            width: 85%;
-            max-width: 600px;
-            padding: 50px;
+            width: 88%;
+            max-width: 680px;
+            max-height: 80vh;
+            overflow-y: auto;
+            padding: clamp(28px, 5vw, 50px);
             border: 1px solid #E8DDD2;
             box-shadow: 0 10px 30px rgba(0,0,0,0.1);
             position: relative;
             transform: translateY(100vh);
             transition: transform 1s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.5s;
+            box-sizing: border-box;
         }
 
         .paper.slide-in { transform: translateY(0); }
 
         #text-content { 
             white-space: pre-wrap; 
-            line-height: 1.8; 
-            color: #4A373A; 
-            font-size: 1.1rem;
+            line-height: 1.7; 
+            color: #2D1A1D; 
+            font-size: clamp(1.35rem, 3vw, 1.65rem);
+            font-weight: 500;
         }
 
         #cursor { 
             display: inline-block; 
-            width: 2px; 
-            height: 1.2em; 
-            background: #4A373A; 
+            width: 3px; 
+            height: 1.3em; 
+            background: #2D1A1D; 
             animation: blink 1s infinite; 
+            vertical-align: sub;
         }
         @keyframes blink { 50% { opacity: 0; } }
 
-        #signature-svg { width: 200px; height: 60px; margin-top: 20px; }
+        #signature-svg { width: 220px; height: 70px; margin-top: 24px; display: block; }
         .path { stroke-dasharray: 1000; stroke-dashoffset: 1000; }
         .draw-sig { animation: draw 2s forwards; }
         @keyframes draw { to { stroke-dashoffset: 0; } }
 
         .continue-btn {
-            margin-top: 5vh;
+            margin-top: 4vh;
             display: flex; align-items: center; justify-content: center;
             width: 106px; height: 106px;
             border-radius: 50%;
@@ -73,6 +78,7 @@
             opacity: 0;
             visibility: hidden;
             text-decoration: none;
+            position: relative;
         }
 
         .continue-btn::before {
@@ -105,8 +111,8 @@
         <span id="cursor"></span>
         
         <svg id="signature-svg">
-            <path id="sig-path" class="path" d="M10,40 C50,10 100,50 150,20" fill="none" stroke="#8B6969" stroke-width="2"/>
-            <path id="heart-path" class="path" d="M170,30 Q180,10 190,30 T200,30" fill="none" stroke="#FF69B4" stroke-width="2"/>
+            <path id="sig-path" class="path" d="M10,40 C50,10 100,50 150,20" fill="none" stroke="#8B6969" stroke-width="2.5"/>
+            <path id="heart-path" class="path" d="M170,30 Q180,10 190,30 T200,30" fill="none" stroke="#FF69B4" stroke-width="2.5"/>
         </svg>
     </div>
 
@@ -128,6 +134,7 @@ I love you more than words can ever truly capture.
         const content = document.getElementById('text-content');
         const cursor = document.getElementById('cursor');
         const audio = document.getElementById('typewriterAudio');
+        const paper = document.getElementById('paper');
 
         async function typeLetter() {
             // Trigger audio
@@ -135,6 +142,7 @@ I love you more than words can ever truly capture.
 
             for (let char of text) {
                 content.innerHTML += char;
+                paper.scrollTop = paper.scrollHeight; // Keep view auto-scrolled as text types
                 let delay = Math.random() * 20 + 50; 
                 if (char === '.' || char === ',') delay = 400;
                 if (char === '\n') delay = 600;
@@ -158,12 +166,11 @@ I love you more than words can ever truly capture.
                 }, 50);
 
                 document.getElementById('nextBtn').classList.add('show');
-                document.getElementById('paper').style.boxShadow = "0 0 20px rgba(255, 105, 180, 0.3)";
+                paper.style.boxShadow = "0 0 25px rgba(255, 105, 180, 0.35)";
             }, 2000);
         }
 
         window.onload = () => {
-            const paper = document.getElementById('paper');
             paper.classList.add('slide-in');
             setTimeout(typeLetter, 1500);
         };
