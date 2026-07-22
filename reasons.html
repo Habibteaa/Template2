@@ -152,7 +152,7 @@
     position:relative;width:100%;height:100%;
     transform-style:preserve-3d;
     transition:transform .65s ease-in-out;
-    border-radius:clamp(12px,2vw,20px);
+    border-radius:clamp(16px,2.5vw,24px);
   }
 
   .card-wrap.flipped .card-inner,
@@ -165,7 +165,7 @@
     -webkit-backface-visibility:hidden;
     display:flex;flex-direction:column;
     align-items:center;justify-content:center;
-    padding:clamp(8px,2vw,16px) clamp(6px,1.5vw,12px);
+    padding:clamp(12px,2.5vw,20px);
   }
 
   /* FRONT */
@@ -213,7 +213,8 @@
       0 6px 20px -6px rgba(255,143,176,.4);
     text-align:center;
     transition:box-shadow .45s ease;
-    gap:clamp(4px,1vw,8px);
+    gap:8px;
+    justify-content:center;
   }
 
   .card-wrap.flipped .card-back,
@@ -225,30 +226,30 @@
   }
 
   .back-mini-heart{
-    width:clamp(12px,2.5vw,22px);
-    height:clamp(12px,2.5vw,22px);
+    width:clamp(16px,3vw,28px);
+    height:clamp(16px,3vw,28px);
     flex-shrink:0;
-    opacity:.7;
+    filter:drop-shadow(0 2px 4px rgba(244,167,185,.4));
   }
 
   .reason-label{
     font-family:'Berkshire Swash',cursive;
-    font-size:clamp(9px,1.8vw,14px);
+    font-size:clamp(11px,2vw,15px);
     color:var(--pink-neon);
     line-height:1;
   }
 
   .reason-text{
-    font-size:clamp(9px,1.9vw,13.5px);
-    color:#B84064;
-    line-height:1.45;
-    font-weight:500;
+    font-size:clamp(10px,2vw,14px);
+    color:#9e2a4b;
+    line-height:1.4;
+    font-weight:600;
   }
 
   /* ── CENTER MODAL POPUP ── */
   .modal-overlay{
     position:fixed;inset:0;
-    background:rgba(54, 34, 20, 0.45);
+    background:rgba(54, 34, 20, 0.52);
     backdrop-filter:blur(8px);
     -webkit-backdrop-filter:blur(8px);
     z-index:100;
@@ -263,7 +264,7 @@
   }
 
   .modal-card{
-    width:min(320px, 82vw);
+    width:min(390px, 88vw);
     aspect-ratio:3/4;
     perspective:1000px;
     transform:scale(.7) translateY(20px);
@@ -274,16 +275,32 @@
     transform:scale(1) translateY(0);
   }
 
-  /* ENLARGED TEXT IN POPUP */
-  .modal-card .reason-label{
-    font-size:clamp(16px, 4vw, 22px);
+  /* ENLARGED MODAL CARD BACK LAYOUT */
+  .modal-card .card-back{
+    padding:clamp(24px, 6vw, 36px) clamp(20px, 5vw, 28px);
+    justify-content:flex-start;
+    gap:12px;
+  }
+
+  .modal-card .back-mini-heart{
+    width:clamp(36px, 9vw, 52px);
+    height:clamp(36px, 9vw, 52px);
+    margin-top:6px;
     margin-bottom:4px;
+    filter:drop-shadow(0 4px 10px rgba(244,167,185,.6));
+  }
+
+  .modal-card .reason-label{
+    font-size:clamp(18px, 4.5vw, 24px);
+    margin-bottom:2px;
   }
 
   .modal-card .reason-text{
-    font-size:clamp(14px, 3.8vw, 17px);
-    padding:0 12px;
-    line-height:1.5;
+    font-size:clamp(17px, 4.8vw, 23px); /* Significantly larger and easier to read */
+    color:#8c2340;
+    padding:0 6px;
+    line-height:1.55;
+    font-weight:600;
   }
 
   /* ── ARROW BUTTON ── */
@@ -389,6 +406,7 @@
         </div>
 
         <div class="card-face card-back">
+          <!-- Heart on top -->
           <svg class="back-mini-heart" viewBox="0 0 60 56" fill="none">
             <path d="M30 52 C30 52 3 36 3 17.5
                      C3 8.9 10.1 2 19 2
@@ -396,7 +414,7 @@
                      C31.2 4.7 35.8 2 41 2
                      C49.9 2 57 8.9 57 17.5
                      C57 36 30 52 30 52Z"
-                  fill="var(--pink-deep)"/>
+                  fill="var(--pink-neon)"/>
           </svg>
           <div class="reason-label" id="modalReasonLabel"># 1</div>
           <div class="reason-text" id="modalReasonText"></div>
@@ -529,7 +547,7 @@ reasons.forEach((txt, i) => {
       modalCard.classList.add('flipped');
     }, 150);
 
-    // After 3 seconds, close the modal ("it just goes")
+    // After 3 seconds, close the modal
     setTimeout(() => {
       modalOverlay.classList.remove('active');
       
