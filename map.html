@@ -132,8 +132,8 @@
         0 1px 0 rgba(255,255,255,.5) inset,
         0 14px 28px -10px rgba(244,167,185,.7);
       border:none; cursor:pointer;
-      /* CHANGE 2: was 32px, now 52px to push it down */
-      margin-top: 52px;
+      /* CHANGE 2: pushed further down */
+      margin-top: 78px;
       opacity:0;
       animation: arrowFloat 2.4s ease-in-out infinite;
     }
@@ -248,20 +248,26 @@
       <!-- Flight path -->
       <path id="flight-path" d="M 50 150 Q 325 20 600 150"/>
 
-      <!-- CHANGE 1: Berlin — bigger emoji (38) and bigger label (19) -->
+      <!-- Berlin -->
       <g transform="translate(50,150)">
         <text x="0" y="0" text-anchor="middle" font-size="38"
               dominant-baseline="auto" transform="translate(0,-18)">📍</text>
-        <text y="52" text-anchor="middle" fill="#7B4A2A"
-              font-family="Berkshire Swash, cursive" font-size="19" font-weight="bold">Berlin</text>
+        <!-- badge behind label -->
+        <rect x="-38" y="38" width="76" height="22" rx="11"
+              fill="#FDFBF7" fill-opacity="0.82"/>
+        <text y="54" text-anchor="middle" fill="#5c2e16"
+              font-family="Berkshire Swash, cursive" font-size="17">Berlin</text>
       </g>
 
-      <!-- CHANGE 1: Sydney — bigger emoji (38) and bigger label (19) -->
+      <!-- Sydney -->
       <g id="sydney-pin" transform="translate(600,150)">
         <text x="0" y="0" text-anchor="middle" font-size="38"
               dominant-baseline="auto" transform="translate(0,-18)">📍</text>
-        <text y="52" text-anchor="middle" fill="#7B4A2A"
-              font-family="Berkshire Swash, cursive" font-size="19" font-weight="bold">Sydney</text>
+        <!-- badge behind label -->
+        <rect x="-42" y="38" width="84" height="22" rx="11"
+              fill="#FDFBF7" fill-opacity="0.82"/>
+        <text y="54" text-anchor="middle" fill="#5c2e16"
+              font-family="Berkshire Swash, cursive" font-size="17">Sydney</text>
         <text class="heart-particle" style="--tx:20px;--ty:-30px;">💗</text>
         <text class="heart-particle" style="--tx:-20px;--ty:-30px;">💗</text>
       </g>
